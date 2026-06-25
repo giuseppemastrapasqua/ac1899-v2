@@ -8,6 +8,7 @@ import NewsletterBox from "../components/NewsletterBox";
 import EuropaLeagueBox from "../components/EuropaLeagueBox";
 import CreatorVideoBox from "../components/CreatorVideoBox";
 import WonderkidsHomeBox from "../components/WonderkidsHomeBox";
+import type { CSSProperties } from "react";
 import {
   getSerieAStandings,
   getMilanFixtures,
@@ -446,16 +447,12 @@ const quickGrid = {
   marginBottom: 24,
 };
 
-const quickCard = {
-  background: "#111827",
-  color: "#f9fafb",
-  padding: 20,
-  minHeight: 220,
-  display: "flex",
-  flexDirection: "column",
-  justifyContent: "space-between",
+const quickCard: CSSProperties = {
+  background: "rgba(17,24,39,.9)",
   border: "1px solid rgba(255,255,255,.08)",
+  padding: 20,
   textDecoration: "none",
+  color: "white",
 };
 
 const quickIcon = {

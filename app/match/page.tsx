@@ -3,7 +3,7 @@ import { getMilanFixtures } from "../../lib/api-football";
 export default async function MatchPage() {
   const data = await getMilanFixtures();
   const fixtures = data?.response || [];
-  console.log("FIXTURES", fixtures);
+  // console.log("FIXTURES", fixtures);
 
   const finishedFixtures = fixtures.filter(
     (item: any) => item.fixture?.status?.short === "FT"
@@ -43,7 +43,7 @@ export default async function MatchPage() {
         <div
           style={{
             display: "grid",
-            ggridTemplateColumns: "100px auto 100px",
+            gridTemplateColumns: "100px auto 100px",
             gap: 20,
             alignItems: "center",
           }}

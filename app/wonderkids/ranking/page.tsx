@@ -7,7 +7,7 @@ export default async function WonderkidsRankingPage() {
   .select("*")
   .order("potential_rating", { ascending: false });
 
-console.log(players);
+// console.log("FIXTURES", fixtures);
   return (
     <main style={page}>
       <section style={hero}>

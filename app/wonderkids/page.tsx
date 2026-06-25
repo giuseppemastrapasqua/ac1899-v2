@@ -6,7 +6,7 @@ export default async function WonderkidsPage() {
     .from("wonderkids")
     .select("id, name, surname, age, club, position, nationality, market_value, scout_rating, potential_rating, slug, photo");
 
-  console.log(players);
+  // console.log("FIXTURES", fixtures);
   return (
     <main style={page}>
       <section style={hero}>

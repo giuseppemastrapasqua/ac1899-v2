@@ -15,9 +15,9 @@ const { data: bestXiData } = await supabase
 const awards = awardsData || [];
 const bestXi = bestXiData || [];
 
-console.log("AWARDS", awards.length);
-console.log("BEST XI", bestXi.length);
-console.log(bestXi);
+// console.log("AWARDS", awards.length);
+// console.log("BEST XI", bestXi.length);
+// console.log(bestXi);
 
   const bestGoalkeeper = awards.find((p: any) => p.award_type === "best_goalkeeper");
   const bestDefender = awards.find((p: any) => p.award_type === "best_defender");

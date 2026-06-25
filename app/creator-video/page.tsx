@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { supabase } from "../../lib/supabase";
+import type { CSSProperties } from "react";
 
 type Video = {
   id: number;
@@ -17,17 +18,22 @@ type Video = {
 
 export default async function CreatorVideoPage() {
   const { data: videos, error } = await supabase
-  .from("creator_videos")
-  .select("id, creator, title, youtube_url, category, published_at");
+    .from("creator_videos")
+    .select("id, creator, title, youtube_url, category, published_at");
 
-console.log("SUPABASE URL:", process.env.NEXT_PUBLIC_SUPABASE_URL);
-console.log("VIDEOS:", videos);
-console.log("ERROR:", error);
-  const groupedVideos = (videos || []).reduce((groups: any, video: Video) => {
-    if (!groups[video.creator]) groups[video.creator] = [];
-    groups[video.creator].push(video);
-    return groups;
-  }, {});
+  const groupedVideos = (videos || []).reduce(
+    (groups: Record<string, any[]>, video: any) => {
+      const creator = video.creator || "Altro";
+
+      if (!groups[creator]) {
+        groups[creator] = [];
+      }
+
+      groups[creator].push(video);
+      return groups;
+    },
+    {}
+  );
 
   return (
     <main style={page}>
@@ -193,7 +199,7 @@ const socialLink = {
   fontWeight: 800,
 };
 
-const grid = {
+const grid: CSSProperties = {
   display: "grid",
   gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))",
   gap: 18,

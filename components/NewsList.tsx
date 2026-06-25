@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
+import type { CSSProperties } from "react";
 
 type News = {
   id: number;
@@ -203,7 +204,7 @@ const readMore = {
   color: "#f87171",
 };
 
-const smallCard = {
+const smallCard: CSSProperties = {
   background: "#111827",
   color: "#f9fafb",
   overflow: "hidden",
