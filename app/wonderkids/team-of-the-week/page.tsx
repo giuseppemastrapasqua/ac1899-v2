@@ -1,19 +1,34 @@
 import Link from "next/link";
 import { supabase } from "../../../lib/supabase";
 
-export default async function TeamOfTheWeekPage() {
-  const { data: awardsData } = await supabase
-  .from("wonderkids_weekly_awards")
-  .select("*")
-  .order("rating", { ascending: false });
+export default async function TeamOfTheWeekPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ week?: string }>;
+}) {
+  const params = await searchParams;
+  const selectedWeek = params?.week;
 
-const { data: bestXiData } = await supabase
-  .from("wonderkids_best_xi")
-  .select("*")
-  .order("id", { ascending: true });
+  let awardsQuery = supabase
+    .from("wonderkids_weekly_awards")
+    .select("*")
+    .order("rating", { ascending: false });
 
-const awards = awardsData || [];
-const bestXi = bestXiData || [];
+  let bestXiQuery = supabase
+    .from("wonderkids_best_xi")
+    .select("*")
+    .order("id", { ascending: true });
+
+  if (selectedWeek) {
+    awardsQuery = awardsQuery.eq("week_id", selectedWeek);
+    bestXiQuery = bestXiQuery.eq("week_id", selectedWeek);
+  }
+
+  const { data: awardsData } = await awardsQuery;
+  const { data: bestXiData } = await bestXiQuery;
+
+  const awards = awardsData || [];
+  const bestXi = bestXiData || [];
 
 // console.log("AWARDS", awards.length);
 // console.log("BEST XI", bestXi.length);
@@ -177,7 +192,7 @@ const awardsGrid = {
   maxWidth: 1200,
   margin: "0 auto 28px",
   display: "grid",
-  gridTemplateColumns: "repeat(4,1fr)",
+  gridTemplateColumns: "repeat(auto-fit,minmax(150px,1fr))",
   gap: 16,
 };
 

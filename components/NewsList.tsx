@@ -5,203 +5,261 @@ import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 import type { CSSProperties } from "react";
 
-type News = {
+type FeedItem = {
   id: number;
   title: string;
-  subtitle: string;
-  content: string;
+  subtitle: string | null;
   category: string;
-  image_url: string;
-  featured: boolean;
-  created_at: string;
+  image_url?: string | null;
+  created_at: string | null;
+  type: "news" | "editorial";
 };
 
 export default function NewsList() {
-  const [news, setNews] = useState<News[]>([]);
+  const [items, setItems] = useState<FeedItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadNews();
+    loadFeed();
   }, []);
 
-  async function loadNews() {
-    const { data, error } = await supabase
+  async function loadFeed() {
+    const { data: newsData, error: newsError } = await supabase
       .from("news")
-      .select("*")
+      .select("id, title, subtitle, category, image_url, created_at")
       .order("created_at", { ascending: false });
 
-    if (error) {
-      console.error(error);
+    const { data: editorialData, error: editorialError } = await supabase
+      .from("daily_editorials")
+      .select("id, title, subtitle, created_at")
+      .order("created_at", { ascending: false });
+
+    if (newsError || editorialError) {
+      console.error(newsError || editorialError);
       setLoading(false);
       return;
     }
 
-    setNews(data || []);
+    const formattedNews: FeedItem[] = (newsData || []).map((item: any) => ({
+      id: item.id,
+      title: item.title,
+      subtitle: item.subtitle,
+      category: item.category || "News",
+      image_url: item.image_url,
+      created_at: item.created_at,
+      type: "news",
+    }));
+
+    const formattedEditorials: FeedItem[] = (editorialData || []).map(
+      (item: any) => ({
+        id: item.id,
+        title: item.title,
+        subtitle: item.subtitle,
+        category: "Editoriale AC1899",
+        image_url: null,
+        created_at: item.created_at,
+        type: "editorial",
+      })
+    );
+
+    const feed = [...formattedNews, ...formattedEditorials]
+      .sort(
+        (a, b) =>
+          new Date(b.created_at || 0).getTime() -
+          new Date(a.created_at || 0).getTime()
+      )
+      .slice(0, 7);
+
+    setItems(feed);
     setLoading(false);
   }
 
   if (loading) {
     return (
-      <article style={card}>
+      <article style={emptyCard}>
         <h2>Caricamento news...</h2>
       </article>
     );
   }
 
-  if (news.length === 0) {
+  if (items.length === 0) {
     return (
-      <article style={card}>
+      <article style={emptyCard}>
         <h2>📰 Nessuna news pubblicata</h2>
         <p>Vai su Admin e pubblica una news.</p>
       </article>
     );
   }
 
-  const normalNews = news.slice(0, 6);
+  const featured = items[0];
+  const otherItems = items.slice(1, 7);
 
   return (
     <>
-            {normalNews.length > 0 && (
-        <section style={secondaryGrid}>
-          {normalNews.map((item) => (
-            <Link
-              key={item.id}
-              href={`/news/${item.id}`}
-              style={smallCard}
+      {featured && (
+        <Link
+          href={
+            featured.type === "editorial"
+              ? `/editoriali/${featured.id}`
+              : `/news/${featured.id}`
+          }
+          style={
+            featured.type === "editorial"
+              ? editorialFeaturedCard
+              : featuredCard
+          }
+        >
+          {featured.image_url && (
+            <img
+              src={featured.image_url}
+              alt={featured.title}
+              style={featuredImage}
+            />
+          )}
+
+          <div style={featuredContent}>
+            <p
+              style={
+                featured.type === "editorial"
+                  ? editorialCategory
+                  : smallCategory
+              }
             >
-              {item.image_url && (
-                <img
-                  src={item.image_url}
-                  alt={item.title}
-                  style={smallImage}
-                />
-              )}
+              {featured.type === "editorial"
+                ? "📰 Editoriale AC1899"
+                : "News in evidenza"}
+            </p>
 
-              <div
-                 style={{
-                padding: 10,
-                flex: 1,
-                 display: "flex",
-                flexDirection: "column",
-                  }}
-                >
-                <p style={smallCategory}>{item.category}</p>
+            <h2 style={featuredTitle}>{featured.title}</h2>
 
-                <h2 style={smallTitle}>{item.title}</h2>
+            {featured.subtitle && (
+              <p style={featuredSubtitle}>{featured.subtitle}</p>
+            )}
 
-                {item.subtitle && (
-                  <p style={smallSubtitle}>{item.subtitle}</p>
-                )}
-                <p
-                 style={{
-                   color: "#ef4444",
-                  fontWeight: "bold",
-                   marginTop: "auto",
-                  fontSize: 14,
-                  textTransform: "uppercase",
-                  letterSpacing: 1,
-                 }}
-                >
-                 Leggi articolo →
-                </p>
-                <small style={{ color: "#9ca3af" }}>
-                  {item.created_at
-                 ? new Date(item.created_at).toLocaleDateString("it-IT")
-                  : ""}
-                </small>
-              </div>
-            </Link>
-          ))}
-        </section>
+            <p style={compactReadMore}>
+              {featured.type === "editorial"
+                ? "Leggi editoriale →"
+                : "Leggi articolo →"}
+            </p>
+          </div>
+        </Link>
       )}
+
+      <section style={secondaryGrid}>
+        {otherItems.map((item) => (
+          <Link
+            key={`${item.type}-${item.id}`}
+            href={
+              item.type === "editorial"
+                ? `/editoriali/${item.id}`
+                : `/news/${item.id}`
+            }
+            style={item.type === "editorial" ? editorialCard : smallCard}
+          >
+            {item.image_url && (
+              <img src={item.image_url} alt={item.title} style={smallImage} />
+            )}
+
+            <div style={compactContent}>
+              <p
+                style={
+                  item.type === "editorial"
+                    ? editorialCategory
+                    : smallCategory
+                }
+              >
+                {item.type === "editorial"
+                  ? "📰 Editoriale AC1899"
+                  : item.category}
+              </p>
+
+              <h2 style={smallTitle}>{item.title}</h2>
+
+              {item.subtitle && <p style={smallSubtitle}>{item.subtitle}</p>}
+
+              <p style={compactReadMore}>
+                {item.type === "editorial"
+                  ? "Leggi editoriale →"
+                  : "Leggi articolo →"}
+              </p>
+
+              <small style={dateText}>
+                {item.created_at
+                  ? new Date(item.created_at).toLocaleDateString("it-IT")
+                  : ""}
+              </small>
+            </div>
+          </Link>
+        ))}
+      </section>
     </>
   );
 }
 
-const card = {
+const emptyCard = {
   background: "rgba(17,24,39,.94)",
   color: "#f9fafb",
   padding: 24,
-  borderRadius: 0,
   border: "1px solid rgba(255,255,255,.08)",
-  boxShadow: "0 0px 45px rgba(0,0,0,.32)",
   marginBottom: 14,
 };
 
-const featuredCard = {
-  display: "grid",
-  gridTemplateColumns: "1.15fr .85fr",
-  background: "rgba(17,24,39,.96)",
+const featuredCard: CSSProperties = {
+  background: "#111827",
   color: "#f9fafb",
-  borderRadius: 0,
   overflow: "hidden",
   textDecoration: "none",
-  border: "1px solid rgba(255,255,255,.1)",
-  boxShadow: "0 24px 65px rgba(0,0,0,.42)",
-  marginBottom: 20,
+  border: "1px solid rgba(255,255,255,.10)",
+  borderTop: "3px solid #e30613",
+  minHeight: 210,
+  display: "grid",
+  gridTemplateColumns: "260px 1fr",
+  marginBottom: 16,
 };
 
-const featuredImageWrap = {
-  position: "relative" as const,
-  minHeight: 360,
-  background: "#111827",
+const editorialFeaturedCard: CSSProperties = {
+  ...featuredCard,
+  border: "1px solid rgba(227,6,19,.65)",
+  borderTop: "3px solid #e30613",
+  background:
+    "linear-gradient(180deg, rgba(127,29,29,.24), rgba(17,24,39,.96))",
+  display: "flex",
+  flexDirection: "column",
 };
 
 const featuredImage = {
   width: "100%",
   height: "100%",
-  minHeight: 360,
+  minHeight: 210,
   objectFit: "cover" as const,
   display: "block",
 };
 
-const imageOverlay = {
-  position: "absolute" as const,
-  inset: 0,
-  background:
-    "linear-gradient(90deg,rgba(3,7,18,.05),rgba(3,7,18,.55))",
-};
-
-const featuredContent = {
-  padding: 30,
+const featuredContent: CSSProperties = {
+  padding: 18,
   display: "flex",
-  flexDirection: "column" as const,
-  justifyContent: "center",
-};
-
-const badge = {
-  color: "#f87171",
-  fontWeight: "bold",
-  fontSize: 13,
-  letterSpacing: 1,
-  margin: "0 0 12px",
+  flexDirection: "column",
 };
 
 const featuredTitle = {
-  fontSize: 56,
+  fontSize: 28,
   lineHeight: 1.12,
-  margin: "0 0 18px",
+  margin: "0 0 10px",
   color: "#ffffff",
+  fontWeight: 900,
 };
 
 const featuredSubtitle = {
-  color: "#d1d5db",
-  fontSize: 22,
-  lineHeight: 1.55,
-  marginBottom: 22,
-};
-
-const metaRow = {
-  display: "flex",
-  gap: 14,
-  flexWrap: "wrap" as const,
   color: "#9ca3af",
-  fontSize: 14,
-  marginBottom: 20,
+  fontSize: 15,
+  lineHeight: 1.45,
+  marginBottom: 12,
 };
 
-const readMore = {
-  color: "#f87171",
+const secondaryGrid = {
+  display: "grid",
+  gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+  gap: 16,
 };
 
 const smallCard: CSSProperties = {
@@ -210,47 +268,73 @@ const smallCard: CSSProperties = {
   overflow: "hidden",
   textDecoration: "none",
   border: "1px solid rgba(255,255,255,.10)",
-  boxShadow: "0 14px 35px rgba(0,0,0,.32)",
-  transition: "transform .2s ease, border-color .2s ease",
-  minHeight: 220,
+  minHeight: 150,
   display: "flex",
   flexDirection: "column",
 };
 
-const secondaryGrid = {
-  display: "grid",
-  gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-  gap: 24,
-  marginTop: 20,
+const editorialCard: CSSProperties = {
+  ...smallCard,
+  border: "1px solid rgba(227,6,19,.65)",
+  borderTop: "3px solid #e30613",
+  background:
+    "linear-gradient(180deg, rgba(127,29,29,.24), rgba(17,24,39,.96))",
 };
 
 const smallImage = {
   width: "100%",
-  height: 200,
+  height: 105,
   objectFit: "cover" as const,
   display: "block",
+};
+
+const compactContent: CSSProperties = {
+  padding: 14,
+  flex: 1,
+  display: "flex",
+  flexDirection: "column",
 };
 
 const smallCategory = {
   color: "#ef4444",
   fontWeight: "bold",
-  fontSize: 12,
+  fontSize: 11,
   letterSpacing: 1,
   textTransform: "uppercase" as const,
-  margin: "0 0 10px",
+  margin: "0 0 8px",
+};
+
+const editorialCategory = {
+  ...smallCategory,
+  color: "#e30613",
 };
 
 const smallTitle = {
-  fontSize: 18,
-  lineHeight: 1.18,
-  margin: "0 0 10px",
+  fontSize: 17,
+  lineHeight: 1.15,
+  margin: "0 0 8px",
   color: "#ffffff",
   fontWeight: 800,
 };
 
 const smallSubtitle = {
   color: "#9ca3af",
-  fontSize: 15,
-  lineHeight: 1.5,
-  marginBottom: 14,
+  fontSize: 13,
+  lineHeight: 1.35,
+  marginBottom: 10,
+};
+
+const compactReadMore = {
+  color: "#ef4444",
+  fontWeight: "bold",
+  marginTop: "auto",
+  fontSize: 12,
+  textTransform: "uppercase" as const,
+  letterSpacing: 1,
+};
+
+const dateText = {
+  color: "#9ca3af",
+  marginTop: 8,
+  fontSize: 12,
 };

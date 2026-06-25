@@ -7,7 +7,8 @@ import { supabase } from "../lib/supabase";
 import NewsletterBox from "../components/NewsletterBox";
 import EuropaLeagueBox from "../components/EuropaLeagueBox";
 import CreatorVideoBox from "../components/CreatorVideoBox";
-import WonderkidsHomeBox from "../components/WonderkidsHomeBox";
+import WonderkidHomeBox from "../components/WonderkidHomeBox";
+import WonderkidKingBox from "../components/WonderkidKingBox";
 import type { CSSProperties } from "react";
 import {
   getSerieAStandings,
@@ -85,18 +86,7 @@ export default async function Home() {
       
       <section style={featuredLayout}>
         <div style={mainColumn}>
-          <div style={sectionHeader}>
-            <span
-  style={{
-    ...sectionBadge,
-    color: "#e30613",
-  }}
->
-  📰 REDAZIONE
-</span>
-            <h2 style={sectionTitle}></h2>
-          </div>
-
+          
           <NewsList />
 
           <div style={premiumCard}>
@@ -131,14 +121,15 @@ export default async function Home() {
   </div>
 
   <MilanHubAI />
-</div>
-
+  </div>
+  
           <div style={premiumCard}>
   <span
   style={{
     ...sectionBadge,
     color: "#e30613",
   }}
+
 >
   🗞️ FONTI
 </span>
@@ -179,9 +170,10 @@ export default async function Home() {
   />
   </section>
 <EuropaLeagueBox />
-<CreatorVideoBox />
 
-<WonderkidsHomeBox />
+<WonderkidHomeBox />
+
+<CreatorVideoBox />
                  </div>
 
         <aside style={sideColumn}>
@@ -333,8 +325,8 @@ export default async function Home() {
 </div>
   </div>
   <NewsletterBox />
-  </aside>
-
+  <WonderkidKingBox />
+    </aside>
   </section>     
 
    
@@ -630,4 +622,18 @@ const quickDetail = {
   fontWeight: 800,
   textTransform: "uppercase" as const,
   letterSpacing: 1,
+};
+const homePairRow = {
+  display: "grid",
+  gridTemplateColumns: "2fr 1fr",
+  gap: 18,
+  alignItems: "stretch",
+};
+
+const homePairMain = {
+  minWidth: 0,
+};
+
+const homePairSide = {
+  minWidth: 0,
 };
