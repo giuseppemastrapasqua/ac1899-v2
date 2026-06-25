@@ -133,8 +133,8 @@ export async function POST() {
       forward: forwards[0],
     };
 
-    await supabaseAdmin.from("wonderkids_weekly_awards").delete().neq("id", 0);
-    await supabaseAdmin.from("wonderkids_best_xi").delete().neq("id", 0);
+    const weekId = "2026-06-17_2026-06-24";
+    const weekLabel = "week 1";
 
     for (const [role, player] of Object.entries(bestByRole)) {
       const playerScore = score(player);
@@ -143,7 +143,8 @@ export async function POST() {
       const { error: awardError } = await supabaseAdmin
         .from("wonderkids_weekly_awards")
         .insert({
-          week_label: "Settimana corrente",
+          week_id: weekId,
+          week_label: weekLabel,
           player_name: player.name,
           player_surname: player.surname,
           club: player.club,
@@ -189,7 +190,8 @@ export async function POST() {
       const { error: xiError } = await supabaseAdmin
         .from("wonderkids_best_xi")
         .insert({
-          week_label: "Settimana corrente",
+          week_id: weekId,
+          week_label: weekLabel,
           candidate_id: player.id,
           player_name: player.name,
           player_surname: player.surname,
