@@ -173,7 +173,7 @@ export default async function Home() {
     icon="🏆"
     title="Posizione Milan"
     value={milan?.rank ? `${milan.rank}° posto` : "-"}
-    detail={`${milan?.points || 0} punti in Serie A`}
+    detail={`${milan?.points || 0} punti`}
     href="/statistiche"
   />
   </section>
@@ -331,12 +331,12 @@ export default async function Home() {
   </Link>
 </div>
   </div>
-  
+  <NewsletterBox />
   </aside>
 
   </section>     
 
-      <NewsletterBox />
+   
     </main>
   );
 }
@@ -359,7 +359,7 @@ function QuickBox({
       <div style={quickIcon}>{icon}</div>
       <p style={quickTitle}>{title}</p>
       <h2 style={quickValue}>{value}</h2>
-      <p style={mutedText}>{detail}</p>
+      <p style={quickDetail}>{detail}</p>
     </Link>
   );
 }
@@ -439,40 +439,43 @@ const secondaryButton = {
 };
 
 const quickGrid = {
-  maxWidth: 1400,
-  margin: "0 auto",
-  padding: "20px 24px 28px",
   display: "grid",
   gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))",
   gap: 18,
+  marginTop: 24,
+  marginBottom: 24,
 };
 
 const quickCard = {
   background: "#111827",
   color: "#f9fafb",
-  padding: 22,
-  borderRadius: 0,
-  minHeight: 150,
+  padding: 20,
+  minHeight: 220,
   display: "flex",
   flexDirection: "column",
-  justifyContent: "center",
+  justifyContent: "space-between",
+  border: "1px solid rgba(255,255,255,.08)",
+  textDecoration: "none",
 };
 
 const quickIcon = {
   fontSize: 28,
-  marginBottom: 8,
+  marginBottom: 10,
 };
 
 const quickTitle = {
-  margin: 0,
-  color: "#fca5a5",
-  fontWeight: "bold",
+  margin: "0 0 10px",
+  color: "#f9fafb",
+  fontWeight: 800,
+  fontSize: 20,
+  lineHeight: 1.2,
 };
 
 const quickValue = {
-  margin: "8px 0",
-  color: "#ffffff",
-  fontSize: 18,
+  margin: 0,
+  color: "#9ca3af",
+  fontSize: 15,
+  lineHeight: 1.55,
 };
 
 const featuredLayout = {
@@ -622,4 +625,12 @@ const sideTitle = {
   marginTop: 8,
   marginBottom: 12,
   fontSize: 22,
+};
+const quickDetail = {
+  marginTop: 14,
+  color: "#e30613",
+  fontSize: 13,
+  fontWeight: 800,
+  textTransform: "uppercase" as const,
+  letterSpacing: 1,
 };

@@ -87,7 +87,7 @@ function PlayerList({
         <p>Nessun dato disponibile.</p>
       ) : (
         <ol style={{ paddingLeft: 20 }}>
-          {players.map((p) => (
+          {bestXi.map((player: any) => (
             <li key={p.id} style={{ marginBottom: 12 }}>
               <Link
                 href={`/giocatore/${p.id}`}

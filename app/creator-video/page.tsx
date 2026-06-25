@@ -9,19 +9,22 @@ type Video = {
   thumbnail: string;
   category: string;
   published_at: string;
+  creator_channel?: string;
+  creator_tiktok?: string;
+  creator_instagram?: string;
+  creator_x?: string;
 };
 
 export default async function CreatorVideoPage() {
-  const { data: videos } = await supabase
-    .from("creator_videos")
-    .select("*")
-    .order("published_at", { ascending: false });
+  const { data: videos, error } = await supabase
+  .from("creator_videos")
+  .select("id, creator, title, youtube_url, category, published_at");
 
+console.log("SUPABASE URL:", process.env.NEXT_PUBLIC_SUPABASE_URL);
+console.log("VIDEOS:", videos);
+console.log("ERROR:", error);
   const groupedVideos = (videos || []).reduce((groups: any, video: Video) => {
-    if (!groups[video.creator]) {
-      groups[video.creator] = [];
-    }
-
+    if (!groups[video.creator]) groups[video.creator] = [];
     groups[video.creator].push(video);
     return groups;
   }, {});
@@ -42,41 +45,74 @@ export default async function CreatorVideoPage() {
           <p>Nessun video inserito.</p>
         </section>
       ) : (
-        Object.keys(groupedVideos).map((creator) => (
-          <section key={creator} style={creatorSection}>
-            <h2 style={creatorTitle}>{creator}</h2>
+        Object.keys(groupedVideos).map((creator) => {
+          const creatorVideos = groupedVideos[creator];
+          const firstVideo = creatorVideos[0];
 
-            <div style={grid}>
-              {groupedVideos[creator].map((video: Video) => (
-                <article key={video.id} style={card}>
-                  {video.thumbnail ? (
-                    <img
-                      src={video.thumbnail}
-                      alt={video.title}
-                      style={thumbnail}
-                    />
-                  ) : (
-                    <div style={placeholder}>🎥</div>
+          return (
+            <section key={creator} style={creatorSection}>
+              <div style={creatorHeader}>
+                <div>
+                  <span style={badge}>CREATOR</span>
+                  <h2 style={creatorTitle}>{creator}</h2>
+                </div>
+
+                <div style={socials}>
+                  {firstVideo.creator_channel && (
+                    <a href={firstVideo.creator_channel} target="_blank" style={socialLink}>
+                      YouTube
+                    </a>
                   )}
 
-                  <div style={{ padding: 18 }}>
-                    <span style={cardBadge}>{video.category || "Video"}</span>
-                    <h3>{video.title}</h3>
-
-                    <a
-                      href={video.youtube_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={button}
-                    >
-                      Guarda video →
+                  {firstVideo.creator_tiktok && (
+                    <a href={firstVideo.creator_tiktok} target="_blank" style={socialLink}>
+                      TikTok
                     </a>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </section>
-        ))
+                  )}
+
+                  {firstVideo.creator_instagram && (
+                    <a href={firstVideo.creator_instagram} target="_blank" style={socialLink}>
+                      Instagram
+                    </a>
+                  )}
+
+                  {firstVideo.creator_x && (
+                    <a href={firstVideo.creator_x} target="_blank" style={socialLink}>
+                      X
+                    </a>
+                  )}
+                </div>
+              </div>
+
+              <div style={grid}>
+                {creatorVideos.map((video: Video) => (
+                  <article key={video.id} style={card}>
+                    {video.thumbnail ? (
+                      <img src={video.thumbnail} alt={video.title} style={thumbnail} />
+                    ) : (
+                      <div style={placeholder}>🎥</div>
+                    )}
+
+                    <div style={{ padding: 18 }}>
+                      <span style={cardBadge}>{video.category || "Video"}</span>
+
+                      <h3 style={cardTitle}>{video.title}</h3>
+
+                      <a
+                        href={video.youtube_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={button}
+                      >
+                        Guarda →
+                      </a>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </section>
+          );
+        })
       )}
 
       <Link href="/" style={backLink}>
@@ -98,24 +134,25 @@ const hero = {
   margin: "0 auto 28px",
   background: "#111827",
   border: "1px solid rgba(255,255,255,.08)",
+  borderTop: "2px solid #e30613",
   padding: 32,
 };
 
 const badge = {
   color: "#e30613",
   fontWeight: 800,
-  fontSize: 13,
+  fontSize: 12,
   letterSpacing: 1,
 };
 
 const title = {
-  fontSize: 48,
-  margin: "16px 0 12px",
+  fontSize: 42,
+  margin: "14px 0 10px",
 };
 
 const subtitle = {
   color: "#9ca3af",
-  fontSize: 20,
+  fontSize: 18,
   maxWidth: 760,
   lineHeight: 1.5,
 };
@@ -123,12 +160,37 @@ const subtitle = {
 const creatorSection = {
   maxWidth: 1200,
   margin: "0 auto 34px",
+  background: "#111827",
+  border: "1px solid rgba(255,255,255,.08)",
+  padding: 24,
+};
+
+const creatorHeader = {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  gap: 20,
+  marginBottom: 20,
 };
 
 const creatorTitle = {
   fontSize: 30,
-  borderLeft: "5px solid #e30613",
-  paddingLeft: 14,
+  margin: "8px 0 0",
+};
+
+const socials = {
+  display: "flex",
+  gap: 10,
+  flexWrap: "wrap" as const,
+};
+
+const socialLink = {
+  color: "#f9fafb",
+  textDecoration: "none",
+  border: "1px solid rgba(255,255,255,.12)",
+  padding: "8px 10px",
+  fontSize: 13,
+  fontWeight: 800,
 };
 
 const grid = {
@@ -163,14 +225,23 @@ const cardBadge = {
   letterSpacing: 1,
 };
 
+const cardTitle = {
+  fontSize: 20,
+  lineHeight: 1.25,
+  margin: "10px 0 0",
+};
+
 const button = {
   display: "inline-block",
-  marginTop: 14,
+  marginTop: 16,
   background: "#e30613",
   color: "white",
-  padding: "10px 14px",
+  padding: "8px 12px",
   textDecoration: "none",
-  fontWeight: "bold",
+  fontWeight: 800,
+  fontSize: 13,
+  textTransform: "uppercase" as const,
+  letterSpacing: 1,
 };
 
 const emptyBox = {

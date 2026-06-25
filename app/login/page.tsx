@@ -60,20 +60,25 @@ export default function LoginPage() {
         />
 
         <button
-          onClick={login}
-          style={{
-            width: "100%",
-            padding: 14,
-            background: "#991b1b",
-            color: "white",
-            border: "none",
-            borderRadius: 10,
-            fontWeight: "bold",
-            cursor: "pointer",
-          }}
-        >
-          Accedi
-        </button>
+  type="button"
+  onClick={login}
+  style={{
+    width: "100%",
+    padding: 14,
+    background: "#991b1b",
+    color: "white",
+    border: "none",
+    borderRadius: 10,
+    fontWeight: "bold",
+    cursor: "pointer",
+    opacity: 1,
+    pointerEvents: "auto",
+    position: "relative",
+    zIndex: 10,
+  }}
+>
+  Accedi
+</button>
       </div>
     </main>
   );

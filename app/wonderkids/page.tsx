@@ -3,11 +3,10 @@ import { supabase } from "../../lib/supabase";
 
 export default async function WonderkidsPage() {
   const { data: players } = await supabase
-  .from("wonderkids")
-  .select("*")
-  .order("potential_rating", { ascending: false });
+    .from("wonderkids")
+    .select("id, name, surname, age, club, position, nationality, market_value, scout_rating, potential_rating, slug, photo");
 
-console.log(players);
+  console.log(players);
   return (
     <main style={page}>
       <section style={hero}>
@@ -23,21 +22,20 @@ console.log(players);
       <section style={grid}>
         {players?.map((player: any) => (
           <article key={player.id} style={card}>
-            <div style={photo}>
-              {player.photo ? (
-                <img
-                  src={player.photo}
-                  alt={player.name}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                  }}
-                />
-              ) : (
-                "⭐"
-              )}
-            </div>
+           <div style={photoBox}>
+  {player.photo ? (
+    <img
+      src={player.photo}
+      alt={`${player.name} ${player.surname}`}
+      style={photoImg}
+    />
+  ) : (
+    <span style={initials}>
+      {player.name?.[0]}
+      {player.surname?.[0]}
+    </span>
+  )}
+</div>
 
             <div style={{ padding: 18 }}>
               <h2>
@@ -65,11 +63,11 @@ console.log(players);
               </p>
 
               <Link
-                href={`/wonderkids/${player.id}`}
-                style={button}
-              >
-                Scheda completa →
-              </Link>
+  href={`/wonderkids/${player.slug || "franco-mastantuono"}`}
+  style={button}
+>
+  Scheda completa →
+</Link>
             </div>
           </article>
         ))}
@@ -125,14 +123,25 @@ const card = {
   border: "1px solid rgba(255,255,255,.08)",
 };
 
-const photo = {
+const photoBox = {
   height: 220,
   display: "grid",
   placeItems: "center",
   fontSize: 50,
   background: "rgba(255,255,255,.06)",
+  overflow: "hidden",
 };
 
+const photoImg = {
+  width: "100%",
+  height: "100%",
+  objectFit: "cover" as const,
+};
+
+const initials = {
+  color: "#e30613",
+  fontWeight: 900,
+};
 const muted = {
   color: "#9ca3af",
 };

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
+
 export default function Navbar() {
   const links = [
     { label: "Home", href: "/" },
@@ -34,23 +34,19 @@ export default function Navbar() {
         }}
       >
         <Link
-  href="/"
-  style={{
-    display: "flex",
-    alignItems: "center",
-    marginRight: 24,
-  }}
->
-  <img
-    src="/images/logo-ac1899.png.png"
-    alt="AC1899"
-    style={{
-      height: 100,
-      width: "auto",
-      display: "block",
-    }}
-  />
-</Link>
+          href="/"
+          style={{
+            color: "#e30613",
+            textDecoration: "none",
+            fontWeight: 900,
+            fontSize: 26,
+            letterSpacing: "-1px",
+            fontFamily: "Arial Black, sans-serif",
+            marginRight: 40,
+          }}
+        >
+          AC1899
+        </Link>
 
         {links.map((link) => (
           <Link

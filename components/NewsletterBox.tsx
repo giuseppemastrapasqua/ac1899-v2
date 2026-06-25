@@ -32,61 +32,73 @@ export default function NewsletterBox() {
     }
 
     setEmail("");
-
     alert("Iscrizione completata! 🔴⚫");
   }
 
   return (
     <section
       style={{
-        background:
-          "linear-gradient(135deg,#111827,#7f1d1d)",
-        color: "white",
-        padding: 36,
-        borderRadius: 24,
-        textAlign: "center",
-        marginTop: 30,
+        background: "#111827",
+        border: "1px solid rgba(255,255,255,.08)",
+        borderTop: "2px solid #e30613",
+        padding: 20,
+        marginTop: 24,
       }}
     >
-      <h2
+      <span
         style={{
-          marginTop: 0,
-          fontSize: 34,
+          color: "#e30613",
+          fontWeight: 800,
+          fontSize: 12,
+          letterSpacing: 1,
+          textTransform: "uppercase",
         }}
       >
-        📬 Diventa un Insider
-      </h2>
+        📬 Newsletter
+      </span>
+
+      <h3
+        style={{
+          margin: "10px 0 8px",
+          color: "#ffffff",
+          fontSize: 24,
+          lineHeight: 1.2,
+        }}
+      >
+        Diventa un Insider
+      </h3>
 
       <p
         style={{
-          maxWidth: 700,
-          margin: "0 auto 24px",
-          color: "#e5e7eb",
+          margin: 0,
+          color: "#9ca3af",
+          fontSize: 14,
           lineHeight: 1.6,
         }}
       >
-        Ricevi in anteprima news, mercato, pagelle e analisi esclusive del mondo rossonero.
+        Ricevi news, mercato, pagelle e analisi esclusive del mondo rossonero.
       </p>
 
       <div
         style={{
-          display: "flex",
-          gap: 12,
-          justifyContent: "center",
-          flexWrap: "wrap",
+          display: "grid",
+          gap: 10,
+          marginTop: 18,
         }}
       >
         <input
           type="email"
-          placeholder="Inserisci la tua email"
+          placeholder="La tua email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           style={{
-            width: 320,
-            padding: 14,
-            borderRadius: 12,
-            border: "none",
-            fontSize: 16,
+            width: "100%",
+            padding: "12px 14px",
+            background: "#020617",
+            color: "white",
+            border: "1px solid rgba(255,255,255,.08)",
+            outline: "none",
+            boxSizing: "border-box",
           }}
         />
 
@@ -94,16 +106,19 @@ export default function NewsletterBox() {
           onClick={subscribe}
           disabled={loading}
           style={{
-            background: "#dc2626",
+            width: "100%",
+            background: "#e30613",
             color: "white",
             border: "none",
-            padding: "14px 24px",
-            borderRadius: 12,
-            fontWeight: "bold",
+            padding: "12px",
+            fontWeight: 800,
+            fontSize: 13,
             cursor: "pointer",
+            textTransform: "uppercase",
+            letterSpacing: 1,
           }}
         >
-          {loading ? "Iscrizione..." : "🚀 Iscriviti Gratis"}
+          {loading ? "Iscrizione..." : "Iscriviti →"}
         </button>
       </div>
     </section>

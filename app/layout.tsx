@@ -4,8 +4,8 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "Milan Hub",
-    template: "%s | Milan Hub",
+    default: "AC1899",
+template: "%s | AC1899",
   },
   description:
     "Milan Hub: news, mercato, rosa, statistiche, pagelle e approfondimenti sul mondo rossonero.",
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
       "News, mercato, rosa, statistiche, pagelle e approfondimenti sul mondo rossonero.",
     type: "website",
     locale: "it_IT",
-    siteName: "Ac1899com",
+    siteName: "AC1899",
   },
 };
 
@@ -52,64 +52,68 @@ export default function RootLayout({
         <div style={{ flex: 1 }}>{children}</div>
 
         <footer
-          style={{
-            background: "#111827",
-            borderTop: "3px solid #991b1b",
-            padding: "32px 24px",
-            marginTop: 40,
-          }}
-        >
-          <div
-            style={{
-              maxWidth: 1400,
-              margin: "0 auto",
-              display: "flex",
-              justifyContent: "space-between",
-              flexWrap: "wrap",
-              gap: 24,
-            }}
-          >
-            <div>
-              <h2
-                style={{
-                  marginTop: 0,
-                  color: "#ffffff",
-                }}
-              >
-                🔴⚫ Milan Hub
-              </h2>
+  style={{
+    background: "#111827",
+    borderTop: "1px solid #e30613",
+    padding: "18px 24px",
+    marginTop: 48,
+  }}
+>
+  <div
+    style={{
+      maxWidth: 1400,
+      margin: "0 auto",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: 24,
+      flexWrap: "wrap",
+    }}
+  >
+    <div
+      style={{
+        color: "#e30613",
+        fontWeight: 900,
+        fontSize: 22,
+        letterSpacing: "-0.5px",
+      }}
+    >
+      AC1899
+    </div>
 
-              <p
-                style={{
-                  color: "#9ca3af",
-                  maxWidth: 400,
-                }}
-              >
-                News, mercato, statistiche, pagelle e approfondimenti sul mondo
-                rossonero.
-              </p>
-            </div>
+    <nav
+      style={{
+        display: "flex",
+        gap: 24,
+        flexWrap: "wrap",
+      }}
+    >
+      <a href="/news" style={footerLink}>News</a>
+      <a href="/creator-video" style={footerLink}>Creator</a>
+      <a href="/wonderkids" style={footerLink}>Wonderkids</a>
+      <a href="/avversario" style={footerLink}>AI Room</a>
+      <a href="/europa-league" style={footerLink}>Europa</a>
+    </nav>
 
-            <div>
-              <h3>Sezioni</h3>
-
-              <p>📰 News</p>
-              <p>💰 Mercato</p>
-              <p>👥 Rosa</p>
-              <p>📊 Statistiche</p>
-              <p>⭐ Pagelle</p>
-            </div>
-
-            <div>
-              <h3>Informazioni</h3>
-
-              <p>© 2025 Milan Hub</p>
-              <p>Tutti i diritti riservati</p>
-              <p>Progetto indipendente non affiliato ad AC Milan.</p>
-            </div>
-          </div>
-        </footer>
+    <p
+      style={{
+        margin: 0,
+        color: "#9ca3af",
+        fontSize: 13,
+        fontWeight: 600,
+      }}
+    >
+      © 2025 AC1899 · Progetto indipendente
+    </p>
+  </div>
+</footer>
       </body>
     </html>
   );
 }
+const footerLink = {
+  color: "#f9fafb",
+  textDecoration: "none",
+  fontWeight: 700,
+  fontSize: 14,
+};
