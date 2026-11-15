@@ -1,3 +1,7 @@
+import { sectionMetadata } from "../../lib/site-seo";
+
+export const metadata = sectionMetadata("/wonderkids");
+
 import Link from "next/link";
 import { scoutingGroups } from "../../lib/italian-scouting";
 import ItalianWonderkids from "../../components/ItalianWonderkids";

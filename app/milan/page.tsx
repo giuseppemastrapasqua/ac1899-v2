@@ -1,3 +1,7 @@
+import { sectionMetadata } from "../../lib/site-seo";
+
+export const metadata = sectionMetadata("/milan");
+
 import { milanSquad } from "../../lib/milan-squad";
 
 const money = new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR", maximumFractionDigits: 0 });

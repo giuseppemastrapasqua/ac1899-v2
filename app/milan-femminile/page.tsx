@@ -1,3 +1,7 @@
+import { sectionMetadata } from "../../lib/site-seo";
+
+export const metadata = sectionMetadata("/milan-femminile");
+
 import Link from "next/link";
 import StandingsTable from "../../components/StandingsTable";
 import { getLocalNews, localNewsHref } from "../../lib/local-news";

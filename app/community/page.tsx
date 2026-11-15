@@ -1,3 +1,7 @@
+import { sectionMetadata } from "../../lib/site-seo";
+
+export const metadata = sectionMetadata("/community");
+
 import Link from "next/link";
 import CommunityLive from "../../components/CommunityLive";
 

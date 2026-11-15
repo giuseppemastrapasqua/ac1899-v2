@@ -1,3 +1,7 @@
+import { sectionMetadata } from "../../lib/site-seo";
+
+export const metadata = sectionMetadata("/creator-video");
+
 import Link from "next/link";
 import { supabase } from "../../lib/supabase";
 import type { CSSProperties } from "react";

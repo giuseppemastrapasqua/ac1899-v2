@@ -1,4 +1,7 @@
-import NewsAutoRefresh from "../components/NewsAutoRefresh";
+import { sectionMetadata } from "../lib/site-seo";
+
+export const metadata = sectionMetadata("/");
+
 import MatchThreeNumbers from "../components/MatchThreeNumbers";
 import Link from "next/link";
 import EuropaMatchAnalyst from "../components/EuropaMatchAnalyst";
@@ -20,7 +23,6 @@ const sections = [
 export default function Home() {
   return (
     <main className="ac1899-home min-h-screen">
-      <NewsAutoRefresh />
       <div className="home-section home-section-news"><HomeFeaturedNews /></div>
 
       <div className="home-section home-section-league">

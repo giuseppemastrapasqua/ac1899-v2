@@ -1,3 +1,7 @@
+import { sectionMetadata } from "../../lib/site-seo";
+
+export const metadata = sectionMetadata("/europa-league");
+
 import EuropaOpponent from "../../components/EuropaOpponent";
 import Link from "next/link";
 import EuropaLeagueBox from "../../components/EuropaLeagueBox";

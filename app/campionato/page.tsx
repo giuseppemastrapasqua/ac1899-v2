@@ -1,3 +1,7 @@
+import { sectionMetadata } from "../../lib/site-seo";
+
+export const metadata = sectionMetadata("/campionato");
+
 import LeagueExtraStats from "../../components/LeagueExtraStats";
 import LeaguePlayerStats from "../../components/LeaguePlayerStats";
 import LeagueCharts from "../../components/LeagueCharts";

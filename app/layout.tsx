@@ -2,31 +2,13 @@ import type { Metadata } from "next";
 import Navbar from "../components/Navbar";
 import "./globals.css";
 
+import { siteUrl } from "../lib/site-seo";
+
 export const metadata: Metadata = {
-  title: {
-    default: "AC1899",
-template: "%s | AC1899",
-  },
-  description:
-    "Milan Hub: news, mercato, rosa, statistiche, pagelle e approfondimenti sul mondo rossonero.",
-  keywords: [
-    "Milan",
-    "AC Milan",
-    "Milan Hub",
-    "news Milan",
-    "mercato Milan",
-    "pagelle Milan",
-    "statistiche Milan",
-    "rosa Milan",
-  ],
-  openGraph: {
-    title: "Milan Hub",
-    description:
-      "News, mercato, rosa, statistiche, pagelle e approfondimenti sul mondo rossonero.",
-    type: "website",
-    locale: "it_IT",
-    siteName: "AC1899",
-  },
+  metadataBase: new URL(siteUrl),
+  title: { default: "AC1899", template: "%s | AC1899" },
+  description: "Notizie, mercato, risultati e analisi sul Milan.",
+  openGraph: { type: "website", locale: "it_IT", siteName: "AC1899" },
 };
 
 export default function RootLayout({

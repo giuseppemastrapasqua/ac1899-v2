@@ -1,3 +1,7 @@
+import { sectionMetadata } from "../../../lib/site-seo";
+
+export const metadata = sectionMetadata("/campionato/analisi");
+
 import MatchAnalyst from "../../../components/MatchAnalyst";
 import CompetitionComparison from "../../../components/CompetitionComparison";
 

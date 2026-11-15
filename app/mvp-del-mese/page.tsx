@@ -1,3 +1,7 @@
+import { sectionMetadata } from "../../lib/site-seo";
+
+export const metadata = sectionMetadata("/mvp-del-mese");
+
 import MonthlyMvp from "../../components/MonthlyMvp";
 
 export default function MonthlyMvpArchive() {

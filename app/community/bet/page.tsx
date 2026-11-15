@@ -1,3 +1,7 @@
+import { sectionMetadata } from "../../../lib/site-seo";
+
+export const metadata = sectionMetadata("/community/bet");
+
 import Link from "next/link";
 import { communityMatchday, formatCommunityKickoff } from "../../../lib/community-matchday";
 
