@@ -1,8 +1,8 @@
 import type { StandingRow } from "../lib/home-standings";
 
-export default function StandingsTable({ rows, title }: { rows: StandingRow[]; title: string }) {
+export default function StandingsTable({ rows, title, expanded = false }: { rows: StandingRow[]; title: string; expanded?: boolean }) {
   return (
-    <div className="max-h-80 overflow-auto" tabIndex={0} role="region" aria-label={title}>
+    <div className={expanded ? "overflow-x-auto" : "max-h-80 overflow-auto"} tabIndex={0} role="region" aria-label={title}>
       <table className="w-full min-w-max text-left text-sm tabular-nums">
         <thead className="sticky top-0 bg-gray-50">
           <tr>{["Pos.", "Squadra", "Pt", "G", "V", "N", "P", "GF", "GS", "DR"].map(label =>

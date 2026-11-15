@@ -48,7 +48,6 @@ export default async function HomeMatchCenter() {
     ? liveTable.map(row => [row.rank, row.team.id === 489 ? "AC Milan" : row.team.name, row.points,
         row.all.played, row.all.win, row.all.draw, row.all.lose, row.all.goals.for, row.all.goals.against])
     : serieA;
-  const stats = (rows !== serieA ? liveMilan?.all : undefined) ?? { played: 11, win: 7, draw: 3, lose: 1, goals: { for: 23, against: 13 } };
   const liveFixtures: Fixture[] = fixturesResult.status === "fulfilled" && Array.isArray(fixturesResult.value?.response)
     ? fixturesResult.value.response.filter((match: Fixture) => match.league?.id === 135 && match.league.season === 2026) : [];
   const sorted = [...liveFixtures].sort((a, b) => Date.parse(a.fixture.date) - Date.parse(b.fixture.date));
@@ -61,7 +60,7 @@ export default async function HomeMatchCenter() {
   return (
     <section aria-labelledby="match-center-title">
       <h2 id="match-center-title" className="mb-4 border-b border-gray-200 pb-3 text-3xl">Match Center</h2>
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2">
       <div className={panel}>
         <h3 className="mb-2 text-xl">Risultati</h3>
         <p className="text-sm text-gray-400">Serie A {season ? season + "/" + String(season + 1).slice(-2) : ""}</p>
@@ -72,18 +71,6 @@ export default async function HomeMatchCenter() {
             value={last.goals.home + "–" + last.goals.away} status="FINITA" note={fixtureDate(last.fixture.date)} />
         </div>
         <a className="mt-3 inline-block" href={calendar}>Calendario ufficiale →</a>
-      </div>
-
-      <div className={panel}>
-        <h3 className="mb-3 text-xl font-bold">Classifica Serie A · 20 squadre</h3>
-        <StandingsTable rows={rows} title="Classifica completa Serie A" />
-        <dl className="mt-4 grid grid-cols-3 gap-2 text-sm">
-          {[["Partite", stats.played], ["Vinte", stats.win], ["Pareggi", stats.draw], ["Perse", stats.lose], ["Gol fatti", stats.goals.for], ["Gol subiti", stats.goals.against]].map(([label, value]) =>
-            <div key={label} className="border border-white/10 p-2"><dt className="text-gray-400">{label}</dt><dd className="text-lg font-bold">{value}</dd></div>
-          )}
-        </dl>
-        <p className={caption}>{rows !== serieA ? "Dati di campionato da API-Football" : "Dati verificati al 15 novembre 2026"}</p>
-        <a className="mt-2 inline-block" href={officialTable}>Classifica completa →</a>
       </div>
 
       <div className={panel}>
@@ -108,6 +95,13 @@ export default async function HomeMatchCenter() {
         <Link className="mt-2 inline-block" href="/rosa">Scopri la rosa →</Link>
       </div>
       </div>
+      <div className={panel + " mt-4"}>
+        <h3 className="mb-3 text-xl font-bold">Classifica Serie A · 20 squadre</h3>
+        <StandingsTable rows={rows} title="Classifica completa Serie A" expanded />
+        <p className={caption}>{rows !== serieA ? "Dati di campionato da API-Football" : "Dati verificati al 15 novembre 2026"}</p>
+        <a className="mt-2 inline-block" href={officialTable}>Fonte ufficiale →</a>
+      </div>
+
     </section>
   );
 }
