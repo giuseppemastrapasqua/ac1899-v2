@@ -132,7 +132,7 @@ export default function NewsDetailPage() {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))",
+              gridTemplateColumns: "repeat(auto-fit,minmax(min(100%, 240px), 1fr))",
               gap: 18,
             }}
           >

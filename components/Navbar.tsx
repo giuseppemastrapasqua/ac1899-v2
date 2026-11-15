@@ -26,6 +26,7 @@ export default function Navbar() {
     >
       <nav
         aria-label="Navigazione principale"
+        className="site-nav-inner"
         style={{
           maxWidth: 1400,
           margin: "0 auto",
@@ -51,6 +52,7 @@ export default function Navbar() {
           AC1899
         </Link>
 
+        <div className="site-nav-links">
         {links.map((link) => (
           <Link
             key={link.href}
@@ -66,9 +68,11 @@ export default function Navbar() {
             {link.label}
           </Link>
         ))}
+        </div>
 
         <Link
           href="/admin"
+          className="site-nav-admin"
           style={{
             marginLeft: "auto",
             color: "#fca5a5",

@@ -104,6 +104,7 @@ export default function NewsList() {
               ? `/editoriali/${featured.id}`
               : `/news/${featured.id}`
           }
+          className="news-featured-card"
           style={
             featured.type === "editorial"
               ? editorialFeaturedCard
@@ -140,7 +141,7 @@ export default function NewsList() {
         </Link>
       )}
 
-      <section style={secondaryGrid}>
+      <section className="news-secondary-grid" style={secondaryGrid}>
         {otherItems.map((item) => (
           <Link
             key={`${item.type}-${item.id}`}

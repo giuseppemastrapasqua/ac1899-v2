@@ -43,7 +43,7 @@ export default async function MatchPage() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "100px auto 100px",
+            gridTemplateColumns: "minmax(0, 1fr) auto minmax(0, 1fr)",
             gap: 20,
             alignItems: "center",
           }}

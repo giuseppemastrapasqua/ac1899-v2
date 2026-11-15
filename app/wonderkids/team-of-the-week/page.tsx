@@ -192,7 +192,7 @@ const awardsGrid = {
   maxWidth: 1200,
   margin: "0 auto 28px",
   display: "grid",
-  gridTemplateColumns: "repeat(auto-fit,minmax(150px,1fr))",
+  gridTemplateColumns: "repeat(auto-fit,minmax(min(100%, 150px), 1fr))",
   gap: 16,
 };
 

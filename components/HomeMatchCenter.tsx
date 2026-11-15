@@ -65,7 +65,7 @@ export default async function HomeMatchCenter() {
 
   return (
     <section aria-labelledby="match-center-title">
-      <h2 id="match-center-title" className="mb-4 border-b border-gray-200 pb-3 text-3xl">Match Center</h2>
+      <h2 id="match-center-title" className="scroll-mt-24 mb-4 border-b border-gray-200 pb-3 text-3xl">Match Center</h2>
       <div className="grid items-stretch gap-3 md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,2.2fr)]">
       <div className="grid min-w-0 content-start gap-3 xl:row-span-2 xl:grid-rows-subgrid">
       <div className={panel}>
