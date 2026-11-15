@@ -3,6 +3,7 @@ import EuropaLeagueBox from "../components/EuropaLeagueBox";
 import HomeFeaturedNews from "../components/HomeFeaturedNews";
 import HomeMatchCenter from "../components/HomeMatchCenter";
 import MonthlyMvp from "../components/MonthlyMvp";
+import UpcomingMatchCards from "../components/UpcomingMatchCards";
 import NewsletterBox from "../components/NewsletterBox";
 
 const sections = [
@@ -25,6 +26,7 @@ export default function Home() {
           </div>
         </section>
 
+        <UpcomingMatchCards today={new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Rome" }).format(new Date())} />
         <HomeMatchCenter />
         <MonthlyMvp />
         <EuropaLeagueBox />

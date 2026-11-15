@@ -28,8 +28,6 @@ const snapshot = [
 
 const officialFixtures: Fixture[] = [
   { fixture: { date: "2026-11-08T15:00:00+01:00", status: { short: "FT" } }, league: { id: 135, season: 2026 }, teams: { home: { name: "Genoa" }, away: { name: "AC Milan" } }, goals: { home: 1, away: 2 } },
-  { fixture: { date: "2026-11-22T18:00:00+01:00", status: { short: "NS" } }, league: { id: 135, season: 2026 }, teams: { home: { name: "AC Milan" }, away: { name: "Frosinone" } }, goals: { home: null, away: null } },
-  { fixture: { date: "2026-11-30T20:45:00+01:00", status: { short: "NS" } }, league: { id: 135, season: 2026 }, teams: { home: { name: "Cagliari" }, away: { name: "AC Milan" } }, goals: { home: null, away: null } },
 ];
 
 const scorers = [
@@ -59,13 +57,10 @@ export default async function HomeMatchCenter() {
   const stats = liveMilan?.all ?? { played: 11, win: 7, draw: 3, lose: 1, goals: { for: 23, against: 13 } };
   const liveFixtures: Fixture[] = fixturesResult.status === "fulfilled" && Array.isArray(fixturesResult.value?.response)
     ? fixturesResult.value.response.filter((match: Fixture) => match.league?.id === 135 && match.league.season === 2026) : [];
-  const now = Date.now();
   const sorted = [...liveFixtures].sort((a, b) => Date.parse(a.fixture.date) - Date.parse(b.fixture.date));
   const last = sorted.findLast(match => ["FT", "AET", "PEN"].includes(match.fixture.status.short)
     && match.goals.home !== null && match.goals.away !== null && Date.parse(match.fixture.date) >= Date.parse(officialFixtures[0].fixture.date))
     ?? officialFixtures[0];
-  const upcoming = sorted.filter(match => match.fixture.status.short === "NS" && Date.parse(match.fixture.date) > now);
-  const next = upcoming.length ? upcoming.slice(0, 2) : officialFixtures.slice(1).filter(match => Date.parse(match.fixture.date) > now);
   const season = tableResult.status === "fulfilled" && liveMilan
     ? tableResult.value?.response?.[0]?.league?.season ?? 2026 : 2026;
 
@@ -74,18 +69,11 @@ export default async function HomeMatchCenter() {
       <h2 id="match-center-title" className="mb-4 border-b border-gray-200 pb-3 text-3xl">Match Center</h2>
       <div className="grid gap-4 lg:grid-cols-3">
       <div className={panel}>
-        <h3 className="mb-2 text-xl">Risultati e calendario</h3>
+        <h3 className="mb-2 text-xl">Risultati</h3>
         <p className="text-sm text-gray-400">Serie A {season ? season + "/" + String(season + 1).slice(-2) : ""}</p>
         <h3 className="mt-4 font-semibold">Ultimo risultato</h3>
         <p className="mt-1 text-lg font-bold">{last.teams.home.name} {last.goals.home}–{last.goals.away} {last.teams.away.name}</p>
         <p className="text-sm text-gray-400">{fixtureDate(last.fixture.date)}</p>
-        <h3 className="mt-4 font-semibold">Prossime partite</h3>
-        {next.length ? <ul className="mt-1 divide-y divide-white/10">
-          {next.map(match => <li key={match.fixture.date} className="py-2">
-            <strong>{match.teams.home.name} – {match.teams.away.name}</strong>
-            <p className="text-sm text-gray-400">{fixtureDate(match.fixture.date)}</p>
-          </li>)}
-        </ul> : <p className="mt-1 text-sm text-gray-400">Date in attesa di aggiornamento.</p>}
         <a className="mt-3 inline-block" href={calendar}>Calendario ufficiale →</a>
       </div>
 
