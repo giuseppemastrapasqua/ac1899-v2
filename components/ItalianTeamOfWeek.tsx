@@ -1,29 +1,29 @@
 const lines = [
   [
-    { name: "Emanuele Rao", short: "Rao", level: "U20", note: "Ha deciso Italia–Portogallo con il gol dell’1–0." },
-    { name: "Francesco Camarda", short: "Camarda", level: "U21", note: "Ha sbloccato il 2–1 contro la Francia U21." },
-    { name: "Francesco Pio Esposito", short: "Pio Esposito", level: "Italia", note: "Doppietta contro la Francia e MVP secondo Sky Sport." },
-    { name: "Alessio Cacciamani", short: "Cacciamani", level: "U21", note: "Ha creato pericoli in fascia e costretto Patouillet a intervenire." },
+    { name: "Gabriele Borsa", short: "Borsa", level: "Milan", note: "Doppietta al Lussemburgo e un gol contro l’Armenia." },
+    { name: "Fortune Erhunmwun Egharevba", short: "Egharevba", level: "Fiorentina", note: "Ha segnato il terzo gol contro l’Armenia." },
+  ],
+  [{ name: "Michele Elena", short: "Elena", level: "Lazio", note: "Un gol in ciascuna gara e rigore procurato contro il Lussemburgo." }],
+  [
+    { name: "Roberto Scaglione", short: "Scaglione", level: "Parma", note: "Ha segnato il 2–0 contro il Lussemburgo." },
+    { name: "Noham Blandina", short: "Blandina", level: "Genoa", note: "Titolare in mediana nel 4–0 contro l’Armenia." },
+    { name: "Cristian Sorrentino", short: "Sorrentino", level: "Milan", note: "In gol contro il Lussemburgo e titolare contro l’Armenia." },
   ],
   [
-    { name: "Matteo Dagasso", short: "Dagasso", level: "U21", note: "Assist per Camarda e contributo al pressing." },
-    { name: "Luca Lipani", short: "Lipani", level: "U21", note: "Recupero e tiro da fuori per il gol della vittoria." },
+    { name: "Lorenzo Dattilo", short: "Dattilo", level: "Roma", note: "Titolare sull’out sinistro nel 4–0 di Erevan." },
+    { name: "Alessandro Ghiotto", short: "Ghiotto", level: "Juventus", note: "Capitano della difesa azzurra contro l’Armenia." },
+    { name: "Diego Lucarelli", short: "Lucarelli", level: "Inter", note: "Centrale titolare nella gara chiusa senza reti subite." },
+    { name: "Sebastian Mattei", short: "Mattei", level: "Roma", note: "Titolare a destra contro l’Armenia." },
   ],
-  [
-    { name: "Matteo Cocchi", short: "Cocchi", level: "U20", note: "Equilibrio sulla fascia nella vittoria senza gol subiti." },
-    { name: "Luca Reggiani", short: "Reggiani", level: "U20", note: "Un salvataggio decisivo ha protetto l’1–0." },
-    { name: "Pietro Comuzzo", short: "Comuzzo", level: "U21", note: "Sicurezza al centro della difesa contro la Francia." },
-    { name: "Filippo Mané", short: "Mané", level: "U21", note: "Anticipi e pressione sulla fascia destra." },
-  ],
-  [{ name: "Lorenzo Palmisani", short: "Palmisani", level: "U21", note: "Decisivo nel finale sulla punizione di Ethan Mbappé." }],
+  [{ name: "Umberto Costante", short: "Costante", level: "Inter", note: "Porta inviolata nel 4–0 contro l’Armenia." }],
 ];
 
 export default function ItalianTeamOfWeek() {
   return (
     <section aria-labelledby="italian-weekly-title" className="ac1899-box p-4 sm:p-6">
       <header className="mb-4">
-        <h2 id="italian-weekly-title" className="text-3xl">Undici italiano della settimana</h2>
-        <p className="text-sm text-gray-600">9–15 novembre 2026 · modulo 4-2-4</p>
+        <h2 id="italian-weekly-title" className="text-3xl">Undici italiano Under 18 della settimana</h2>
+        <p className="text-sm text-gray-600">9–15 novembre 2026 · modulo 4-3-1-2</p>
       </header>
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
         <figure className="relative isolate flex min-h-80 flex-col justify-between gap-5 overflow-hidden rounded-xl bg-emerald-950 p-3 sm:p-5">
@@ -56,7 +56,7 @@ export default function ItalianTeamOfWeek() {
           </ul>
         </div>
       </div>
-      <p className="mt-4 text-xs text-gray-600">Selezione editoriale per ruolo basata sulle prestazioni in Italia–Francia, Francia–Italia U21 e Italia–Portogallo U20. Fonti: FIGC, Sky Sport e MondoPrimavera.</p>
+      <p className="mt-4 text-xs text-gray-600">Selezione editoriale per ruolo basata sulle gare dell’Italia U17 contro Lussemburgo e Armenia. Per i profili di vivaio, il club indica la società di appartenenza. Fonte: FIGC.</p>
     </section>
   );
 }
