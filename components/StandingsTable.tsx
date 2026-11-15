@@ -3,7 +3,7 @@ import type { StandingRow } from "../lib/home-standings";
 export default function StandingsTable({ rows, title, expanded = false, compact = false }: { rows: StandingRow[]; title: string; expanded?: boolean; compact?: boolean }) {
   return (
     <div className={expanded ? "overflow-x-auto" : "max-h-80 overflow-auto"} tabIndex={0} role="region" aria-label={title}>
-      <table className={"w-full min-w-max text-left tabular-nums " + (compact ? "text-xs leading-4" : "text-sm")}>
+      <table className={"w-full min-w-max text-left tabular-nums " + (compact ? "text-[13px] leading-[17px]" : "text-sm")}>
         <thead className="sticky top-0 bg-gray-50">
           <tr>{["Pos.", "Squadra", "Pt", "G", "V", "N", "P", "GF", "GS", "DR"].map(label =>
             <th key={label} scope="col" className={compact ? "px-1.5 py-0.5" : "px-2 py-2"}>{label}</th>

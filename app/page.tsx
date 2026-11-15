@@ -2,6 +2,7 @@ import Link from "next/link";
 import EuropaLeagueBox from "../components/EuropaLeagueBox";
 import HomeFeaturedNews from "../components/HomeFeaturedNews";
 import HomeMatchCenter from "../components/HomeMatchCenter";
+import MatchAnalyst from "../components/MatchAnalyst";
 import MonthlyMvp from "../components/MonthlyMvp";
 import UpcomingMatchCards from "../components/UpcomingMatchCards";
 import NewsletterBox from "../components/NewsletterBox";
@@ -20,6 +21,7 @@ export default function Home() {
       <div className="mx-auto max-w-[1448px] space-y-12 px-4 pb-12 sm:px-6">
         <UpcomingMatchCards today={new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Rome" }).format(new Date())} />
         <HomeMatchCenter />
+        <MatchAnalyst />
         <MonthlyMvp />
         <EuropaLeagueBox />
 
