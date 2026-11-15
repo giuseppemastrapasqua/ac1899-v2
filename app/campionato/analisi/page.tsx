@@ -1,6 +1,41 @@
 import MatchAnalyst from "../../../components/MatchAnalyst";
 import CompetitionComparison from "../../../components/CompetitionComparison";
 
+const previousMeetings = [
+  ["3 febbraio 2024", "Frosinone", 2, 3, "Milan"],
+  ["2 dicembre 2023", "Milan", 3, 1, "Frosinone"],
+  ["19 maggio 2019", "Milan", 2, 0, "Frosinone"],
+  ["26 dicembre 2018", "Frosinone", 0, 0, "Milan"],
+  ["1 maggio 2016", "Milan", 3, 3, "Frosinone"],
+  ["20 dicembre 2015", "Frosinone", 2, 4, "Milan"],
+] as const;
+
+function PreviousMeetings() {
+  return <section className="ac1899-box space-y-4 p-4 sm:p-5" aria-labelledby="precedenti-milan-frosinone">
+    <header>
+      <h2 id="precedenti-milan-frosinone" className="text-3xl">Milan–Frosinone · Precedenti</h2>
+      <p className="text-sm text-gray-600">Sei incontri di Serie A, dal 2015 al 2024.</p>
+    </header>
+    <dl className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+      {([["Vittorie Milan", 4], ["Pareggi", 2], ["Vittorie Frosinone", 0], ["Gol Milan–Frosinone", "15–8"]] as const).map(([label, value]) =>
+        <div key={label} className="rounded-lg bg-gray-100 p-3"><dt className="text-sm">{label}</dt><dd className="text-2xl font-bold">{value}</dd></div>
+      )}
+    </dl>
+    <p className="text-sm">A San Siro, due vittorie del Milan e un pareggio. A Frosinone, lo stesso bilancio. Quattro gare su sei hanno avuto almeno quattro gol.</p>
+    <div className="overflow-x-auto" tabIndex={0} role="region" aria-label="Risultati dei precedenti Milan–Frosinone">
+      <table className="w-full text-sm tabular-nums">
+        <thead className="bg-gray-100"><tr><th scope="col" className="p-2 text-left">Data</th><th scope="col" className="p-2 text-left">Casa</th><th scope="col" className="p-2">Esito</th><th scope="col" className="p-2 text-left">Trasferta</th></tr></thead>
+        <tbody>{previousMeetings.map(([date, home, homeGoals, awayGoals, away]) => (
+          <tr key={date} className="border-b border-gray-100">
+            <td className="p-2">{date}</td><td className="p-2">{home}</td><td className="p-2 text-center font-bold">{homeGoals}–{awayGoals}</td><td className="p-2">{away}</td>
+          </tr>
+        ))}</tbody>
+      </table>
+    </div>
+    <p className="text-xs text-gray-600">Fonti: ArenaRete e CiociariaNews.</p>
+  </section>;
+}
+
 export default function CampionatoAnalisiPage() {
   return (
     <main className="ac1899-home min-h-screen">
@@ -28,6 +63,7 @@ export default function CampionatoAnalisiPage() {
             "Il Milan ha più possesso e una precisione superiore di 13,3 punti percentuali. Il Frosinone ha comunque segnato 24 reti. Sarà utile osservare quante volte riesce a entrare in area dopo un recupero o a guadagnare un angolo.",
             "Gli xG sono medie stagionali della fonte e descrivono il rendimento osservato. Non sono un pronostico per questa partita.",
           ]} source="AC Milan (calendario e classifica), StatsNext (xG per partita)." />
+        <PreviousMeetings />
         <CompetitionComparison title="Ultima partita · Genoa 1–2 Milan" opponent="Genoa"
           rows={[
             { label: "Possesso", milan: 62, opponent: 38, unit: "%" },
