@@ -1,3 +1,4 @@
+import LeagueExtraStats from "../../components/LeagueExtraStats";
 import LeaguePlayerStats from "../../components/LeaguePlayerStats";
 import LeagueCharts from "../../components/LeagueCharts";
 import Link from "next/link";
@@ -37,6 +38,7 @@ export default async function CampionatoPage({ searchParams }: { searchParams: P
           <p className="mt-2 text-xs text-gray-600">Medie per partita · Fonte: StatsNext, dopo 11 giornate.</p>
         </section>
         <LeaguePlayerStats page={playerPage} />
+        <LeagueExtraStats />
         <Link href="/campionato/analisi" className="font-semibold">Analisi ultima partita e prossimo avversario →</Link>
       </div>
     </main>
