@@ -12,7 +12,7 @@ import HomeFeaturedNews from "../components/HomeFeaturedNews";
 
 export default function Home() {
   return (
-    <main style={page}>
+    <main className="ac1899-home" style={page}>
       <HomeFeaturedNews />
 
       <section className="homepage-layout" style={featuredLayout}>

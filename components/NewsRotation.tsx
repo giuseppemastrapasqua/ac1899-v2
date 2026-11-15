@@ -28,8 +28,8 @@ function StoryPhoto({ story }: { story: RotationStory }) {
 
 function StoryMeta({ story }: { story: RotationStory }) {
   return (
-    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-600">
-      <span className="font-bold uppercase text-red-800">{story.source}</span>
+    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-300">
+      <span className="font-bold uppercase text-red-400">{story.source}</span>
       {story.category && <span className="capitalize">{story.category}</span>}
       {story.date && (
         <time dateTime={story.date}>
@@ -65,7 +65,7 @@ export default function NewsRotation({ stories }: { stories: RotationStory[] }) 
   return (
     <section
       aria-label="Notizie in evidenza"
-      className="mb-7 bg-white px-4 py-6 text-gray-950 sm:px-6 lg:py-9"
+      className="mb-7 border-b border-white/10 bg-gray-950 px-4 py-6 text-gray-100 sm:px-6 lg:py-9"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onFocus={() => setFocused(true)}
@@ -75,13 +75,13 @@ export default function NewsRotation({ stories }: { stories: RotationStory[] }) 
     >
       <div className="mx-auto max-w-[1400px]">
         <div className="grid gap-5 lg:grid-cols-[1.35fr_1fr]">
-          <article className="overflow-hidden rounded-2xl border border-gray-200">
+          <article className="overflow-hidden rounded-2xl border border-white/15 bg-gray-900">
             <div className="aspect-video"><StoryPhoto story={lead} /></div>
             <div className="p-4">
               <h1 className="mb-4 text-2xl font-black uppercase sm:text-3xl">{lead.title}</h1>
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <StoryMeta story={lead} />
-                <a href={lead.url} className="border border-red-700 px-3 py-2 text-sm font-bold text-red-800">
+                <a href={lead.url} className="border border-red-500 px-3 py-2 text-sm font-bold text-red-400 hover:bg-red-950">
                   Leggi di più →
                 </a>
               </div>
@@ -93,7 +93,7 @@ export default function NewsRotation({ stories }: { stories: RotationStory[] }) 
                 <div className="aspect-video"><StoryPhoto story={story} /></div>
                 <div>
                   <h2 className="mb-2 text-sm font-black uppercase sm:text-lg">
-                    <a href={story.url} className="text-gray-950 hover:underline">{story.title}</a>
+                    <a href={story.url} className="hover:underline">{story.title}</a>
                   </h2>
                   <StoryMeta story={story} />
                 </div>
@@ -103,11 +103,11 @@ export default function NewsRotation({ stories }: { stories: RotationStory[] }) 
         </div>
         {count > 1 && (
           <div className="mt-4 flex items-center justify-end gap-3 text-sm">
-            <button type="button" className="border px-3 py-2" aria-label="Notizia precedente" onClick={() => setStart(value => (value + count - 1) % count)}>←</button>
-            <button type="button" className="border px-3 py-2" onClick={() => setRunning(value => !value)}>
+            <button type="button" className="rounded border border-white/20 bg-gray-900 px-3 py-2 text-gray-100 hover:border-red-500" aria-label="Notizia precedente" onClick={() => setStart(value => (value + count - 1) % count)}>←</button>
+            <button type="button" className="rounded border border-white/20 bg-gray-900 px-3 py-2 text-gray-100 hover:border-red-500" onClick={() => setRunning(value => !value)}>
               {running ? "Pausa" : "Riprendi"}
             </button>
-            <button type="button" className="border px-3 py-2" aria-label="Notizia successiva" onClick={() => setStart(value => (value + 1) % count)}>→</button>
+            <button type="button" className="rounded border border-white/20 bg-gray-900 px-3 py-2 text-gray-100 hover:border-red-500" aria-label="Notizia successiva" onClick={() => setStart(value => (value + 1) % count)}>→</button>
           </div>
         )}
       </div>

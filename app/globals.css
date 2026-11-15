@@ -73,3 +73,12 @@ table {
     grid-template-columns: minmax(0, 1fr) !important;
   }
 }
+
+.ac1899-home {
+  --home-title: #ff4b55;
+}
+
+.ac1899-home :is(h1, h2, h3),
+.ac1899-home :is(h1, h2, h3) a {
+  color: var(--home-title) !important;
+}
