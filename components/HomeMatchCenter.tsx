@@ -32,7 +32,15 @@ const officialFixtures: Fixture[] = [
   { fixture: { date: "2026-11-30T20:45:00+01:00", status: { short: "NS" } }, league: { id: 135, season: 2026 }, teams: { home: { name: "Cagliari" }, away: { name: "AC Milan" } }, goals: { home: null, away: null } },
 ];
 
-const panel = "min-w-0 rounded-xl border border-gray-200 bg-white p-5";
+const scorers = [
+  { rank: 1, name: "Adrien Rabiot", goals: 5 },
+  { rank: 1, name: "Alphadjo Cissè", goals: 5 },
+  { rank: 3, name: "Christian Pulisic", goals: 4 },
+  { rank: 3, name: "Diego Moreira", goals: 4 },
+  { rank: 5, name: "Gonçalo Ramos", goals: 2 },
+];
+
+const panel = "min-w-0 rounded-xl border border-gray-200 border-t-2 border-t-red-600 bg-white p-5 shadow-sm";
 const caption = "mt-3 text-xs text-gray-400";
 
 function fixtureDate(date: string) {
@@ -101,12 +109,23 @@ export default async function HomeMatchCenter() {
       </div>
 
       <div className={panel}>
-        <h3 className="mb-3 text-xl font-bold">Giocatori</h3>
-        <dl className="grid gap-3">
-          <div><dt className="text-sm text-gray-400">Marcatori · Serie A</dt><dd className="font-bold">Adrien Rabiot e Alphadjo Cissè · 5 gol a testa</dd></div>
-          <div><dt className="text-sm text-gray-400">Assist · Serie A</dt><dd className="font-bold">Adrien Rabiot · 4 assist</dd></div>
-          <div><dt className="text-sm text-gray-400">MVP di ottobre</dt><dd><a href="https://www.acmilan.com/it/news/articoli/awards/2026-11-04/emirates-mvp-di-ottobre-diego-moreira">Diego Moreira</a></dd></div>
-        </dl>
+        <h3 className="mb-1 text-xl font-bold">Classifica marcatori</h3>
+        <p className="mb-3 text-sm text-gray-600">AC Milan · Serie A 2026/27</p>
+        <table className="w-full text-left text-sm">
+          <thead>
+            <tr><th scope="col">Pos.</th><th scope="col">Giocatore</th><th scope="col" className="text-right">Gol</th></tr>
+          </thead>
+          <tbody>
+            {scorers.map(player => (
+              <tr key={player.name} className={player.rank === 1 ? "border-t border-gray-200 bg-red-50 font-semibold" : "border-t border-gray-200"}>
+                <td className="py-2">{player.rank}</td>
+                <td>{player.name}</td>
+                <td className="text-right font-bold tabular-nums">{player.goals}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <p className="mt-4 border-t border-gray-200 pt-3 text-sm"><strong>Più assist:</strong> Adrien Rabiot · 4</p>
         <p className={caption}>Statistiche giocatori verificate al 15 novembre 2026 · <a href="https://www.fotmob.com/it/leagues/55/stats/season/36072/players/goals/team/8564/milan">FotMob</a></p>
         <Link className="mt-2 inline-block" href="/rosa">Scopri la rosa →</Link>
       </div>

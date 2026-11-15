@@ -2,6 +2,7 @@ import Link from "next/link";
 import EuropaLeagueBox from "../components/EuropaLeagueBox";
 import HomeFeaturedNews from "../components/HomeFeaturedNews";
 import HomeMatchCenter from "../components/HomeMatchCenter";
+import MonthlyMvp from "../components/MonthlyMvp";
 import NewsletterBox from "../components/NewsletterBox";
 
 const sections = [
@@ -25,6 +26,7 @@ export default function Home() {
         </section>
 
         <HomeMatchCenter />
+        <MonthlyMvp />
         <EuropaLeagueBox />
 
         <section aria-labelledby="explore-title">
