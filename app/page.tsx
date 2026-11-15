@@ -11,7 +11,7 @@ import ItalianWonderkids from "../components/ItalianWonderkids";
 import NewsletterBox from "../components/NewsletterBox";
 
 const sections = [
-  { title: "AI Room", description: "Analisi delle partite e approfondimenti.", href: "/analisi", id: "ai-room" },
+  { title: "AI Room", description: "Analisi delle partite e approfondimenti.", href: "/campionato/analisi", id: "ai-room" },
   { title: "Creator Room", description: "Video e contenuti della redazione.", href: "/creator-video" },
 ];
 

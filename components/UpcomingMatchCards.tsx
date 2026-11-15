@@ -14,9 +14,9 @@ const matches = [
   { date: "2026-12-19", time: "18:00", venue: "Stadio San Siro", opponent: { name: "Como", id: 895 }, home: true, competition: "Serie A", league: 135 },
 ];
 
-export default function UpcomingMatchCards({ today }: { today: string }) {
+export default function UpcomingMatchCards({ today, league }: { today: string; league?: number }) {
   const row = useRef<HTMLUListElement>(null);
-  const upcoming = matches.filter(match => match.date >= today);
+  const upcoming = matches.filter(match => match.date >= today && (league === undefined || match.league === league));
   const calendar = "https://www.acmilan.com/it/stagione/attiva/calendario/completo";
 
   function scroll(direction: number) {

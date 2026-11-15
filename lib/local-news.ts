@@ -120,43 +120,47 @@ async function generateOfficialBriefs(): Promise<LocalNews[]> {
   return results.flatMap(result => result.status === "fulfilled" && result.value ? [result.value] : []);
 }
 
+const feeds = [
+  { id: "gazzetta", source: "La Gazzetta dello Sport", edition: "Italia",
+    url: "https://www.gazzetta.it/dynamic-feed/rss/section/Calcio.xml", host: "www.gazzetta.it", limit: 4 },
+  { id: "guardian", source: "The Guardian", edition: "Estero",
+    url: "https://www.theguardian.com/football/acmilan/rss", host: "www.theguardian.com", limit: 3 },
+] as const;
+
+async function readPressFeed(feed: typeof feeds[number]): Promise<LocalNews[]> {
+  const response = await fetch(feed.url, {
+    next: { revalidate: 300 }, signal: AbortSignal.timeout(6000),
+  });
+  if (!response.ok) return [];
+  const items = [...(await response.text()).matchAll(/<item>([\s\S]*?)<\/item>/gi)]
+    .map(([, item]) => ({
+      title: rssField(item, "title"), description: rssField(item, "description"),
+      url: rssField(item, "link"), date: Date.parse(rssField(item, "pubDate")),
+    }))
+    .filter(item => /\b(?:milan|rossoner[ioe])\b/i.test(item.title)
+      && !(/endrick/i.test(item.title) && /tresoldi/i.test(item.title))
+      && item.description.length >= 100 && Number.isFinite(item.date)
+      && item.url.startsWith("https://" + feed.host + "/"))
+    .sort((a, b) => b.date - a.date)
+    .slice(0, feed.limit);
+  const briefs = await Promise.allSettled(items.map(async item => {
+    const rewrite = await generateBrief(item.title, item.description.slice(0, 3500));
+    if (!rewrite) return;
+    return { ...rewrite, id: feed.id + "-" + createHash("sha256").update(item.url).digest("hex").slice(0, 18),
+      source: feed.source, date: new Date(item.date).toISOString(), category: "Rassegna stampa",
+      edition: feed.edition, coverSource: item.url };
+  }));
+  return briefs.flatMap(result => result.status === "fulfilled" && result.value ? [result.value] : []);
+}
+
 export async function getLocalNews(): Promise<LocalNews[]> {
-  const stories = [...reviewed];
-  if (process.env.OPENAI_API_KEY) {
-    const official = generateOfficialBriefs().catch(() => []);
-    try {
-      const res = await fetch("https://www.gazzetta.it/dynamic-feed/rss/section/Calcio.xml", {
-        next: { revalidate: 300 }, signal: AbortSignal.timeout(6000),
-      });
-      if (!res.ok) throw new Error("Feed Gazzetta HTTP " + res.status);
-      const items = [...(await res.text()).matchAll(/<item>([\s\S]*?)<\/item>/gi)]
-        .map(([, item]) => ({
-          title: rssField(item, "title"),
-          description: rssField(item, "description"),
-          url: rssField(item, "link"),
-          date: Date.parse(rssField(item, "pubDate")),
-        }))
-        .filter(item => /\b(?:milan|rossoner[ioe])\b/i.test(item.title)
-          && !/\b(?:inter|milanese)\s*[-–]\s*milanese\b/i.test(item.title)
-          && !(/endrick/i.test(item.title) && /tresoldi/i.test(item.title))
-          && item.description.length >= 100 && Number.isFinite(item.date)
-          && /^https:\/\/www\.gazzetta\.it\//.test(item.url))
-        .sort((a, b) => b.date - a.date)
-        .slice(0, 4);
-      const briefs = await Promise.allSettled(items.map(async item => {
-        const rewrite = await generateBrief(item.title, item.description.slice(0, 3500));
-        if (!rewrite) return;
-        const id = "gazzetta-" + createHash("sha256").update(item.url).digest("hex").slice(0, 18);
-        return { ...rewrite, id, source: "La Gazzetta dello Sport", date: new Date(item.date).toISOString(),
-          category: "Rassegna stampa", edition: "Italia" as const, coverSource: item.url };
-      }));
-      for (const brief of briefs) if (brief.status === "fulfilled" && brief.value) stories.push(brief.value);
-    } catch (error) {
-      console.error("Acquisizione rassegna AC1899:", error);
-    }
-    stories.push(...await official);
-  }
-  return stories.sort((a, b) => Date.parse(b.date) - Date.parse(a.date) || a.id.localeCompare(b.id));
+  const sources = process.env.OPENAI_API_KEY ? await Promise.allSettled([
+    generateOfficialBriefs(), ...feeds.map(readPressFeed),
+  ]) : [];
+  const live = sources.flatMap(result => result.status === "fulfilled" ? result.value : []);
+  const existing = new Set(reviewed.map(story => story.coverSource));
+  return [...reviewed, ...live.filter(story => !existing.has(story.coverSource))]
+    .sort((a, b) => Date.parse(b.date) - Date.parse(a.date) || a.id.localeCompare(b.id));
 }
 
 export const localNewsHref = (id: string) => "/news/lettura/" + id;

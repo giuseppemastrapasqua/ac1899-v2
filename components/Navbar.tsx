@@ -5,11 +5,14 @@ import Link from "next/link";
 export default function Navbar() {
   const links = [
     { label: "Home", href: "/" },
-    { label: "Milan", href: "/news" },
-    { label: "AI Room", href: "/#ai-room" },
-    { label: "Creator", href: "/creator-video" },
+    { label: "Milan", href: "/milan" },
+    { label: "News", href: "/news" },
+    { label: "Campionato", href: "/campionato" },
+    { label: "Match Analyst AI", href: "/campionato/analisi" },
+    { label: "MVP", href: "/mvp-del-mese" },
+    { label: "Europa League", href: "/europa-league" },
     { label: "Wonderkids", href: "/wonderkids" },
-    { label: "Europa", href: "/#europa" },
+    { label: "Creator", href: "/creator-video" },
     { label: "Community", href: "/#newsletter" },
   ];
 

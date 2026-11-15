@@ -1,0 +1,35 @@
+import Link from "next/link";
+import HomeMatchCenter from "../../components/HomeMatchCenter";
+import UpcomingMatchCards from "../../components/UpcomingMatchCards";
+import { serieATeamStats } from "../../lib/serie-a-team-stats";
+import { serieA } from "../../lib/home-standings";
+
+const totals = serieA.reduce((sum, row) => sum + row[7], 0);
+export default function CampionatoPage() {
+  return (
+    <main className="ac1899-home min-h-screen home-section-league">
+      <div className="home-section-inner">
+        <header><h1 className="text-4xl">Campionato · Serie A 2026/27</h1><p className="mt-2 text-sm text-gray-600">Dati della classifica verificata dopo 11 giornate.</p></header>
+        <div className="grid gap-3 sm:grid-cols-3">
+          {[["Partite disputate", "110"], ["Gol totali", String(totals)], ["Gol per partita", (totals / 110).toLocaleString("it-IT", { maximumFractionDigits: 2 })]].map(([label, value]) =>
+            <div key={label} className="ac1899-box p-4"><p className="text-sm text-gray-600">{label}</p><strong className="text-2xl">{value}</strong></div>)}
+        </div>
+        <UpcomingMatchCards league={135} today={new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Rome" }).format(new Date())} />
+        <HomeMatchCenter />
+        <section className="ac1899-box p-4" aria-labelledby="league-metrics">
+          <h2 id="league-metrics" className="mb-3 text-2xl">Statistiche delle 20 squadre</h2>
+          <div className="overflow-x-auto" tabIndex={0} role="region" aria-label="Possesso, passaggi e duelli di Serie A">
+            <table className="w-full min-w-max text-left text-sm tabular-nums">
+              <thead className="bg-gray-100"><tr>{["Squadra", "Possesso %", "Passaggi", "Prec. passaggi %", "Duelli a terra vinti %", "Duelli aerei vinti %", "Angoli"].map(label => <th scope="col" key={label} className="p-2">{label}</th>)}</tr></thead>
+              <tbody>{serieATeamStats.map(([team, ...values]) => <tr key={team} className={team === "Milan" ? "bg-red-50 font-bold" : "border-b border-gray-100"}>
+                <th scope="row" className="p-2">{team}</th>{values.map((value, index) => <td key={index} className="p-2">{value.toLocaleString("it-IT")}</td>)}
+              </tr>)}</tbody>
+            </table>
+          </div>
+          <p className="mt-2 text-xs text-gray-600">Medie per partita · Fonte: StatsNext, dopo 11 giornate.</p>
+        </section>
+        <Link href="/campionato/analisi" className="font-semibold">Analisi ultima partita e prossimo avversario →</Link>
+      </div>
+    </main>
+  );
+}
