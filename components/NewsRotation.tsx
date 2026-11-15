@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import NewsCover from "./NewsCover";
 
 export type RotationStory = {
   title: string;
@@ -9,22 +11,7 @@ export type RotationStory = {
   source: string;
   category?: string;
   image?: string;
-  credit?: { author: string; url: string };
 };
-
-function StoryPhoto({ story }: { story: RotationStory }) {
-  return (
-    <figure className="relative h-full min-h-0 overflow-hidden rounded-xl bg-gray-800">
-      <img src={story.image} alt="" className="aspect-video h-full w-full object-cover" />
-      {story.credit && (
-        <figcaption className="absolute right-0 bottom-0 bg-black/80 px-2 py-1 text-xs text-white">
-          Repertorio · <a href={story.credit.url} className="text-white underline">{story.credit.author}</a>
-          {" · "}<a href="https://creativecommons.org/licenses/by-sa/4.0/" className="text-white underline">CC BY-SA 4.0</a>
-        </figcaption>
-      )}
-    </figure>
-  );
-}
 
 function StoryMeta({ story }: { story: RotationStory }) {
   return (
@@ -41,42 +28,26 @@ function StoryMeta({ story }: { story: RotationStory }) {
 }
 
 export default function NewsRotation({ stories }: { stories: RotationStory[] }) {
-  const [start, setStart] = useState(0);
-  const [running, setRunning] = useState(false);
-  const [hovered, setHovered] = useState(false);
-  const [focused, setFocused] = useState(false);
-  const count = stories.length;
-
+  const router = useRouter();
   useEffect(() => {
-    setRunning(!window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-  }, []);
+    const timer = window.setInterval(() => {
+      if (document.visibilityState === "visible") router.refresh();
+    }, 300_000);
+    return () => window.clearInterval(timer);
+  }, [router]);
 
-  useEffect(() => {
-    if (!running || hovered || focused || count < 2) return;
-    const tick = window.setInterval(() => setStart(value => (value + 1) % count), 8500);
-    return () => window.clearInterval(tick);
-  }, [running, hovered, focused, count]);
-
-  if (!count) return null;
-  const [lead, ...side] = Array.from({ length: Math.min(count, 4) }, (_, index) =>
-    stories[(start + index) % count]
-  );
+  const [lead, ...side] = stories;
+  if (!lead) return null;
 
   return (
     <section
       aria-label="Notizie in evidenza"
       className="px-4 pt-7 pb-5 text-gray-100 sm:px-6 lg:pt-10"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      onFocus={() => setFocused(true)}
-      onBlur={event => {
-        if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false);
-      }}
     >
       <div className="mx-auto max-w-[1400px]">
         <div className="grid gap-5 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
           <article className="ac1899-box">
-            <div className="aspect-video"><StoryPhoto story={lead} /></div>
+            <NewsCover image={lead.image} />
             <div className="p-4">
               <h1 className="mb-4 text-2xl font-black uppercase sm:text-3xl">{lead.title}</h1>
               <div className="flex flex-wrap items-center justify-between gap-4">
@@ -89,8 +60,8 @@ export default function NewsRotation({ stories }: { stories: RotationStory[] }) 
           </article>
           <div className="grid gap-4 lg:auto-rows-fr">
             {side.map(story => (
-              <article key={story.url} className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] items-center gap-3 border-b border-gray-200 pb-3 last:border-0 last:pb-0">
-                <div className="aspect-video"><StoryPhoto story={story} /></div>
+              <article key={story.url} className={story.image ? "grid grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] items-center gap-3 border-b border-gray-200 pb-3 last:border-0 last:pb-0" : "grid content-center border-b border-gray-200 py-3 last:border-0"}>
+                <NewsCover image={story.image} />
                 <div>
                   <h2 className="mb-2 text-sm font-black uppercase sm:text-lg">
                     <a href={story.url} className="hover:underline">{story.title}</a>
@@ -101,15 +72,6 @@ export default function NewsRotation({ stories }: { stories: RotationStory[] }) 
             ))}
           </div>
         </div>
-        {count > 1 && (
-          <div className="mt-4 flex items-center justify-end gap-3 text-sm">
-            <button type="button" className="rounded border border-white/20 bg-gray-900 px-3 py-2 text-gray-100 hover:border-red-500" aria-label="Notizia precedente" onClick={() => setStart(value => (value + count - 1) % count)}>←</button>
-            <button type="button" className="rounded border border-white/20 bg-gray-900 px-3 py-2 text-gray-100 hover:border-red-500" onClick={() => setRunning(value => !value)}>
-              {running ? "Pausa" : "Riprendi"}
-            </button>
-            <button type="button" className="rounded border border-white/20 bg-gray-900 px-3 py-2 text-gray-100 hover:border-red-500" aria-label="Notizia successiva" onClick={() => setStart(value => (value + 1) % count)}>→</button>
-          </div>
-        )}
       </div>
     </section>
   );
