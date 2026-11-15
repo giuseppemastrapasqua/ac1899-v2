@@ -7,6 +7,7 @@ export default function Navbar() {
   const links = [
     { label: "Home", href: "/" },
     { label: "Milan", href: "/milan" },
+    { label: "Femminile", href: "/milan-femminile" },
     { label: "News", href: "/news" },
     { label: "Campionato", href: "/campionato" },
     { label: "Match Analyst AI", href: "/campionato/analisi" },
