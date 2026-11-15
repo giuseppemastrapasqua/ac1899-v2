@@ -1,3 +1,4 @@
+import LeaguePlayerStats from "../../components/LeaguePlayerStats";
 import LeagueCharts from "../../components/LeagueCharts";
 import Link from "next/link";
 import HomeMatchCenter from "../../components/HomeMatchCenter";
@@ -6,7 +7,9 @@ import { serieATeamStats } from "../../lib/serie-a-team-stats";
 import { serieA } from "../../lib/home-standings";
 
 const totals = serieA.reduce((sum, row) => sum + row[7], 0);
-export default function CampionatoPage() {
+export default async function CampionatoPage({ searchParams }: { searchParams: Promise<{ calciatori?: string }> }) {
+  const requestedPage = Number((await searchParams).calciatori ?? 1);
+  const playerPage = Number.isSafeInteger(requestedPage) && requestedPage >= 1 && requestedPage <= 100 ? requestedPage : 1;
   return (
     <main className="ac1899-home min-h-screen home-section-league">
       <div className="home-section-inner">
@@ -33,6 +36,7 @@ export default function CampionatoPage() {
           </div>
           <p className="mt-2 text-xs text-gray-600">Medie per partita · Fonte: StatsNext, dopo 11 giornate.</p>
         </section>
+        <LeaguePlayerStats page={playerPage} />
         <Link href="/campionato/analisi" className="font-semibold">Analisi ultima partita e prossimo avversario →</Link>
       </div>
     </main>
