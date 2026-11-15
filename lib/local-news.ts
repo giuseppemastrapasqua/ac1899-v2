@@ -1,3 +1,4 @@
+import { getMilanLiveNews } from "./api-football";
 import OpenAI from "openai";
 import { unstable_cache } from "next/cache";
 import { createHash } from "node:crypto";
@@ -266,6 +267,7 @@ function readPlayerNews(group: typeof playerNewsSources[number], checkedAt: numb
 
 export async function getLocalNews(): Promise<LocalNews[]> {
   const checkedAt = Date.now();
+  const liveEventsPromise = getMilanLiveNews(checkedAt);
   const [sources, indexed] = process.env.OPENAI_API_KEY ? await Promise.all([
     Promise.allSettled([generateOfficialBriefs(checkedAt), ...feeds.map(feed => readPressFeed(feed, checkedAt))]),
     Promise.allSettled([
@@ -302,7 +304,8 @@ export async function getLocalNews(): Promise<LocalNews[]> {
   }
   const urls = new Set<string>();
   const titles = new Set<string>();
-  return [...reviewed, ...live, ...playerBriefs].filter(story => {
+  const liveEvents: LocalNews[] = await liveEventsPromise;
+  return [...reviewed, ...liveEvents, ...live, ...playerBriefs].filter(story => {
     const title = normalizeNewsText(story.title);
     if (titles.has(title) || (story.coverSource && urls.has(story.coverSource))) return false;
     titles.add(title);

@@ -1,3 +1,4 @@
+import { milanSquad } from "./milan-squad";
 const BASE_URL = "https://v3.football.api-sports.io";
 
 const headers = {
@@ -161,7 +162,7 @@ export async function getLeaguePlayers(endpoint: "players" | "players/topscorers
 }
 
 type LiveFixture = {
-  fixture: { id: number; status: { elapsed: number | null; short: string } };
+  fixture: { id: number; date: string; status: { elapsed: number | null; short: string } };
   league: { id: number; name: string };
   teams: { home: { id: number; name: string }; away: { id: number; name: string } };
   goals: { home: number | null; away: number | null };
@@ -169,22 +170,32 @@ type LiveFixture = {
     time: { elapsed: number; extra: number | null };
     team: { name: string };
     player: { name: string | null };
+    assist?: { name: string | null };
     type: string;
     detail: string;
   }[];
 };
 
-export async function getCommunityScoreboard() {
+async function getLiveFixtures() {
   if (!process.env.API_FOOTBALL_KEY) return null;
   try {
     const response = await fetch(`${BASE_URL}/fixtures?live=all`, {
-      headers, next: { revalidate: 60 }, signal: AbortSignal.timeout(6000),
+      headers, next: { revalidate: 300 }, signal: AbortSignal.timeout(6000),
     });
     if (!response.ok) return null;
     const data = await response.json() as { errors: object; response: LiveFixture[] };
     if (!Array.isArray(data.response) || Object.keys(data.errors ?? {}).length) return null;
 
-    return data.response.flatMap(match => {
+    return data.response;
+  } catch {
+    return null;
+  }
+}
+
+export async function getCommunityScoreboard() {
+  const fixtures = await getLiveFixtures();
+  if (!fixtures) return null;
+  return fixtures.flatMap(match => {
       const milan = match.teams.home.id === 489 || match.teams.away.id === 489;
       if (!milan && match.league.id !== 135) return [];
       return [{
@@ -203,7 +214,58 @@ export async function getCommunityScoreboard() {
         })).reverse() : [],
       }];
     }).sort((a, b) => Number(b.milan) - Number(a.milan));
-  } catch {
-    return null;
-  }
+}
+
+// Confirmed fixtures only. One shared query per five-minute cache window.
+const liveNewsKickoffs = [
+  "2026-11-16T20:45:00+01:00", // Switzerland–Scotland
+  "2026-11-17T20:45:00+01:00", // Wales–Portugal
+  "2026-11-17T23:00:00+01:00", // United States–Haiti
+  "2026-11-22T18:00:00+01:00", // Milan–Frosinone
+];
+
+const normalizeName = (name: string) =>
+  name.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase().replace(/[^a-z]+/g, " ").trim();
+
+export async function getMilanLiveNews(now = Date.now()) {
+  if (!liveNewsKickoffs.some(date => now >= Date.parse(date) && now < Date.parse(date) + 135 * 60_000)) return [];
+
+  const fixtures = await getLiveFixtures() ?? [];
+  const players = milanSquad.flatMap(group => group.players.map(row => ({
+    name: row[1], nation: row[2], keeper: group.role === "Portieri",
+  })));
+  const nationalTeams: Record<string, string> = {
+    italia: "italy", francia: "france", stati: "usa", belgio: "belgium", croazia: "croatia",
+    svizzera: "switzerland", portogallo: "portugal", ecuador: "ecuador", serbia: "serbia", inghilterra: "england",
+  };
+
+  return fixtures.flatMap(match => (match.events ?? []).flatMap(event => {
+    if (!event.player.name) return [];
+    const eventName = normalizeName(event.player.name);
+    const team = normalizeName(event.team.name);
+    const player = players.find(entry => {
+      const name = normalizeName(entry.name);
+      const first = name.split(" ")[0];
+      const surname = name.slice(first.length + 1);
+      const isMilan = [match.teams.home, match.teams.away].some(side => side.id === 489 && normalizeName(side.name) === team);
+      return (isMilan || nationalTeams[normalizeName(entry.nation).split(" ")[0]] === team)
+        && (eventName === name || eventName === first[0] + " " + surname);
+    });
+    if (!player) return [];
+    const minute = event.time.elapsed + (event.time.extra ? "+" + event.time.extra : "") + "′";
+    const matchName = match.teams.home.name + "–" + match.teams.away.name;
+    const replacement = event.assist?.name;
+    const substitution = event.type.toLowerCase() === "subst" && (player.keeper || event.time.elapsed <= 45);
+    const dismissal = event.type === "Card" && /red card|second yellow/i.test(event.detail);
+    if (!substitution && !dismissal) return [];
+    const title = player.name + (dismissal ? " espulso" : " sostituito") + " in " + matchName;
+    const body = dismissal
+      ? [player.name + " ha ricevuto un’espulsione al " + minute + " in " + matchName + "."]
+      : [player.name + " è stato sostituito al " + minute + (replacement ? " da " + replacement : "") + " in " + matchName + ". Motivo del cambio da chiarire."];
+    return [{
+      id: "live-" + match.fixture.id + "-" + normalizeName(player.name).replaceAll(" ", "-") + "-" + event.time.elapsed + (dismissal ? "-rosso" : "-cambio"),
+      title, body, source: "API-Football · tabellino live", category: "Diretta",
+      date: new Date(Date.parse(match.fixture.date) + event.time.elapsed * 60_000).toISOString(),
+    }];
+  }));
 }
