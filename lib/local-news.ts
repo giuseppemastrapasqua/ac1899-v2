@@ -12,6 +12,18 @@ export type LocalNews = {
 
 const reviewed: LocalNews[] = [
   {
+    id: "belgio-italia-formazioni-novembre-2026", title: "Belgio–Italia, le probabili formazioni: Moreira verso una maglia da titolare",
+    source: "Fantacalcio e Sky Sport", date: "2026-11-15T19:55:00+01:00", category: "Nazionali", edition: "Italia",
+    coverSource: "https://sport.sky.it/calcio/nations-league/2026/11/14/belgio-italia-probabili-formazioni",
+    body: ["In vista di Belgio–Italia, in programma alle 20:45 a Bruxelles, Fantacalcio indica Diego Moreira nel tridente belga con De Ketelaere e Doku. Alphadjo Cissè è tra i convocati azzurri e, secondo le indicazioni prepartita pubblicate da Sky Sport, non figura nell’undici provato da Mancini.", "Sono indicazioni della vigilia. La presenza dei due rossoneri va verificata con le distinte ufficiali."],
+  },
+  {
+    id: "francia-turchia-formazioni-novembre-2026", title: "Francia–Turchia, le probabili: Maignan dall’inizio, Rabiot verso la panchina",
+    source: "MilanNews24 (da RMC Sport)", date: "2026-11-15T19:55:00+01:00", category: "Nazionali", edition: "Estero",
+    coverSource: "https://www.milannews24.com/meno-milan-francia-turchia-rabiot-out/",
+    body: ["Secondo le indicazioni di RMC Sport riprese da MilanNews24, Mike Maignan è favorito per partire titolare nella sfida di Nations League delle 20:45 a Bordeaux. Adrien Rabiot, l’altro rossonero convocato dalla Francia, è invece atteso in panchina.", "L’undici iniziale resta da confermare con la distinta ufficiale."],
+  },
+  {
     id: "milan-frosinone-recuperi-15-novembre", title: "Verso il Frosinone, il Milan valuta i rientri di Pavlović e Tomori",
     source: "Radio Rossonera", date: "2026-11-15T12:35:00+01:00", category: "Prima squadra", edition: "Italia",
     coverSource: "https://www.radiorossonera.it/news/256221023750/milan-frosinone-recupero-pavlovic-tomori-infortunati",
