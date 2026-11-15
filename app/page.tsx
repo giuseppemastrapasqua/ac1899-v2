@@ -1,91 +1,47 @@
 import Link from "next/link";
-import NewsList from "../components/NewsList";
-import OfficialMilanNews from "../components/OfficialMilanNews";
-import MilanHubAI from "../components/MilanHubAI";
-import NewsletterBox from "../components/NewsletterBox";
 import EuropaLeagueBox from "../components/EuropaLeagueBox";
-import CreatorVideoBox from "../components/CreatorVideoBox";
-import WonderkidHomeBox from "../components/WonderkidHomeBox";
-import WonderkidKingBox from "../components/WonderkidKingBox";
-import HomeMatchCenter from "../components/HomeMatchCenter";
 import HomeFeaturedNews from "../components/HomeFeaturedNews";
+import HomeMatchCenter from "../components/HomeMatchCenter";
+import NewsletterBox from "../components/NewsletterBox";
+
+const sections = [
+  { title: "AI Room", description: "Analisi delle partite e approfondimenti.", href: "/analisi", id: "ai-room" },
+  { title: "Wonderkids", description: "Profili e classifiche dei giovani talenti.", href: "/wonderkids" },
+  { title: "Creator Room", description: "Video e contenuti della redazione.", href: "/creator-video" },
+];
 
 export default function Home() {
   return (
-    <main className="ac1899-home" style={page}>
+    <main className="ac1899-home min-h-screen">
       <HomeFeaturedNews />
 
-      <section className="homepage-layout" style={featuredLayout}>
-        <div style={mainColumn}>
+      <div className="mx-auto max-w-[1448px] space-y-12 px-4 pb-12 sm:px-6">
+        <section aria-labelledby="news-destinations" className="flex flex-wrap items-center justify-between gap-4 border-b border-gray-200 pb-5">
+          <h2 id="news-destinations" className="text-2xl">Notizie AC1899</h2>
+          <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold">
+            <Link href="/news">Tutte le notizie →</Link>
+            <Link href="/news#rassegna-stampa">Rassegna stampa →</Link>
+          </div>
+        </section>
 
-          <section style={premiumCard}>
-            <h2 style={{ marginTop: 0 }}>Ultime notizie ufficiali</h2>
-            <OfficialMilanNews />
-            <p className="mt-4"><Link href="/news#rassegna-stampa">Rassegna stampa italiana ed estera →</Link></p>
-          </section>
+        <HomeMatchCenter />
+        <EuropaLeagueBox />
 
-          <NewsList />
+        <section aria-labelledby="explore-title">
+          <h2 id="explore-title" className="mb-4 border-b border-gray-200 pb-3 text-3xl">Approfondimenti</h2>
+          <div className="grid gap-3 md:grid-cols-3">
+            {sections.map(section => (
+              <Link key={section.href} id={section.id} href={section.href}
+                className="group rounded-xl border border-gray-200 px-5 py-4 transition-colors hover:border-red-300 hover:bg-red-50">
+                <h3 className="mb-1 text-xl">{section.title} <span aria-hidden="true">→</span></h3>
+                <p className="text-sm text-gray-600">{section.description}</p>
+              </Link>
+            ))}
+          </div>
+        </section>
 
-          <section id="ai-room" aria-labelledby="ai-room-title" style={premiumCard}>
-            <span style={sectionBadge}>Approfondimenti</span>
-            <h2 id="ai-room-title" className="my-2 text-3xl font-bold">AI Room</h2>
-            <p className="text-gray-400">Analisi, confronti e approfondimenti sul Milan.</p>
-            <MilanHubAI />
-          </section>
-
-          <EuropaLeagueBox />
-          <WonderkidHomeBox />
-          <CreatorVideoBox />
-        </div>
-
-        <aside style={sideColumn}>
-          <HomeMatchCenter />
-          <NewsletterBox />
-          <WonderkidKingBox />
-        </aside>
-      </section>
+        <NewsletterBox />
+      </div>
     </main>
   );
 }
-
-const page = {
-  background:
-    "radial-gradient(circle at top left,#7f1d1d 0,#030712 32%,#030712 100%)",
-  minHeight: "100vh",
-  color: "var(--home-text, #f9fafb)",
-  fontFamily: "Arial",
-};
-
-const featuredLayout = {
-  maxWidth: 1400,
-  margin: "0 auto",
-  padding: "0 24px",
-  display: "grid",
-  gridTemplateColumns: "minmax(0, 2fr) 420px",
-  gap: 32,
-  alignItems: "start",
-};
-
-const mainColumn = {
-  minWidth: 0,
-};
-
-const sideColumn = {
-  display: "flex",
-  flexDirection: "column" as const,
-  gap: 20,
-};
-
-const sectionBadge = {
-  color: "#e30613",
-  fontWeight: "bold",
-  fontSize: 13,
-  letterSpacing: 1,
-};
-
-const premiumCard = {
-  background: "var(--home-surface, #111827)",
-  padding: 28,
-  borderRadius: 0,
-  marginTop: 32,
-};

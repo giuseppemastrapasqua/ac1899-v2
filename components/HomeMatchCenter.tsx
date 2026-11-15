@@ -32,7 +32,7 @@ const officialFixtures: Fixture[] = [
   { fixture: { date: "2026-11-30T20:45:00+01:00", status: { short: "NS" } }, league: { id: 135, season: 2026 }, teams: { home: { name: "Cagliari" }, away: { name: "AC Milan" } }, goals: { home: null, away: null } },
 ];
 
-const panel = "border border-white/10 bg-gray-900 p-5";
+const panel = "min-w-0 rounded-xl border border-gray-200 bg-white p-5";
 const caption = "mt-3 text-xs text-gray-400";
 
 function fixtureDate(date: string) {
@@ -62,9 +62,11 @@ export default async function HomeMatchCenter() {
     ? tableResult.value?.response?.[0]?.league?.season ?? 2026 : 2026;
 
   return (
-    <section aria-labelledby="match-center-title" className="grid gap-4">
+    <section aria-labelledby="match-center-title">
+      <h2 id="match-center-title" className="mb-4 border-b border-gray-200 pb-3 text-3xl">Match Center</h2>
+      <div className="grid gap-4 lg:grid-cols-3">
       <div className={panel}>
-        <h2 id="match-center-title" className="mb-2 text-2xl font-bold">Match Center</h2>
+        <h3 className="mb-2 text-xl">Risultati e calendario</h3>
         <p className="text-sm text-gray-400">Serie A {season ? season + "/" + String(season + 1).slice(-2) : ""}</p>
         <h3 className="mt-4 font-semibold">Ultimo risultato</h3>
         <p className="mt-1 text-lg font-bold">{last.teams.home.name} {last.goals.home}–{last.goals.away} {last.teams.away.name}</p>
@@ -107,6 +109,7 @@ export default async function HomeMatchCenter() {
         </dl>
         <p className={caption}>Statistiche giocatori verificate al 15 novembre 2026 · <a href="https://www.fotmob.com/it/leagues/55/stats/season/36072/players/goals/team/8564/milan">FotMob</a></p>
         <Link className="mt-2 inline-block" href="/rosa">Scopri la rosa →</Link>
+      </div>
       </div>
     </section>
   );

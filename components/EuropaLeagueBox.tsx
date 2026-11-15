@@ -1,6 +1,6 @@
 export default function EuropaLeagueBox() {
   return (
-    <section id="europa" aria-labelledby="europa-title" className="mt-6 border border-white/10 bg-gray-900 p-5">
+    <section id="europa" aria-labelledby="europa-title" className="rounded-xl border border-gray-200 bg-gray-50 p-5">
       <h2 id="europa-title" className="mb-3 text-2xl font-bold">Europa League</h2>
       <dl className="grid gap-3 sm:grid-cols-3">
         <div>

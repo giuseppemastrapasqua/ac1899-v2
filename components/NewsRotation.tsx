@@ -65,7 +65,7 @@ export default function NewsRotation({ stories }: { stories: RotationStory[] }) 
   return (
     <section
       aria-label="Notizie in evidenza"
-      className="mb-7 border-b border-white/10 bg-white px-4 py-6 text-gray-100 sm:px-6 lg:py-9"
+      className="bg-white px-4 pt-7 pb-5 text-gray-100 sm:px-6 lg:pt-10"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onFocus={() => setFocused(true)}
@@ -74,7 +74,7 @@ export default function NewsRotation({ stories }: { stories: RotationStory[] }) 
       }}
     >
       <div className="mx-auto max-w-[1400px]">
-        <div className="grid gap-5 lg:grid-cols-[1.35fr_1fr]">
+        <div className="grid gap-5 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
           <article className="overflow-hidden rounded-2xl border border-white/15 bg-gray-900">
             <div className="aspect-video"><StoryPhoto story={lead} /></div>
             <div className="p-4">
@@ -89,7 +89,7 @@ export default function NewsRotation({ stories }: { stories: RotationStory[] }) 
           </article>
           <div className="grid gap-4 lg:auto-rows-fr">
             {side.map(story => (
-              <article key={story.url} className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] items-center gap-3">
+              <article key={story.url} className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] items-center gap-3 border-b border-gray-200 pb-3 last:border-0 last:pb-0">
                 <div className="aspect-video"><StoryPhoto story={story} /></div>
                 <div>
                   <h2 className="mb-2 text-sm font-black uppercase sm:text-lg">
