@@ -1,6 +1,8 @@
 import OpenAI from "openai";
 import { unstable_cache } from "next/cache";
 import { createHash } from "node:crypto";
+import { milanSquad } from "./milan-squad";
+import { playerNewsSources } from "./player-news-sources";
 import { getOfficialMilanNews } from "./acmilan-news";
 
 export type LocalNews = {
@@ -153,14 +155,65 @@ async function readPressFeed(feed: typeof feeds[number]): Promise<LocalNews[]> {
   return briefs.flatMap(result => result.status === "fulfilled" && result.value ? [result.value] : []);
 }
 
+function normalizeNewsText(text: string) {
+  return text.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+}
+
+async function readPlayerNews(group: typeof playerNewsSources[number]): Promise<LocalNews[]> {
+  const squad = milanSquad.flatMap(({ players }) => players.map(row => normalizeNewsText(row[1])));
+  const players = group.players.filter(name => squad.some(player => (" " + player + " ").includes(" " + normalizeNewsText(name) + " ")));
+  if (!players.length) return [];
+
+  const params = new URLSearchParams({
+    q: "(" + players.map(player => '"' + player + '"').join(" OR ") + ") (" +
+      group.outlets.map(([host]) => "site:" + host).join(" OR ") + ") when:7d",
+    hl: group.locale, gl: group.country, ceid: group.country + ":" + group.locale.split("-")[0],
+  });
+  const response = await fetch("https://news.google.com/rss/search?" + params, {
+    next: { revalidate: 600 }, signal: AbortSignal.timeout(5000),
+  });
+  if (!response.ok) return [];
+
+  return [...(await response.text()).matchAll(/<item>([\s\S]*?)<\/item>/gi)].flatMap(([, item]) => {
+    const sourceUrl = item.match(/<source\b[^>]*\burl="([^"]+)"/i)?.[1];
+    if (!sourceUrl) return [];
+    const host = URL.parse(sourceUrl)?.hostname;
+    const outlet = group.outlets.find(([domain]) => host === domain || host?.endsWith("." + domain));
+    if (!outlet) return [];
+    const title = rssField(item, "title").replace(/\s+[–-]\s+[^–-]+$/, "").trim();
+    const date = Date.parse(rssField(item, "pubDate"));
+    const url = rssField(item, "link");
+    if (!title || !Number.isFinite(date) || !url.startsWith("https://news.google.com/rss/articles/")) return [];
+    if (!players.some(player => (" " + normalizeNewsText(title) + " ").includes(" " + normalizeNewsText(player) + " "))) return [];
+    return [{ title, date: new Date(date).toISOString(), url, source: outlet[1] }];
+  }).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 2).flatMap(story => [{
+    id: "player-" + createHash("sha256").update(story.url).digest("hex").slice(0, 18),
+    title: story.title, source: story.source, date: story.date, category: "Rassegna giocatori",
+    edition: "Estero" as const, body: [],
+  }]);
+}
+
 export async function getLocalNews(): Promise<LocalNews[]> {
   const sources = process.env.OPENAI_API_KEY ? await Promise.allSettled([
     generateOfficialBriefs(), ...feeds.map(readPressFeed),
   ]) : [];
+  const indexed = await Promise.allSettled(playerNewsSources.map(readPlayerNews));
+  const headlines = indexed.flatMap(result => result.status === "fulfilled" ? result.value : []);
+  const results = await Promise.allSettled(headlines.map(async story => {
+    const rewrite = await generateBrief(story.title, "Unico elemento disponibile: il titolo. Riportalo in italiano in forma di breve attribuita soltanto se contiene un fatto concreto. Non dedurre dettagli.");
+    return rewrite ? { ...story, ...rewrite } : null;
+  }));
+  const playerBriefs = results.flatMap(result => result.status === "fulfilled" && result.value ? [result.value] : []);
   const live = sources.flatMap(result => result.status === "fulfilled" ? result.value : []);
-  const existing = new Set(reviewed.map(story => story.coverSource));
-  return [...reviewed, ...live.filter(story => !existing.has(story.coverSource))]
-    .sort((a, b) => Date.parse(b.date) - Date.parse(a.date) || a.id.localeCompare(b.id));
+  const urls = new Set<string>();
+  const titles = new Set<string>();
+  return [...reviewed, ...live, ...playerBriefs].filter(story => {
+    const title = normalizeNewsText(story.title);
+    if (titles.has(title) || (story.coverSource && urls.has(story.coverSource))) return false;
+    titles.add(title);
+    if (story.coverSource) urls.add(story.coverSource);
+    return true;
+  }).sort((a, b) => Date.parse(b.date) - Date.parse(a.date) || a.id.localeCompare(b.id));
 }
 
 export const localNewsHref = (id: string) => "/news/lettura/" + id;
