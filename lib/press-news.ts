@@ -73,3 +73,7 @@ export async function getPressNews(edition: Edition): Promise<PressStory[]> {
   }
   return [...unique.values()].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 25);
 }
+
+export function getVerifiedPressNews() {
+  return [...editions.estero.seed, ...editions.italia.seed];
+}

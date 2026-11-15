@@ -1,161 +1,72 @@
-"use client";
-
-import Link from "next/link";
-import { useEffect, useState } from "react";
+import { getOfficialMilanCover, getOfficialMilanNews } from "../lib/acmilan-news";
+import { getPressNews, getVerifiedPressNews } from "../lib/press-news";
 import { supabase } from "../lib/supabase";
+import NewsRotation, { type RotationStory } from "./NewsRotation";
 
-type News = {
-  id: number;
-  title: string;
-  subtitle: string;
-  image_url: string;
-  category: string;
-  featured: boolean;
-  created_at: string;
-};
+const archive = [
+  { file: "4/42/San_Siro_stadio_Milano.jpg", author: "Vasil Evlogiev" },
+  { file: "0/0c/San_Siro_Curva_Sud_Milano.jpg", author: "Simov" },
+  { file: "6/6e/San_Siro_MilanDerby5.jpg", author: "Milanellopv" },
+].map(({ file, author }) => {
+  const filename = file.split("/").at(-1);
+  return {
+    image: "https://thumb.wikimedia.org/wikipedia/commons/thumb/" + file + "/960px-" + filename,
+    credit: { author, url: "https://commons.wikimedia.org/wiki/File:" + filename },
+  };
+});
 
-export default function HomeFeaturedNews() {
-  const [news, setNews] = useState<News | null>(null);
-
-  useEffect(() => {
-    loadNews();
-  }, []);
-
-  async function loadNews() {
-    const { data } = await supabase
-      .from("news")
-      .select("*")
-      .order("featured", { ascending: false })
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .single();
-
-    setNews(data || null);
-  }
-
-  if (!news) return null;
-
-  return (
-    <section style={wrapper}>
-      <div style={heroBox}>
-        {news.image_url && (
-          <img src={news.image_url} alt={news.title} style={heroImage} />
-        )}
-
-        <div style={overlay} />
-
-        <div style={content}>
-          <div style={badge}>🔥 NEWS IN EVIDENZA</div>
-
-          <h1 style={title}>{news.title}</h1>
-
-          {news.subtitle && <p style={subtitle}>{news.subtitle}</p>}
-
-          <div style={meta}>
-            <span>{news.category || "News"}</span>
-            <span>
-              {news.created_at
-                ? new Date(news.created_at).toLocaleDateString("it-IT")
-                : ""}
-            </span>
-          </div>
-
-          <Link href={`/news/${news.id}`} style={button}>
-            LEGGI ARTICOLO →
-          </Link>
-        </div>
-      </div>
-    </section>
-  );
+function photoKey(image: string) {
+  return image.split(/[?#]/, 1)[0];
 }
 
-const wrapper = {
-  maxWidth: 1400,
-  margin: "24px auto 28px",
-  padding: "0 24px",
-};
+export default async function HomeFeaturedNews() {
+  const [official, editorial, foreign, italian] = await Promise.all([
+    getOfficialMilanNews(),
+    supabase.from("news")
+      .select("id,title,category,image_url,created_at")
+      .order("featured", { ascending: false })
+      .order("created_at", { ascending: false })
+      .limit(8)
+      .abortSignal(AbortSignal.timeout(5000)),
+    getPressNews("estero"),
+    getPressNews("italia"),
+  ]);
 
-const heroBox = {
-  height: 500,
-  position: "relative" as const,
-  overflow: "hidden",
-  background: "#030712",
-  boxShadow: "0 28px 70px rgba(0,0,0,.45)",
-};
+  const press = [...foreign, ...italian];
+  const distinctPress = [...new Map(
+    [...getVerifiedPressNews(), ...press].map(story => [story.url, story])
+  ).values()];
 
-const heroImage = {
-  width: "100%",
-  height: "100%",
-  objectFit: "cover" as const,
-  objectPosition: "center top",
-  display: "block",
-};
+  const groups: RotationStory[][] = await Promise.all([
+    Promise.all(official.slice(0, 8).map(async story => ({
+      ...story, source: "AC Milan", image: await getOfficialMilanCover(story.url),
+    }))),
+    Promise.resolve((editorial.data ?? []).map(story => ({
+      title: story.title, source: "Redazione AC1899", category: story.category,
+      date: story.created_at, url: "/news/" + story.id, image: story.image_url,
+    }))),
+    Promise.all(distinctPress.slice(0, 6).map(async story => ({
+      ...story, category: "Rassegna stampa",
+      image: story.url.startsWith("https://news.google.com/") ? undefined : await getOfficialMilanCover(story.url),
+    }))),
+  ]);
 
-const overlay = {
-  position: "absolute" as const,
-  inset: 0,
-  background:
-    "linear-gradient(90deg,rgba(3,7,18,.88),rgba(3,7,18,.42),rgba(3,7,18,.08))",
-};
+  const stories: RotationStory[] = [];
+  const usedPhotos = new Set<string>();
+  const max = Math.max(...groups.map(group => group.length));
+  for (let i = 0; i < max; i++) {
+    for (const group of groups) {
+      const story = group[i];
+      if (!story) continue;
+      const key = story.image && photoKey(story.image);
+      const cover = key && !usedPhotos.has(key)
+        ? { image: story.image }
+        : archive.find(photo => !usedPhotos.has(photoKey(photo.image)));
+      if (!cover?.image) continue;
+      usedPhotos.add(photoKey(cover.image));
+      stories.push({ ...story, ...cover });
+    }
+  }
 
-const content = {
-  position: "absolute" as const,
-  left: 48,
-  bottom: 46,
-  maxWidth: 760,
-  color: "white",
-};
-
-const badge = {
-  display: "inline-block",
-  background: "#e30613",
-  color: "white",
-  padding: "9px 16px",
-  fontWeight: "bold",
-  fontSize: 13,
-  letterSpacing: 1,
-  marginBottom: 16,
-  textTransform: "uppercase" as const,
-};
-
-const title = {
-  fontSize: 58,
-  lineHeight: 0.95,
-  fontWeight: 900,
-  textTransform: "uppercase" as const,
-  letterSpacing: "-1px",
-  margin: "0 0 18px",
-  color: "white",
-  fontFamily: "Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif",
-};
-
-const subtitle = {
-  fontSize: 20,
-  lineHeight: 1.5,
-  color: "#e5e7eb",
-  margin: "0 0 18px",
-  maxWidth: 720,
-};
-
-const meta = {
-  display: "flex",
-  gap: 14,
-  flexWrap: "wrap" as const,
-  color: "#d1d5db",
-  fontSize: 14,
-  marginBottom: 22,
-  fontWeight: "bold",
-  textTransform: "uppercase" as const,
-};
-
-const button = {
-  display: "inline-block",
-  background: "#e30613",
-  color: "white",
-  padding: "15px 34px",
-  textDecoration: "none",
-  fontWeight: "bold",
-  letterSpacing: 1,
-  marginTop: 18,
-  textTransform: "uppercase" as const,
-};
+  return <NewsRotation stories={stories} />;
+}
