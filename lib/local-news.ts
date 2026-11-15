@@ -19,10 +19,10 @@ const reviewed: LocalNews[] = [
     body: ["In vista di Belgio–Italia, in programma alle 20:45 a Bruxelles, Fantacalcio indica Diego Moreira nel tridente belga con De Ketelaere e Doku. Alphadjo Cissè è tra i convocati azzurri e, secondo le indicazioni prepartita pubblicate da Sky Sport, non figura nell’undici provato da Mancini.", "Sono indicazioni della vigilia. La presenza dei due rossoneri va verificata con le distinte ufficiali."],
   },
   {
-    id: "francia-turchia-formazioni-novembre-2026", title: "Francia–Turchia, le probabili: Maignan dall’inizio, Rabiot verso la panchina",
-    source: "MilanNews24 (da RMC Sport)", date: "2026-11-15T19:55:00+01:00", category: "Nazionali", edition: "Estero",
-    coverSource: "https://www.milannews24.com/meno-milan-francia-turchia-rabiot-out/",
-    body: ["Secondo le indicazioni di RMC Sport riprese da MilanNews24, Mike Maignan è favorito per partire titolare nella sfida di Nations League delle 20:45 a Bordeaux. Adrien Rabiot, l’altro rossonero convocato dalla Francia, è invece atteso in panchina.", "L’undici iniziale resta da confermare con la distinta ufficiale."],
+    id: "francia-turchia-formazioni-novembre-2026", title: "Maignan sostituito all’intervallo di Francia–Turchia: problema alla coscia",
+    source: "Radio Rossonera e SportMediaset", date: "2026-11-15T22:05:00+01:00", category: "Nazionali", edition: "Estero",
+    coverSource: "https://www.radiorossonera.it/news/52210077190/francia-turchia-maignan-infortunio",
+    body: ["Mike Maignan è uscito al 45′ di Francia–Turchia, a Bordeaux, ed è stato sostituito da Guillaume Restes. Secondo Radio Rossonera e SportMediaset, il portiere rossonero ha accusato un problema alla coscia destra.", "L’entità del problema e i tempi di recupero restano da chiarire. Adrien Rabiot, l’altro rossonero convocato dalla Francia, era partito titolare."],
   },
   {
     id: "milan-frosinone-recuperi-15-novembre", title: "Verso il Frosinone, il Milan valuta i rientri di Pavlović e Tomori",
