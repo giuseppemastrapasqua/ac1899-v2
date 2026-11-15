@@ -10,12 +10,11 @@ const stats = [
   ["Tiri in area", "7", "4"],
   ["Tiri da fuori", "10", "2"],
   ["Tocchi in area avversaria", "25", "14"],
+  ["Tiri respinti", "6", "1"],
+  ["Fuorigioco", "3", "1"],
   ["Calci d’angolo", "3", "0"],
 ];
 
-const flowSource = "https://www.shotifystats.com/match/genoa-vs-milan-2026-11-08/report";
-const statsSource = "https://www.flashscore.com/match/football/ac-milan-8Sa8HInO/genoa-d0PJxeie/summary/stats/";
-const reportSource = "https://www.acmilan.com/it/news/articoli/serie-a/2026-11-08/reazione-milan-2-1-a-genova";
 
 const phases = [
   ["13′", "Cissè", "0–1"],
@@ -33,9 +32,7 @@ export default function MatchAnalyst() {
         <p className="mt-1 text-sm text-gray-600">Genoa–Milan 1–2 · Serie A, 11ª giornata · Luigi Ferraris · 8 novembre 2026</p>
       </div>
 
-      <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-        <div className="grid min-w-0 gap-4">
-          <section className="ac1899-box p-4" aria-labelledby="analyst-xg">
+      <section className="ac1899-box p-4" aria-labelledby="analyst-xg">
             <h3 id="analyst-xg" className="mb-2 text-xl">xG Flow</h3>
             <p className="mb-3 text-sm text-gray-600">Totale xG a fine partita · scala comune da 0 a 1,5</p>
             <div className="grid gap-2">
@@ -57,11 +54,11 @@ export default function MatchAnalyst() {
                 </li>
               ))}
             </ol>
-            <a href={flowSource} className="mt-3 inline-block text-sm font-semibold">Apri la curva xG minuto per minuto su Shotify →</a>
-            <p className="mt-1 text-xs text-gray-600">I totali in pagina sono di Flashscore. Shotify usa un proprio modello xG.</p>
-          </section>
+            <p className="mt-1 text-xs text-gray-600">Fonte xG e statistiche: Flashscore.</p>
+      </section>
 
-          <div className="ac1899-box p-4">
+      <div className="mt-4 grid items-stretch gap-4 lg:grid-cols-2">
+          <div className="ac1899-box min-w-0 p-4">
             <table className="w-full text-left text-sm tabular-nums">
               <caption className="mb-2 text-left font-bold">Statistiche della partita</caption>
               <thead><tr className="bg-gray-50"><th scope="col" className="p-2">Statistica</th><th scope="col" className="p-2 text-right">Genoa</th><th scope="col" className="p-2 text-right">Milan</th></tr></thead>
@@ -69,9 +66,7 @@ export default function MatchAnalyst() {
                 <tr key={label} className="border-t border-gray-100"><th scope="row" className="px-2 py-1 font-medium">{label}</th><td className="px-2 py-1 text-right">{genoa}</td><td className="px-2 py-1 text-right">{milan}</td></tr>
               ))}</tbody>
             </table>
-            <a href={statsSource} className="mt-2 inline-block text-xs">Statistiche Flashscore →</a>
           </div>
-        </div>
 
         <article className="ac1899-box space-y-4 p-4 text-sm leading-relaxed" aria-labelledby="analyst-report">
           <h3 id="analyst-report" className="text-xl">Analisi AI completa</h3>
@@ -88,10 +83,13 @@ export default function MatchAnalyst() {
             <p>Nel 4-4-1-1 del Milan, Pulisic parte dietro Ramos. I due gol nascono da recuperi seguiti da una giocata rapida verso la porta. Il Milan tiene il 62% del pallone e segna con entrambi i tiri nello specchio. Il Genoa, schierato 3-4-2-1, calcia 17 volte contro 6 e totalizza più xG (1,15–0,63). Dieci conclusioni genoane arrivano da fuori area, ma i 25 tocchi nell’area rossonera mostrano che la pressione ha prodotto anche incursioni ravvicinate.</p>
           </div>
           <div>
+            <h4 className="font-bold">Qualità delle occasioni</h4>
+            <p>Il Genoa ha generato più pericoli nel complesso, ma il Milan ha prodotto più xG per tiro (0,11 contro 0,07, valori arrotondati). Le grandi occasioni sono state due per parte. Le sei conclusioni respinte del Genoa spiegano parte del divario tra tiri totali e tiri arrivati in porta.</p>
+          </div>
+          <div>
             <h4 className="font-bold">Protagonisti e punto da migliorare</h4>
             <p>Pulisic, votato MVP dai tifosi, realizza il gol decisivo. Rabiot e Ramos firmano gli assist, mentre Maignan protegge il vantaggio in più fasi. La priorità emersa dal finale è limitare gli ingressi in area e le seconde conclusioni quando il Milan difende un vantaggio.</p>
           </div>
-          <a href={reportSource} className="inline-block font-semibold">Cronaca e tabellino ufficiali →</a>
         </article>
       </div>
 
