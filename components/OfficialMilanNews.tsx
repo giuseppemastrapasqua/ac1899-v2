@@ -1,13 +1,18 @@
-import { getOfficialMilanNews, officialNewsUrl } from "../lib/acmilan-news";
+import { getOfficialMilanCover, getOfficialMilanNews, officialNewsUrl } from "../lib/acmilan-news";
 
 export default async function OfficialMilanNews({ limit = 4 }: { limit?: number }) {
   const stories = (await getOfficialMilanNews()).slice(0, limit);
 
+  const covers = await Promise.all(stories.map(story => getOfficialMilanCover(story.url)));
+
   return (
     <section aria-label="Ultime notizie ufficiali">
       <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,220px),1fr))] gap-3.5">
-        {stories.map((story) => (
+        {stories.map((story, index) => (
           <article key={story.url} className="border border-white/10 bg-gray-900 p-4">
+            {covers[index] && (
+              <img src={covers[index]} alt="" loading="lazy" className="mb-3 aspect-video w-full object-cover" />
+            )}
             <p className="m-0 text-xs font-bold uppercase text-red-400">
               AC Milan · {story.category}
             </p>

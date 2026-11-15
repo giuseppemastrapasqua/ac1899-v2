@@ -72,6 +72,7 @@ export default async function Home() {
           <section style={premiumCard}>
             <h2 style={{ marginTop: 0 }}>Ultime notizie ufficiali</h2>
             <OfficialMilanNews />
+            <p className="mt-4"><Link href="/news#rassegna-stampa">Rassegna stampa italiana ed estera →</Link></p>
           </section>
 
           <NewsList />

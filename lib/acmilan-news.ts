@@ -59,3 +59,24 @@ export async function getOfficialMilanNews(): Promise<OfficialMilanNews[]> {
 
   return [...stories.values()].sort((a, b) => b.date.localeCompare(a.date));
 }
+
+export async function getOfficialMilanCover(url: string): Promise<string | undefined> {
+  try {
+    const response = await fetch(url, {
+      next: { revalidate: 86400 },
+      signal: AbortSignal.timeout(5000),
+    });
+    if (!response.ok) return;
+    const html = await response.text();
+    const meta = [...html.matchAll(/<meta\b[^>]*>/gi)].find(([tag]) =>
+      /\bproperty=["']og:image["']/i.test(tag)
+    );
+    const image = meta?.[0].match(/\bcontent=["']([^"']+)["']/i)?.[1];
+    if (image) {
+      const resolved = new URL(image.replaceAll("&amp;", "&"), url);
+      if (resolved.protocol === "https:") return resolved.href;
+    }
+  } catch {
+    // The headline stays available if the publisher's preview image is unavailable.
+  }
+}
