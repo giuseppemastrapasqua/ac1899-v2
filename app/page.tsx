@@ -18,14 +18,6 @@ export default function Home() {
       <HomeFeaturedNews />
 
       <div className="mx-auto max-w-[1448px] space-y-12 px-4 pb-12 sm:px-6">
-        <section aria-labelledby="news-destinations" className="flex flex-wrap items-center justify-between gap-4 border-b border-gray-200 pb-5">
-          <h2 id="news-destinations" className="text-2xl">Notizie AC1899</h2>
-          <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold">
-            <Link href="/news">Tutte le notizie →</Link>
-            <Link href="/news#rassegna-stampa">Rassegna stampa →</Link>
-          </div>
-        </section>
-
         <UpcomingMatchCards today={new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Rome" }).format(new Date())} />
         <HomeMatchCenter />
         <MonthlyMvp />
