@@ -17,6 +17,7 @@ export async function getSerieAStandings() {
     {
       headers,
       next: { revalidate: 60 },
+      signal: AbortSignal.timeout(8000),
     }
   );
 
@@ -40,7 +41,8 @@ export async function getMilanFixtures() {
     `${BASE_URL}/fixtures?team=489&season=${currentSeason()}`,
     {
       headers,
-      next: { revalidate: 3600 },
+      next: { revalidate: 300 },
+      signal: AbortSignal.timeout(8000),
     }
   );
 
