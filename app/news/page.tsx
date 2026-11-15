@@ -1,3 +1,4 @@
+import NewsAutoRefresh from "../../components/NewsAutoRefresh";
 import { sectionMetadata } from "../../lib/site-seo";
 
 export const metadata = sectionMetadata("/news");
@@ -42,6 +43,7 @@ export default async function NewsPage() {
   const entries = [...translated, ...editorial].sort((a, b) => Date.parse(b.date) - Date.parse(a.date));
   return (
     <main className="ac1899-home min-h-screen">
+      <NewsAutoRefresh />
       <div className="home-section-inner">
         <header>
           <h1 className="text-4xl">Archivio notizie</h1>
