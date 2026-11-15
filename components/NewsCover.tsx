@@ -29,7 +29,7 @@ export default function NewsCover({ image, title, category }: { image?: string; 
   if (/endrick/i.test(title) && /tresoldi/i.test(title) && failedImage !== strikerCover) {
     return (
       <figure className="relative overflow-hidden rounded-lg">
-        <img src={strikerCover} alt="Illustrazione con i nomi Endrick e Tresoldi sulle maglie" loading="lazy"
+        <img src={strikerCover} alt="Endrick con il 9 del Real Madrid e Tresoldi con il 7 del Club Brugge" loading="lazy"
           className="aspect-video w-full object-cover" onError={() => setFailedImage(strikerCover)} />
         <figcaption className="editorial-cover-credit rounded bg-black/75 px-2 py-1">Illustrazione AI</figcaption>
       </figure>
