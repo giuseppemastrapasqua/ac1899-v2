@@ -1,6 +1,6 @@
 const report = "https://www.acmilan.com/it/news/articoli/serie-a/2026-11-08/reazione-milan-2-1-a-genova";
 
-const lineups = [
+export const lineups = [
   {
     team: "Genoa", formation: "3-4-2-1", coach: "Daniele De Rossi",
     starters: ["Bijlow", "Marcandalli", "Østigård", "Vásquez", "Ehizibue", "Traorè", "Wiafe", "Ellertsson", "Messias", "Vitinha", "Osmajić"],

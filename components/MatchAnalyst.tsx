@@ -1,63 +1,114 @@
+import { lineups } from "./GenoaMilanReport";
+
 const stats = [
   ["Possesso", "38%", "62%"],
   ["Tiri", "17", "6"],
   ["Tiri in porta", "5", "2"],
   ["Gol attesi (xG)", "1,15", "0,63"],
+  ["xG per tiro", "0,07", "0,11"],
   ["Grandi occasioni", "2", "2"],
+  ["Tiri in area", "7", "4"],
+  ["Tiri da fuori", "10", "2"],
   ["Tocchi in area avversaria", "25", "14"],
   ["Calci d’angolo", "3", "0"],
 ];
 
-function ShotZones({ team, inside, outside }: { team: string; inside: number; outside: number }) {
-  const intensity = (shots: number) => 0.12 + shots / 10 * 0.45;
+const flowSource = "https://www.shotifystats.com/match/genoa-vs-milan-2026-11-08/report";
+const statsSource = "https://www.flashscore.com/match/football/ac-milan-8Sa8HInO/genoa-d0PJxeie/summary/stats/";
+const reportSource = "https://www.acmilan.com/it/news/articoli/serie-a/2026-11-08/reazione-milan-2-1-a-genova";
 
-  return (
-    <figure className="min-w-0">
-      <figcaption className="mb-2 font-bold">{team}</figcaption>
-      <div className="relative flex min-h-32 items-center justify-between overflow-hidden rounded-lg border border-emerald-800 bg-emerald-950 px-3 text-sm" style={{ color: "white" }}>
-        <div className="relative flex min-h-28 flex-1 items-center justify-center border-y border-l border-white/50 text-center" style={{ backgroundColor: `rgb(250 160 35 / ${intensity(outside)})` }}>
-          <span className="px-2"><strong className="block text-2xl">{outside}</strong> Fuori area</span>
-        </div>
-        <div className="relative flex min-h-20 w-2/5 items-center justify-center border border-white/75 text-center" style={{ backgroundColor: `rgb(250 160 35 / ${intensity(inside)})` }}>
-          <span className="px-2"><strong className="block text-2xl">{inside}</strong> In area</span>
-        </div>
-      </div>
-    </figure>
-  );
-}
+const phases = [
+  ["13′", "Cissè", "0–1"],
+  ["19′", "Pulisic", "0–2"],
+  ["45′", "Intervallo", "0–2"],
+  ["88′", "Ellertsson", "1–2"],
+  ["90′+", "Finale", "1–2"],
+];
 
 export default function MatchAnalyst() {
   return (
     <section id="match-analyst" aria-labelledby="match-analyst-title" className="ac1899-box p-4 sm:p-5">
       <div className="mb-4 border-b border-gray-200 pb-3">
         <h2 id="match-analyst-title" className="text-3xl">Match Analyst AI</h2>
-        <p className="mt-1 text-sm text-gray-600">Genoa–Milan 1–2 · Serie A · 8 novembre 2026</p>
+        <p className="mt-1 text-sm text-gray-600">Genoa–Milan 1–2 · Serie A, 11ª giornata · Luigi Ferraris · 8 novembre 2026</p>
       </div>
-      <div className="grid gap-5 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
-        <div className="space-y-3 text-sm leading-relaxed">
-          <h3 className="text-xl">Il Milan colpisce presto, il Genoa tira di più</h3>
-          <p>Cissè e Pulisic hanno portato il Milan sullo 0–2 entro il 19′. I rossoneri hanno avuto il 62% di possesso e segnato con entrambi i tiri nello specchio. Il Genoa ha concluso di più, con 17 tiri contro 6, e ha chiuso avanti negli xG: 1,15 contro 0,63.</p>
-          <p>Le grandi occasioni sono state due per parte. Dieci dei 17 tiri del Genoa sono arrivati da fuori area, ma i rossoblù hanno anche toccato 25 palloni nell’area avversaria contro 14. Il gol di Ellertsson all’88′ ha riaperto la gara: il margine costruito all’inizio è stato decisivo.</p>
+
+      <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+        <div className="grid min-w-0 gap-4">
+          <section className="ac1899-box p-4" aria-labelledby="analyst-xg">
+            <h3 id="analyst-xg" className="mb-2 text-xl">xG Flow</h3>
+            <p className="mb-3 text-sm text-gray-600">Totale xG a fine partita · scala comune da 0 a 1,5</p>
+            <div className="grid gap-2">
+              {[["Genoa", 1.15, "bg-blue-900"], ["Milan", 0.63, "bg-red-700"]].map(([team, value, color]) => (
+                <div key={team} className="grid grid-cols-[3.5rem_1fr_2.5rem] items-center gap-2 text-sm">
+                  <span className="font-semibold">{team}</span>
+                  <span aria-hidden="true" className="h-2 overflow-hidden rounded bg-gray-100">
+                    <span className={color + " block h-full rounded"} style={{ width: Number(value) / 1.5 * 100 + "%" }} />
+                  </span>
+                  <strong className="text-right tabular-nums">{Number(value).toLocaleString("it-IT", { minimumFractionDigits: 2 })}</strong>
+                </div>
+              ))}
+            </div>
+            <h4 className="mt-4 text-sm font-bold">Cronologia del punteggio</h4>
+            <ol className="mt-2 grid grid-cols-2 gap-1 text-center text-xs sm:grid-cols-5">
+              {phases.map(([minute, label, score]) => (
+                <li key={minute} className="rounded border border-gray-200 bg-gray-50 p-2">
+                  <strong className="block">{minute} · {score}</strong>{label}
+                </li>
+              ))}
+            </ol>
+            <a href={flowSource} className="mt-3 inline-block text-sm font-semibold">Apri la curva xG minuto per minuto su Shotify →</a>
+            <p className="mt-1 text-xs text-gray-600">I totali in pagina sono di Flashscore. Shotify usa un proprio modello xG.</p>
+          </section>
+
+          <div className="ac1899-box p-4">
+            <table className="w-full text-left text-sm tabular-nums">
+              <caption className="mb-2 text-left font-bold">Statistiche della partita</caption>
+              <thead><tr className="bg-gray-50"><th scope="col" className="p-2">Statistica</th><th scope="col" className="p-2 text-right">Genoa</th><th scope="col" className="p-2 text-right">Milan</th></tr></thead>
+              <tbody>{stats.map(([label, genoa, milan]) => (
+                <tr key={label} className="border-t border-gray-100"><th scope="row" className="px-2 py-1 font-medium">{label}</th><td className="px-2 py-1 text-right">{genoa}</td><td className="px-2 py-1 text-right">{milan}</td></tr>
+              ))}</tbody>
+            </table>
+            <a href={statsSource} className="mt-2 inline-block text-xs">Statistiche Flashscore →</a>
+          </div>
         </div>
-        <table className="w-full text-left text-sm tabular-nums">
-          <thead><tr className="bg-gray-50"><th scope="col" className="p-2">Statistica</th><th scope="col" className="p-2 text-right">Genoa</th><th scope="col" className="p-2 text-right">Milan</th></tr></thead>
-          <tbody>{stats.map(([label, genoa, milan]) => (
-            <tr key={label} className="border-t border-gray-100"><th scope="row" className="px-2 py-1 font-medium">{label}</th><td className="px-2 py-1 text-right">{genoa}</td><td className="px-2 py-1 text-right">{milan}</td></tr>
-          ))}</tbody>
-        </table>
+
+        <article className="ac1899-box space-y-4 p-4 text-sm leading-relaxed" aria-labelledby="analyst-report">
+          <h3 id="analyst-report" className="text-xl">Analisi AI completa</h3>
+          <div>
+            <h4 className="font-bold">Primo tempo · Due recuperi cambiano la partita</h4>
+            <p>Osmajić sfiora il palo nel primo minuto, poi il Milan risponde con Ramos. Il vantaggio nasce dal recupero di Rabiot e dal suo passaggio per Cissè al 13′. Sei minuti dopo, un altro pallone riconquistato in avanti porta al raddoppio: Ramos serve Pulisic, che firma lo 0–2. Prima dell’intervallo Maignan interviene su Wiafe al 40′ e sul colpo di testa di Østigård al 44′.</p>
+          </div>
+          <div>
+            <h4 className="font-bold">Ripresa · Il Genoa accorcia nel finale</h4>
+            <p>De Rossi cambia con Baldanzi ed El Shaarawy, mentre Amorim inserisce Hutchinson e Terracciano. De Winter chiude su Osmajić al 69′, Maignan ferma Vitinha al 73′ e Gila devia il tentativo di El Shaarawy al 79′. All’88′ Ellertsson accorcia con un tiro dalla distanza. Il Milan conserva il vantaggio nei sette minuti di recupero.</p>
+          </div>
+          <div>
+            <h4 className="font-bold">Lettura tattica · Possesso e volume offensivo</h4>
+            <p>Nel 4-4-1-1 del Milan, Pulisic parte dietro Ramos. I due gol nascono da recuperi seguiti da una giocata rapida verso la porta. Il Milan tiene il 62% del pallone e segna con entrambi i tiri nello specchio. Il Genoa, schierato 3-4-2-1, calcia 17 volte contro 6 e totalizza più xG (1,15–0,63). Dieci conclusioni genoane arrivano da fuori area, ma i 25 tocchi nell’area rossonera mostrano che la pressione ha prodotto anche incursioni ravvicinate.</p>
+          </div>
+          <div>
+            <h4 className="font-bold">Protagonisti e punto da migliorare</h4>
+            <p>Pulisic, votato MVP dai tifosi, realizza il gol decisivo. Rabiot e Ramos firmano gli assist, mentre Maignan protegge il vantaggio in più fasi. La priorità emersa dal finale è limitare gli ingressi in area e le seconde conclusioni quando il Milan difende un vantaggio.</p>
+          </div>
+          <a href={reportSource} className="inline-block font-semibold">Cronaca e tabellino ufficiali →</a>
+        </article>
       </div>
-      <div className="mt-5 border-t border-gray-200 pt-4">
-        <h3 className="mb-1 text-xl">Mappe dei tiri per zona</h3>
-        <p className="mb-3 text-xs text-gray-600">I colori indicano il numero di tiri in area e da fuori. I dati disponibili sono aggregati per zona.</p>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <ShotZones team="Genoa" inside={7} outside={10} />
-          <ShotZones team="Milan" inside={4} outside={2} />
+
+      <section aria-labelledby="analyst-lineups" className="mt-5 border-t border-gray-200 pt-4">
+        <h3 id="analyst-lineups" className="mb-3 text-xl">Lineup · Formazioni ufficiali</h3>
+        <div className="grid gap-4 md:grid-cols-2">
+          {lineups.map(({ team, formation, coach, starters, changes, bench }) => (
+            <div key={team} className="ac1899-box p-4 text-sm">
+              <h4 className="font-bold">{team} · {formation}</h4>
+              <p className="mb-2 text-gray-600">Allenatore: {coach}</p>
+              <p><strong>Titolari:</strong> {starters.join(", ")}.</p>
+              <p className="mt-2"><strong>Cambi:</strong> {changes.join("; ")}.</p>
+              <p className="mt-2"><strong>Riserve non utilizzate:</strong> {bench.join(", ")}.</p>
+            </div>
+          ))}
         </div>
-        <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs">
-          <a href="https://www.flashscore.com/match/football/ac-milan-8Sa8HInO/genoa-d0PJxeie/summary/stats/">Statistiche Flashscore</a>
-          <a href="https://www.shotifystats.com/match/genoa-vs-milan-2026-11-08/shots">Mappa dei singoli tiri su Shotify →</a>
-        </div>
-      </div>
+      </section>
     </section>
   );
 }
