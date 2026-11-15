@@ -159,3 +159,51 @@ export async function getLeaguePlayers(endpoint: "players" | "players/topscorers
     return null;
   }
 }
+
+type LiveFixture = {
+  fixture: { id: number; status: { elapsed: number | null; short: string } };
+  league: { id: number; name: string };
+  teams: { home: { id: number; name: string }; away: { id: number; name: string } };
+  goals: { home: number | null; away: number | null };
+  events?: {
+    time: { elapsed: number; extra: number | null };
+    team: { name: string };
+    player: { name: string | null };
+    type: string;
+    detail: string;
+  }[];
+};
+
+export async function getCommunityScoreboard() {
+  if (!process.env.API_FOOTBALL_KEY) return null;
+  try {
+    const response = await fetch(`${BASE_URL}/fixtures?live=all`, {
+      headers, next: { revalidate: 60 }, signal: AbortSignal.timeout(6000),
+    });
+    if (!response.ok) return null;
+    const data = await response.json() as { errors: object; response: LiveFixture[] };
+    if (!Array.isArray(data.response) || Object.keys(data.errors ?? {}).length) return null;
+
+    return data.response.flatMap(match => {
+      const milan = match.teams.home.id === 489 || match.teams.away.id === 489;
+      if (!milan && match.league.id !== 135) return [];
+      return [{
+        id: match.fixture.id, league: match.league.name, minute: match.fixture.status.elapsed,
+        status: match.fixture.status.short, home: match.teams.home.name, away: match.teams.away.name,
+        goals: match.goals, milan,
+        events: milan ? (match.events ?? []).filter(event =>
+          event.type === "Goal" || event.type === "Var" || event.detail === "Red Card" || event.detail === "Second Yellow card"
+        ).map(event => ({
+          minute: event.time.elapsed, extra: event.time.extra, team: event.team.name, player: event.player.name,
+          action: ({
+            "Normal Goal": "Gol", "Own Goal": "Autogol", Penalty: "Gol su rigore", "Missed Penalty": "Rigore sbagliato",
+            "Red Card": "Espulsione", "Second Yellow card": "Espulsione per doppia ammonizione",
+            "Goal cancelled": "Gol annullato dopo controllo VAR", "Penalty confirmed": "Rigore confermato dal VAR",
+          } as Record<string, string>)[event.detail] ?? (event.type === "Var" ? "Controllo VAR" : "Episodio segnalato"),
+        })).reverse() : [],
+      }];
+    }).sort((a, b) => Number(b.milan) - Number(a.milan));
+  } catch {
+    return null;
+  }
+}

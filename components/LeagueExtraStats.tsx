@@ -22,14 +22,6 @@ const rankings = [
 
 const matchDistances = [
   {
-    title: "Milan · I cinque con più chilometri",
-    match: "Milan–Como · 18 febbraio 2026 · Serie A 2025/26",
-    rows: [
-      ["Ardon Jashari", "Milan", 11.431], ["Davide Bartesaghi", "Milan", 11.029],
-      ["Koni De Winter", "Milan", 10.329], ["Luka Modrić", "Milan", 10.222], ["Fikayo Tomori", "Milan", 9.705],
-    ],
-  },
-  {
     title: "Serie A · Confronto tra squadre",
     match: "Torino–Lecce · 7 novembre 2026 · 11ª giornata 2026/27 · 2 squadre su 20",
     rows: [
@@ -70,7 +62,7 @@ export default function LeagueExtraStats() {
       <p className="mt-2 text-xs text-gray-600">Lega Serie A · dati di squadra.</p>
       <p className="mt-2 text-sm text-gray-700">I report ufficiali della Lega Serie A pubblicano i chilometri percorsi <strong>nella singola gara</strong> per i cinque giocatori che hanno corso di più per squadra. Per calcolare la media stagionale di ogni calciatore servono anche le distanze delle partite in cui è sceso in campo fuori da quella top 5. Quei dati non risultano disponibili nelle fonti che ho trovato, né per l’intera rosa del Milan né per tutta la Serie A.</p>
     </div>
-    <div id="km-singola-gara" className="grid gap-3 md:grid-cols-2">
+    <div id="km-singola-gara">
       {matchDistances.map(({ title, match, rows }) => <div key={title} className="ac1899-box p-4">
         <table className="w-full text-left text-sm tabular-nums">
           <caption className="mb-2 text-left"><strong className="text-xl">{title}</strong><span className="block text-xs text-gray-600">{match}</span></caption>

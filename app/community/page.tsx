@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import CommunityLive from "../../components/CommunityLive";
 import { useState } from "react";
 import type { FormEvent } from "react";
 
@@ -23,7 +25,13 @@ export default function CommunityPage() {
   return <main className="ac1899-home min-h-screen">
     <div className="home-section-inner">
       <header><h1 className="text-4xl">Curva 1899</h1><p>Video brevi della community rossonera.</p></header>
-      <form onSubmit={addClip} className="ac1899-box mx-auto grid w-full max-w-md gap-3 p-4">
+      <nav aria-label="Sezioni Community" className="flex flex-wrap gap-3">
+        <a className="ac1899-box px-4 py-2 font-bold" href="#live">Live</a>
+        <Link className="ac1899-box px-4 py-2 font-bold" href="/community/bet">Bet · Pronostici</Link>
+        <a className="ac1899-box px-4 py-2 font-bold" href="#clip">Clip</a>
+      </nav>
+      <CommunityLive />
+      <form id="clip" onSubmit={addClip} className="ac1899-box mx-auto grid w-full max-w-md gap-3 p-4">
         <h2 className="text-xl">Aggiungi una clip</h2>
         <p className="text-sm text-gray-600">In questa anteprima le clip restano visibili nel tuo browser fino alla chiusura o al ricaricamento della pagina.</p>
         <label className="grid gap-1">Titolo<input name="title" required maxLength={100} className="rounded border p-2" /></label>
