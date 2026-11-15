@@ -194,46 +194,79 @@ function normalizeNewsText(text: string) {
   return text.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
 }
 
-async function readPlayerNews(group: typeof playerNewsSources[number]): Promise<LocalNews[]> {
-  const squad = milanSquad.flatMap(({ players }) => players.map(row => normalizeNewsText(row[1])));
-  const players = group.players.filter(name => squad.some(player => (" " + player + " ").includes(" " + normalizeNewsText(name) + " ")));
-  if (!players.length) return [];
+const indexedClubSearches = [
+  { query: '"AC Milan" OR rossoneri', locale: "it", country: "IT", edition: "Italia" },
+  { query: '"AC Milan" OR "Milan Women"', locale: "en", country: "GB", edition: "Estero" },
+] as const;
 
+async function readIndexedNews({ query, locale, country, edition, category, sourceFor, matches, limit }: {
+  query: string; locale: string; country: string; edition: NonNullable<LocalNews["edition"]>;
+  category: string; sourceFor?: (host: string) => string | undefined; matches: (title: string) => boolean; limit: number;
+}): Promise<LocalNews[]> {
   const params = new URLSearchParams({
-    q: "(" + players.map(player => '"' + player + '"').join(" OR ") + ") (" +
-      group.outlets.map(([host]) => "site:" + host).join(" OR ") + ") when:7d",
-    hl: group.locale, gl: group.country, ceid: group.country + ":" + group.locale.split("-")[0],
+    q: query, hl: locale, gl: country, ceid: country + ":" + locale.split("-")[0],
   });
   const response = await fetch("https://news.google.com/rss/search?" + params, {
-    next: { revalidate: 600 }, signal: AbortSignal.timeout(5000),
+    next: { revalidate: 300 }, signal: AbortSignal.timeout(7500),
   });
-  if (!response.ok) return [];
+  if (!response.ok) throw new Error("Indexed news feed returned HTTP " + response.status);
 
   return [...(await response.text()).matchAll(/<item>([\s\S]*?)<\/item>/gi)].flatMap(([, item]) => {
-    const sourceUrl = item.match(/<source\b[^>]*\burl="([^"]+)"/i)?.[1];
-    if (!sourceUrl) return [];
-    const host = URL.parse(sourceUrl)?.hostname;
-    const outlet = group.outlets.find(([domain]) => host === domain || host?.endsWith("." + domain));
-    if (!outlet) return [];
-    const title = rssField(item, "title").replace(/\s+[–-]\s+[^–-]+$/, "").trim();
+    const source = item.match(/<source\b[^>]*\burl="([^"]+)"[^>]*>([\s\S]*?)<\/source>/i);
+    const host = source && URL.parse(source[1])?.hostname;
+    if (!source || !host) return [];
+    const label = rssField("<publisher>" + source[2] + "</publisher>", "publisher");
+    const publisher = sourceFor ? sourceFor(host) : label;
+    if (!publisher || publisher.length > 100) return [];
+    const fullTitle = rssField(item, "title");
+    const suffix = " - " + label;
+    const title = label && fullTitle.endsWith(suffix) ? fullTitle.slice(0, -suffix.length).trim() : fullTitle;
     const date = Date.parse(rssField(item, "pubDate"));
     const url = rssField(item, "link");
-    if (!title || !Number.isFinite(date) || !url.startsWith("https://news.google.com/rss/articles/")) return [];
-    if (!players.some(player => (" " + normalizeNewsText(title) + " ").includes(" " + normalizeNewsText(player) + " "))) return [];
-    return [{ title, date: new Date(date).toISOString(), url, source: outlet[1] }];
-  }).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 2).flatMap(story => [{
-    id: "player-" + createHash("sha256").update(story.url).digest("hex").slice(0, 18),
-    title: story.title, source: story.source, date: story.date, category: "Rassegna giocatori",
-    edition: "Estero" as const, body: [],
-  }]);
+    if (!title || !Number.isFinite(date) || !url.startsWith("https://news.google.com/rss/articles/") || !matches(title)) return [];
+    return [{
+      id: (category === "Rassegna giocatori" ? "player-" : "web-") + createHash("sha256").update(url).digest("hex").slice(0, 18),
+      title, date: new Date(date).toISOString(), source: publisher, category, edition, body: [],
+    }];
+  }).sort((a, b) => b.date.localeCompare(a.date)).slice(0, limit);
+}
+
+function readPlayerNews(group: typeof playerNewsSources[number]) {
+  const squad = milanSquad.flatMap(({ players }) => players.map(row => normalizeNewsText(row[1])));
+  const players = group.players.filter(name => squad.some(player => (" " + player + " ").includes(" " + normalizeNewsText(name) + " ")));
+  if (!players.length) return Promise.resolve([]);
+  return readIndexedNews({
+    query: "(" + players.map(player => '"' + player + '"').join(" OR ") + ") (" +
+      group.outlets.map(([host]) => "site:" + host).join(" OR ") + ") when:7d",
+    locale: group.locale, country: group.country, edition: "Estero", category: "Rassegna giocatori",
+    sourceFor: host => group.outlets.find(([domain]) => host === domain || host.endsWith("." + domain))?.[1],
+    matches: title => players.some(player => (" " + normalizeNewsText(title) + " ").includes(" " + normalizeNewsText(player) + " ")),
+    limit: 2,
+  });
 }
 
 export async function getLocalNews(): Promise<LocalNews[]> {
   const [sources, indexed] = process.env.OPENAI_API_KEY ? await Promise.all([
     Promise.allSettled([generateOfficialBriefs(), ...feeds.map(readPressFeed)]),
-    Promise.allSettled(playerNewsSources.map(readPlayerNews)),
+    Promise.allSettled([
+      ...playerNewsSources.map(readPlayerNews),
+      ...indexedClubSearches.map(({ query, ...search }) => readIndexedNews({
+        ...search, query: "(" + query + ") when:1d", category: "Rassegna stampa",
+        matches: title => /\b(?:milan|rossoner[ieo])\b/i.test(title), limit: 5,
+      })),
+    ]),
   ]) : [[], []];
-  const headlines = indexed.flatMap(result => result.status === "fulfilled" ? result.value : []);
+  const seenHeadlines = new Set(reviewed.map(story => normalizeNewsText(story.title)));
+  const seenIds = new Set<string>();
+  const headlines = indexed.flatMap(result => result.status === "fulfilled" ? result.value : [])
+    .sort((a, b) => b.date.localeCompare(a.date))
+    .filter(story => {
+      const key = normalizeNewsText(story.title);
+      if (seenIds.has(story.id) || seenHeadlines.has(key)) return false;
+      seenIds.add(story.id);
+      seenHeadlines.add(key);
+      return true;
+    });
   const results = await Promise.allSettled(headlines.map(async story => {
     const rewrite = await generateBrief(story.title, "Unico elemento disponibile: il titolo. Riportalo in italiano in forma di breve attribuita soltanto se contiene un fatto concreto. Non dedurre dettagli.");
     return rewrite ? { ...story, ...rewrite } : null;
