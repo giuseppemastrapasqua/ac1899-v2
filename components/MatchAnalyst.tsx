@@ -1,20 +1,43 @@
 import { lineups } from "./GenoaMilanReport";
 
 const stats = [
-  ["Possesso", "38%", "62%"],
-  ["Tiri", "17", "6"],
-  ["Tiri in porta", "5", "2"],
-  ["Gol attesi (xG)", "1,15", "0,63"],
-  ["xG per tiro", "0,07", "0,11"],
-  ["Grandi occasioni", "2", "2"],
-  ["Tiri in area", "7", "4"],
-  ["Tiri da fuori", "10", "2"],
-  ["Tocchi in area avversaria", "25", "14"],
-  ["Tiri respinti", "6", "1"],
-  ["Fuorigioco", "3", "1"],
-  ["Calci d’angolo", "3", "0"],
+  {
+    group: "Possesso e costruzione",
+    rows: [
+      ["Possesso", "38%", "62%"],
+      ["Passaggi tentati", "335", "576"],
+      ["Passaggi riusciti", "263", "488"],
+      ["Precisione dei passaggi", "79%", "85%"],
+      ["Tocchi in area avversaria", "25", "14"],
+    ],
+  },
+  {
+    group: "Conclusioni e occasioni",
+    rows: [
+      ["Gol", "1", "2"],
+      ["Tiri totali", "17", "6"],
+      ["Tiri nello specchio", "5", "2"],
+      ["Tiri fuori", "6", "3"],
+      ["Tiri respinti", "6", "1"],
+      ["Tiri in area / da fuori", "7 / 10", "4 / 2"],
+      ["Precisione al tiro", "29%", "33%"],
+      ["Gol attesi (xG)", "1,15", "0,63"],
+      ["xG per tiro", "0,07", "0,11"],
+      ["xG dei tiri in porta (xGOT)", "0,63", "1,33"],
+      ["Grandi occasioni", "2", "2"],
+    ],
+  },
+  {
+    group: "Palle inattive e disciplina",
+    rows: [
+      ["Calci d’angolo", "3", "0"],
+      ["Fuorigioco", "3", "1"],
+      ["Falli commessi", "14", "13"],
+      ["Ammonizioni", "2", "5"],
+      ["Espulsioni", "0", "0"],
+    ],
+  },
 ];
-
 
 const phases = [
   ["13′", "Cissè", "0–1"],
@@ -58,15 +81,25 @@ export default function MatchAnalyst() {
       </section>
 
       <div className="mt-4 grid items-stretch gap-4 lg:grid-cols-2">
-          <div className="ac1899-box min-w-0 p-4">
+          <section aria-labelledby="analyst-stats" className="ac1899-box min-w-0 p-4">
+            <h3 id="analyst-stats" className="mb-4 text-xl">Statistiche della partita</h3>
             <table className="w-full text-left text-sm tabular-nums">
-              <caption className="mb-2 text-left font-bold">Statistiche della partita</caption>
               <thead><tr className="bg-gray-50"><th scope="col" className="p-2">Statistica</th><th scope="col" className="p-2 text-right">Genoa</th><th scope="col" className="p-2 text-right">Milan</th></tr></thead>
-              <tbody>{stats.map(([label, genoa, milan]) => (
-                <tr key={label} className="border-t border-gray-100"><th scope="row" className="px-2 py-1 font-medium">{label}</th><td className="px-2 py-1 text-right">{genoa}</td><td className="px-2 py-1 text-right">{milan}</td></tr>
-              ))}</tbody>
+              {stats.map(({ group, rows }) => (
+                <tbody key={group}>
+                  <tr><th scope="rowgroup" colSpan={3} className="bg-red-50 px-2 py-1 text-xs font-bold uppercase text-red-800">{group}</th></tr>
+                  {rows.map(([label, genoa, milan]) => (
+                    <tr key={label} className="border-t border-gray-100">
+                      <th scope="row" className="px-2 py-1 font-medium">{label}</th>
+                      <td className="px-2 py-1 text-right">{genoa}</td>
+                      <td className="px-2 py-1 text-right">{milan}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              ))}
             </table>
-          </div>
+            <p className="mt-3 text-xs text-gray-600">Fonti: Flashscore (tiri e xG), Ludistat (passaggi, falli ed espulsioni), AC Milan (ammonizioni).</p>
+          </section>
 
         <article className="ac1899-box space-y-4 p-4 text-sm leading-relaxed" aria-labelledby="analyst-report">
           <h3 id="analyst-report" className="text-xl">Analisi AI completa</h3>
