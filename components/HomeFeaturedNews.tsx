@@ -1,29 +1,26 @@
-import { getOfficialMilanCover, getOfficialMilanNews } from "../lib/acmilan-news";
-import { getPressNews, getVerifiedPressNews } from "../lib/press-news";
+import { getOfficialMilanCover } from "../lib/acmilan-news";
+import { getLocalNews, localNewsHref } from "../lib/local-news";
 import { supabase } from "../lib/supabase";
 import NewsRotation, { type RotationStory } from "./NewsRotation";
 
 export default async function HomeFeaturedNews() {
-  const [official, editorial, foreign, italian] = await Promise.all([
-    getOfficialMilanNews(),
+  const [articles, editorial] = await Promise.all([
+    getLocalNews(),
     supabase.from("news")
       .select("id,title,category,image_url,created_at")
       .order("created_at", { ascending: false })
       .limit(8)
       .abortSignal(AbortSignal.timeout(5000)),
-    getPressNews("estero"),
-    getPressNews("italia"),
   ]);
 
-  const press = [...getVerifiedPressNews(), ...foreign, ...italian];
-  const uniquePress = new Map(press.map(story => [story.url, story]));
-  const latest: RotationStory[] = [
-    ...official.map(story => ({ ...story, source: "AC Milan" })),
+  const latest: (RotationStory & { coverSource?: string })[] = [
+    ...articles.map(({ id, title, source, date, category, coverSource }) => ({
+      title, source, date, category, coverSource, url: localNewsHref(id),
+    })),
     ...(editorial.data ?? []).map(story => ({
       title: story.title, source: "Redazione AC1899", category: story.category,
       date: story.created_at, url: "/news/" + story.id, image: story.image_url,
     })),
-    ...[...uniquePress.values()].map(story => ({ ...story, category: "Rassegna stampa" })),
   ];
 
   const titles = new Set<string>();
@@ -38,10 +35,9 @@ export default async function HomeFeaturedNews() {
     })
     .slice(0, 4);
 
-  const withCovers = await Promise.all(selected.map(async story => ({
+  const withCovers = await Promise.all(selected.map(async ({ coverSource, ...story }) => ({
     ...story,
-    image: story.image || (story.url.startsWith("https://") && !story.url.startsWith("https://news.google.com/")
-      ? await getOfficialMilanCover(story.url) : undefined),
+    image: story.image || (coverSource ? await getOfficialMilanCover(coverSource) : undefined),
   })));
 
   const usedPhotos = new Set<string>();
