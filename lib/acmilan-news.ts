@@ -46,7 +46,7 @@ export async function getOfficialMilanNews(): Promise<OfficialMilanNews[]> {
     const links = html.matchAll(/href=["'](?:https:\/\/www\.acmilan\.com)?\/it\/news\/articoli\/([^"'?#]+)(?:[?#][^"']*)?["']/gi);
     for (const [, path] of links) {
       const story = articleFromPath(path);
-      if (story && story.category !== "nazionali") stories.set(story.url, story);
+      if (story) stories.set(story.url, story);
     }
   } catch (error) {
     console.error("Feed ufficiale AC Milan:", error);
@@ -54,7 +54,7 @@ export async function getOfficialMilanNews(): Promise<OfficialMilanNews[]> {
 
   for (const [path, title] of recentStories) {
     const story = articleFromPath(path, title);
-    if (story && story.category !== "nazionali") stories.set(story.url, story);
+    if (story) stories.set(story.url, story);
   }
 
   return [...stories.values()].sort((a, b) => b.date.localeCompare(a.date));
