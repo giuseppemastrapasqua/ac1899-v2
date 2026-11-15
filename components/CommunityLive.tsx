@@ -1,5 +1,6 @@
 "use client";
 
+import { communityMatchday, formatCommunityKickoff } from "../lib/community-matchday";
 import { useEffect, useState } from "react";
 import type { getCommunityScoreboard } from "../lib/api-football";
 
@@ -54,5 +55,15 @@ export default function CommunityLive() {
         )}</ol> : <p className="text-sm">In attesa degli episodi dal feed.</p>}
       </div>}
     </article>)}
+    <section aria-labelledby="community-matchday">
+      <h3 id="community-matchday" className="mb-2 text-xl">Calendario · 12ª giornata Serie A 2026/27</h3>
+      <ol className="grid gap-2 sm:grid-cols-2">
+        {communityMatchday.map(([kickoff, home, away]) => <li key={home} className={`rounded-lg border p-3 ${home === "Milan" ? "border-red-200 bg-red-50" : "border-gray-200"}`}>
+          <time className="block text-xs text-gray-600" dateTime={kickoff}>{formatCommunityKickoff(kickoff)}</time>
+          <strong>{home}–{away}</strong>
+        </li>)}
+      </ol>
+      <p className="mt-2 text-xs text-gray-600">Fonte: Lega Serie A. Orari italiani.</p>
+    </section>
   </section>;
 }
