@@ -1,0 +1,11 @@
+const under21 = "https://www.figc.it/it/nazionali/news/inizia-il-raduno-a-tirrenia-simone-duffizi-si-aggiunge-al-gruppo-di-baldini-thygwvup";
+const senior = "https://www.figc.it/it/nazionali/news/litalia-a-caccia-del-pass-per-i-quarti-di-nations-league-31-convocati-per-i-match-con-francia-e-belgio-prima-chiamata-per-cassano-lontani-cisse-e-liberali-ax902bda";
+
+export const italianWonderkids = [
+  { name: "Francesco Camarda", club: "Milan", role: "Attaccante", national: "Italia U21", evidence: "In gol nel 2–1 dell’Under 21 contro la Francia a Laval.", observe: "Continuità di minutaggio e movimenti in area contro difese schierate.", source: "https://www.figc.it/it/nazionali/news/con-leco-di-san-siro-gli-azzurrini-vincono-in-francia-con-i-gol-di-camarda-e-lipani-hudlqmly" },
+  { name: "Davide Bartesaghi", club: "Milan", role: "Difensore", national: "Italia U21", evidence: "Convocato per il raduno di novembre con gli Azzurrini.", observe: "Progressi nella difesa dell’uno contro uno e nella costruzione sulla fascia.", source: under21 },
+  { name: "Mattia Liberali", club: "Como", role: "Trequartista", national: "Italia", evidence: "Prima convocazione in Nazionale maggiore nella finestra di novembre.", observe: "Ricezioni tra le linee e continuità delle occasioni create in prima squadra.", source: senior },
+  { name: "Luca Lipani", club: "Sassuolo", role: "Centrocampista", national: "Italia U21", evidence: "Ha segnato il secondo gol nella vittoria degli Azzurrini in Francia.", observe: "Gestione della pressione in uscita e inserimenti senza palla.", source: "https://www.figc.it/it/nazionali/news/con-leco-di-san-siro-gli-azzurrini-vincono-in-francia-con-i-gol-di-camarda-e-lipani-hudlqmly" },
+  { name: "Samuele Inacio", club: "Borussia Dortmund", role: "Attaccante", national: "Italia U21", evidence: "Inserito tra gli attaccanti dell’Under 21 nel raduno di novembre.", observe: "Passaggio al calcio di prima squadra e capacità di incidere contro avversari più fisici.", source: under21 },
+  { name: "Francesco Pio Esposito", club: "Inter", role: "Attaccante", national: "Italia", evidence: "Convocato in Nazionale maggiore per Francia e Belgio.", observe: "Continuità realizzativa e qualità del gioco di sponda in prima squadra.", source: senior },
+];

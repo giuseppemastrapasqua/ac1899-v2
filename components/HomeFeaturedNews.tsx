@@ -35,7 +35,7 @@ export default async function HomeFeaturedNews() {
   const press = [...foreign, ...italian];
   const distinctPress = [...new Map(
     [...getVerifiedPressNews(), ...press].map(story => [story.url, story])
-  ).values()];
+  ).values()].sort((a, b) => Number(a.url.startsWith("https://news.google.com/")) - Number(b.url.startsWith("https://news.google.com/")) || b.date.localeCompare(a.date));
 
   const groups: RotationStory[][] = await Promise.all([
     Promise.all(official.slice(0, 8).map(async story => ({

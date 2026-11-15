@@ -6,6 +6,10 @@ const editions = {
     hl: "it", gl: "IT", ceid: "IT:it",
     domains: ["gazzetta.it", "corrieredellosport.it", "tuttosport.com", "sport.sky.it", "sportmediaset.mediaset.it", "repubblica.it", "corriere.it", "milannews.it"],
     seed: [{
+      title: "Tournée estiva del Milan, Cardinale affida la scelta ad Amorim",
+      source: "Pianeta Milan", date: "2026-11-14T08:27:00Z",
+      url: "https://www.pianetamilan.it/news-milan/interviste/milan-cardinale-tournee-estiva-decide-amorim-squadra-al-primo-posto/",
+    }, {
       title: "RedBird presenta Milan Sports & Entertainment",
       source: "Sky Sport", date: "2026-11-13T12:33:00Z",
       url: "https://sport.sky.it/calcio/serie-a/2026/11/13/redbird-milan-sport-entertainment-yormark-ad",
@@ -75,5 +79,5 @@ export async function getPressNews(edition: Edition): Promise<PressStory[]> {
 }
 
 export function getVerifiedPressNews() {
-  return [...editions.estero.seed, ...editions.italia.seed];
+  return [...editions.estero.seed, ...editions.italia.seed].sort((a, b) => b.date.localeCompare(a.date));
 }

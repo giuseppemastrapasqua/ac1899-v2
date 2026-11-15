@@ -6,11 +6,11 @@ import HomeMatchCenter from "../components/HomeMatchCenter";
 import MatchAnalyst from "../components/MatchAnalyst";
 import MonthlyMvp from "../components/MonthlyMvp";
 import UpcomingMatchCards from "../components/UpcomingMatchCards";
+import ItalianWonderkids from "../components/ItalianWonderkids";
 import NewsletterBox from "../components/NewsletterBox";
 
 const sections = [
   { title: "AI Room", description: "Analisi delle partite e approfondimenti.", href: "/analisi", id: "ai-room" },
-  { title: "Wonderkids", description: "Profili e classifiche dei giovani talenti.", href: "/wonderkids" },
   { title: "Creator Room", description: "Video e contenuti della redazione.", href: "/creator-video" },
 ];
 
@@ -38,9 +38,11 @@ export default function Home() {
       <div className="home-section home-section-community">
         <div className="home-section-inner">
 
+        <ItalianWonderkids compact />
+
         <section aria-labelledby="explore-title">
           <h2 id="explore-title" className="mb-4 border-b border-gray-200 pb-3 text-3xl">Approfondimenti</h2>
-          <div className="grid gap-3 md:grid-cols-3">
+          <div className="grid gap-3 md:grid-cols-2">
             {sections.map(section => (
               <Link key={section.href} id={section.id} href={section.href}
                 className="ac1899-box group px-5 py-4 transition-colors hover:border-red-300 hover:bg-red-50">
