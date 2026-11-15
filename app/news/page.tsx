@@ -74,13 +74,14 @@ export default function NewsPage() {
       <section
         style={{
           display: "grid",
-          gridTemplateColumns: "1.3fr 1fr",
+          gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 320px), 1fr))",
           gap: 24,
           marginBottom: 24,
         }}
       >
         <div>
-          <OfficialMilanNews />
+          <h2>Ultime notizie ufficiali</h2>
+          <OfficialMilanNews limit={20} />
         </div>
 
         <div>

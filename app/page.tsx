@@ -39,25 +39,7 @@ export default async function Home() {
 
   const fixtures = fixturesData?.response || [];
 
-  const nextMatch =
-  nextFixtureData?.response?.[0] || {
-    teams: {
-      home: {
-        name: "Torino",
-        logo: "https://media.api-sports.io/football/teams/503.png",
-      },
-      away: {
-        name: "AC Milan",
-        logo: "https://media.api-sports.io/football/teams/489.png",
-      },
-    },
-    league: {
-      name: "Serie A",
-    },
-    fixture: {
-      date: "2026-08-23T20:45:00",
-    },
-  };
+  const nextMatch = nextFixtureData?.response?.[0];
 
   const finishedFixtures = fixtures.filter(
     (item: any) => item.fixture?.status?.short === "FT"
@@ -87,6 +69,11 @@ export default async function Home() {
       <section className="homepage-layout" style={featuredLayout}>
         <div style={mainColumn}>
           
+          <section style={premiumCard}>
+            <h2 style={{ marginTop: 0 }}>Ultime notizie ufficiali</h2>
+            <OfficialMilanNews />
+          </section>
+
           <NewsList />
 
           <section id="ai-room" aria-labelledby="ai-room-title" style={premiumCard}>
@@ -125,19 +112,6 @@ export default async function Home() {
   <MilanHubAI />
   </section>
   
-          <div style={premiumCard}>
-  <span
-  style={{
-    ...sectionBadge,
-    color: "#e30613",
-  }}
-
->
-  🗞️ FONTI
-</span>
-  <h2 style={{ marginTop: 10 }}>News ufficiali e rassegna</h2>
-  <OfficialMilanNews />
-</div>
 <section style={quickGrid}>
   <QuickBox
     icon="⚽"

@@ -5,9 +5,15 @@ const headers = {
   "x-apisports-host": "v3.football.api-sports.io",
 };
 
+function currentSeason() {
+  const today = new Date();
+  const year = today.getUTCFullYear();
+  return today.getUTCMonth() >= 6 ? year : year - 1;
+}
+
 export async function getSerieAStandings() {
   const res = await fetch(
-    `${BASE_URL}/standings?league=135&season=2024`,
+    `${BASE_URL}/standings?league=135&season=${currentSeason()}`,
     {
       headers,
       next: { revalidate: 60 },
@@ -19,7 +25,7 @@ export async function getSerieAStandings() {
 
 export async function getTopScorers() {
   const res = await fetch(
-    `${BASE_URL}/players?team=489&season=2024`,
+    `${BASE_URL}/players?team=489&season=${currentSeason()}`,
     {
       headers,
       cache: "no-store",
@@ -31,7 +37,7 @@ export async function getTopScorers() {
 
 export async function getMilanFixtures() {
   const res = await fetch(
-    `${BASE_URL}/fixtures?team=489&season=2024`,
+    `${BASE_URL}/fixtures?team=489&season=${currentSeason()}`,
     {
       headers,
       next: { revalidate: 3600 },
