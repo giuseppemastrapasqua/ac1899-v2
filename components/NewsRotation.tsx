@@ -75,7 +75,7 @@ export default function NewsRotation({ stories }: { stories: RotationStory[] }) 
     >
       <div className="mx-auto max-w-[1400px]">
         <div className="grid gap-5 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
-          <article className="overflow-hidden rounded-2xl border border-white/15 bg-gray-900">
+          <article className="ac1899-box">
             <div className="aspect-video"><StoryPhoto story={lead} /></div>
             <div className="p-4">
               <h1 className="mb-4 text-2xl font-black uppercase sm:text-3xl">{lead.title}</h1>

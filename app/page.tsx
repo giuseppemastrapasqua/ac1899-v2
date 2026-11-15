@@ -36,7 +36,7 @@ export default function Home() {
           <div className="grid gap-3 md:grid-cols-3">
             {sections.map(section => (
               <Link key={section.href} id={section.id} href={section.href}
-                className="group rounded-xl border border-gray-200 px-5 py-4 transition-colors hover:border-red-300 hover:bg-red-50">
+                className="ac1899-box group px-5 py-4 transition-colors hover:border-red-300 hover:bg-red-50">
                 <h3 className="mb-1 text-xl">{section.title} <span aria-hidden="true">→</span></h3>
                 <p className="text-sm text-gray-600">{section.description}</p>
               </Link>

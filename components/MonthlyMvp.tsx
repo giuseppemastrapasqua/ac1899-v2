@@ -3,7 +3,7 @@ const photo = "https://assets-eu-01.kc-usercontent.com/006f7528-416b-01e4-8ef2-a
 
 export default function MonthlyMvp() {
   return (
-    <section aria-labelledby="monthly-mvp" className="overflow-hidden rounded-2xl border border-red-200 border-t-4 border-t-red-600 bg-red-50 shadow-sm md:grid md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
+    <section aria-labelledby="monthly-mvp" className="ac1899-box md:grid md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
       <img src={photo} alt="Diego Moreira nella grafica ufficiale dell’MVP di ottobre" loading="lazy"
         className="aspect-square h-full max-h-72 w-full object-cover object-center md:max-h-none" />
       <div className="self-center p-6 sm:p-8">

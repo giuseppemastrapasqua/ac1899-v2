@@ -1,27 +1,30 @@
+import MatchCard from "./MatchCard";
+import StandingsTable from "./StandingsTable";
+import { europaLeague } from "../lib/home-standings";
+
+const milan = { name: "Milan", id: 489 };
+
 export default function EuropaLeagueBox() {
   return (
-    <section id="europa" aria-labelledby="europa-title" className="rounded-xl border border-gray-200 bg-gray-50 p-5">
-      <h2 id="europa-title" className="mb-3 text-2xl font-bold">Europa League</h2>
-      <dl className="grid gap-3 sm:grid-cols-3">
-        <div>
-          <dt className="text-sm text-gray-400">Ultimo risultato verificato</dt>
-          <dd className="font-bold">Milan 0–2 Ferencváros</dd>
-          <dd className="text-sm text-gray-400">5 novembre 2026</dd>
+    <section id="europa" aria-labelledby="europa-title">
+      <h2 id="europa-title" className="mb-4 border-b border-gray-200 pb-3 text-3xl">Europa League</h2>
+      <div className="grid gap-4 lg:grid-cols-3">
+        <MatchCard home={milan} away={{ name: "Ferencváros", id: 651 }} date="2026-11-05"
+          venue="Stadio San Siro" competition="Europa League" league={3} value="0–2" status="FINITA"
+          note="Giornata 4 · Joseph 52′, 66′" />
+        <MatchCard home={{ name: "Olympiacos", id: 553 }} away={milan} date="2026-11-26"
+          venue="Stadio Georgios Karaiskákis" competition="Europa League" league={3} value="18:45" status="TRASFERTA" note="Giornata 5 · Orario italiano" />
+        <MatchCard home={milan} away={{ name: "Sunderland", id: 746 }} date="2026-12-10"
+          venue="Stadio San Siro" competition="Europa League" league={3} value="21:00" status="CASA" note="Giornata 6 · Orario italiano" />
+      </div>
+      <div className="ac1899-box mt-4 p-5">
+        <h3 className="mb-2 text-xl">Classifica completa · 36 squadre</h3>
+        <p className="mb-3 text-sm text-gray-600">Fase campionato · dopo 4 giornate</p>
+        <StandingsTable rows={europaLeague} title="Classifica completa Europa League" />
+        <div className="mt-4 flex flex-wrap gap-4 text-sm">
+          <a href="https://it.uefa.com/uefaeuropaleague/clubs/50058/matches/">Calendario UEFA →</a>
+          <a href="https://www.acmilan.com/it/stagione/2026/classifiche/uefa-europa-league">Classifica ufficiale →</a>
         </div>
-        <div>
-          <dt className="text-sm text-gray-400">Giornata 5</dt>
-          <dd className="font-bold">Olympiacos – Milan</dd>
-          <dd className="text-sm text-gray-400">26 novembre 2026</dd>
-        </div>
-        <div>
-          <dt className="text-sm text-gray-400">Classifica dopo 4 giornate</dt>
-          <dd className="font-bold">28º posto · 3 punti</dd>
-          <dd className="text-sm text-gray-400">4 gol fatti · 7 subiti</dd>
-        </div>
-      </dl>
-      <div className="mt-4 flex flex-wrap gap-4">
-        <a href="https://it.uefa.com/uefaeuropaleague/clubs/50058/matches/">Calendario UEFA →</a>
-        <a href="https://www.acmilan.com/it/stagione/2026/classifiche/uefa-europa-league">Classifica ufficiale →</a>
       </div>
     </section>
   );

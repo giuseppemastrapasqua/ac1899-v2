@@ -1,3 +1,6 @@
+import MatchCard, { type MatchTeam } from "./MatchCard";
+import StandingsTable from "./StandingsTable";
+import { serieA, type StandingRow } from "../lib/home-standings";
 import Link from "next/link";
 import { getMilanFixtures, getSerieAStandings } from "../lib/api-football";
 
@@ -9,25 +12,16 @@ type Standing = {
 };
 
 type Fixture = {
-  fixture: { date: string; status: { short: string } };
+  fixture: { date: string; venue?: { name?: string }; status: { short: string } };
   league: { id: number; season: number };
-  teams: { home: { name: string }; away: { name: string } };
+  teams: { home: MatchTeam; away: MatchTeam };
   goals: { home: number | null; away: number | null };
 };
 
 const calendar = "https://www.acmilan.com/it/stagione/2026/calendario/serie-a";
 const officialTable = "https://www.acmilan.com/en/season/2026/standings/serie-a";
-const snapshot = [
-  { rank: 1, name: "Lazio", points: 29 },
-  { rank: 2, name: "Inter", points: 28 },
-  { rank: 3, name: "Roma", points: 27 },
-  { rank: 4, name: "AC Milan", points: 24 },
-  { rank: 5, name: "Como", points: 23 },
-  { rank: 6, name: "Frosinone", points: 20 },
-];
-
 const officialFixtures: Fixture[] = [
-  { fixture: { date: "2026-11-08T15:00:00+01:00", status: { short: "FT" } }, league: { id: 135, season: 2026 }, teams: { home: { name: "Genoa" }, away: { name: "AC Milan" } }, goals: { home: 1, away: 2 } },
+  { fixture: { date: "2026-11-08T15:00:00+01:00", venue: { name: "Stadio Luigi Ferraris" }, status: { short: "FT" } }, league: { id: 135, season: 2026 }, teams: { home: { name: "Genoa", id: 495 }, away: { name: "AC Milan", id: 489 } }, goals: { home: 1, away: 2 } },
 ];
 
 const scorers = [
@@ -38,7 +32,7 @@ const scorers = [
   { rank: 5, name: "Gonçalo Ramos", goals: 2 },
 ];
 
-const panel = "min-w-0 rounded-xl border border-gray-200 border-t-2 border-t-red-600 bg-white p-5 shadow-sm";
+const panel = "ac1899-box min-w-0 p-5";
 const caption = "mt-3 text-xs text-gray-400";
 
 function fixtureDate(date: string) {
@@ -50,11 +44,11 @@ export default async function HomeMatchCenter() {
   const liveTable: Standing[] = tableResult.status === "fulfilled"
     ? tableResult.value?.response?.[0]?.league?.standings?.[0] ?? [] : [];
   const liveMilan = liveTable.find(row => row.team.id === 489 && row.all?.played >= 11 && row.all.goals);
-  const rows = liveMilan ? liveTable
-    .filter(row => row.rank <= 6 || row.team.id === 489)
-    .map(row => ({ rank: row.rank, name: row.team.id === 489 ? "AC Milan" : row.team.name, points: row.points }))
-    : snapshot;
-  const stats = liveMilan?.all ?? { played: 11, win: 7, draw: 3, lose: 1, goals: { for: 23, against: 13 } };
+  const rows: StandingRow[] = liveMilan && liveTable.length === 20 && liveTable.every(row => row.all?.goals)
+    ? liveTable.map(row => [row.rank, row.team.id === 489 ? "AC Milan" : row.team.name, row.points,
+        row.all.played, row.all.win, row.all.draw, row.all.lose, row.all.goals.for, row.all.goals.against])
+    : serieA;
+  const stats = (rows !== serieA ? liveMilan?.all : undefined) ?? { played: 11, win: 7, draw: 3, lose: 1, goals: { for: 23, against: 13 } };
   const liveFixtures: Fixture[] = fixturesResult.status === "fulfilled" && Array.isArray(fixturesResult.value?.response)
     ? fixturesResult.value.response.filter((match: Fixture) => match.league?.id === 135 && match.league.season === 2026) : [];
   const sorted = [...liveFixtures].sort((a, b) => Date.parse(a.fixture.date) - Date.parse(b.fixture.date));
@@ -72,27 +66,23 @@ export default async function HomeMatchCenter() {
         <h3 className="mb-2 text-xl">Risultati</h3>
         <p className="text-sm text-gray-400">Serie A {season ? season + "/" + String(season + 1).slice(-2) : ""}</p>
         <h3 className="mt-4 font-semibold">Ultimo risultato</h3>
-        <p className="mt-1 text-lg font-bold">{last.teams.home.name} {last.goals.home}–{last.goals.away} {last.teams.away.name}</p>
-        <p className="text-sm text-gray-400">{fixtureDate(last.fixture.date)}</p>
+        <div className="mt-2">
+          <MatchCard home={last.teams.home} away={last.teams.away} date={last.fixture.date}
+            venue={last.fixture.venue?.name} competition="Serie A" league={135}
+            value={last.goals.home + "–" + last.goals.away} status="FINITA" note={fixtureDate(last.fixture.date)} />
+        </div>
         <a className="mt-3 inline-block" href={calendar}>Calendario ufficiale →</a>
       </div>
 
       <div className={panel}>
-        <h3 className="mb-3 text-xl font-bold">Classifica Serie A</h3>
-        <table className="w-full text-left text-sm">
-          <thead><tr><th scope="col">Pos.</th><th scope="col">Squadra</th><th scope="col" className="text-right">Pt</th></tr></thead>
-          <tbody>{rows.map(row => (
-            <tr key={row.name} className={row.name === "AC Milan" ? "bg-red-950 font-bold" : "border-t border-white/10"}>
-              <td className="py-2">{row.rank}</td><td>{row.name}</td><td className="text-right">{row.points}</td>
-            </tr>
-          ))}</tbody>
-        </table>
+        <h3 className="mb-3 text-xl font-bold">Classifica Serie A · 20 squadre</h3>
+        <StandingsTable rows={rows} title="Classifica completa Serie A" />
         <dl className="mt-4 grid grid-cols-3 gap-2 text-sm">
           {[["Partite", stats.played], ["Vinte", stats.win], ["Pareggi", stats.draw], ["Perse", stats.lose], ["Gol fatti", stats.goals.for], ["Gol subiti", stats.goals.against]].map(([label, value]) =>
             <div key={label} className="border border-white/10 p-2"><dt className="text-gray-400">{label}</dt><dd className="text-lg font-bold">{value}</dd></div>
           )}
         </dl>
-        <p className={caption}>{liveMilan ? "Dati di campionato da API-Football" : "Dati verificati al 15 novembre 2026"}</p>
+        <p className={caption}>{rows !== serieA ? "Dati di campionato da API-Football" : "Dati verificati al 15 novembre 2026"}</p>
         <a className="mt-2 inline-block" href={officialTable}>Classifica completa →</a>
       </div>
 

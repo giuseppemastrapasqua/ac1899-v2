@@ -36,7 +36,7 @@ export default function NewsletterBox() {
   }
 
   return (
-    <section
+    <section className="ac1899-box"
       id="newsletter"
       aria-labelledby="newsletter-title"
       style={{

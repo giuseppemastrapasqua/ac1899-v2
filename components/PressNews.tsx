@@ -8,7 +8,7 @@ export default async function PressNews({ limit = 25 }: { limit?: number }) {
       <h2 id="press-title" className="mb-4 text-2xl font-bold">Rassegna stampa</h2>
       <div className="grid gap-5 lg:grid-cols-2">
         {[{ title: "Italia", stories: italia }, { title: "Estero", stories: estero }].map(({ title, stories }) => (
-          <section key={title} className="border border-white/10 bg-gray-900 p-4">
+          <section key={title} className="ac1899-box ac1899-box-dark p-4">
             <h3 className="mb-2 text-lg font-bold">{title}</h3>
             <ul className="divide-y divide-white/10">
               {stories.slice(0, limit).map(story => (
