@@ -17,21 +17,21 @@ const lineups = [
 
 export default function GenoaMilanReport() {
   return (
-    <section className="ac1899-box min-w-0 p-5" aria-labelledby="last-match-report">
+    <section className="ac1899-box min-w-0 p-3" aria-labelledby="last-match-report">
       <h3 id="last-match-report" className="mb-1 text-xl">Tabellino completo</h3>
-      <p className="mb-3 text-sm text-gray-600">11ª giornata · Arbitro Davide Massa</p>
-      <dl className="divide-y divide-gray-200 text-sm">
-        <div className="py-2">
+      <p className="mb-3 text-xs text-gray-600">11ª giornata · Arbitro Davide Massa</p>
+      <dl className="divide-y divide-gray-200 text-xs">
+        <div className="py-1">
           <dt className="font-bold">Marcatori</dt>
           <dd>13′ Cissè (M), 19′ Pulisic (M), 88′ Ellertsson (G)</dd>
         </div>
-        <div className="py-2">
+        <div className="py-1">
           <dt className="font-bold">Ammoniti</dt>
           <dd>28′ Musah, 31′ Diawara, 50′ Rabiot e Marcandalli, 76′ Pulisic, 87′ Gila, 90′+4 Ehizibue.</dd>
         </div>
       </dl>
       {lineups.map(({ team, formation, coach, starters, bench, changes }) => (
-        <details key={team} className="border-t border-gray-200 py-2 text-sm">
+        <details key={team} className="border-t border-gray-200 py-1 text-xs">
           <summary className="cursor-pointer font-bold">{team} · {formation}</summary>
           <p className="mt-2"><strong>Allenatore:</strong> {coach}</p>
           <p className="mt-1"><strong>Titolari:</strong> {starters.join(", ")}.</p>
@@ -39,7 +39,7 @@ export default function GenoaMilanReport() {
           <p className="mt-1"><strong>Riserve non utilizzate:</strong> {bench.join(", ")}.</p>
         </details>
       ))}
-      <a href={report} className="mt-2 inline-block text-sm">Resoconto ufficiale →</a>
+      <a href={report} className="mt-2 inline-block text-xs">Resoconto ufficiale →</a>
     </section>
   );
 }

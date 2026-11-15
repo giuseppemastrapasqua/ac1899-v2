@@ -41,7 +41,7 @@ const assists = [
   { rank: 3, name: "Gonçalo Ramos", total: 2 },
 ];
 
-const panel = "ac1899-box min-w-0 p-5";
+const panel = "ac1899-box min-w-0 p-3";
 const caption = "mt-3 text-xs text-gray-400";
 
 function fixtureDate(date: string) {
@@ -69,8 +69,8 @@ export default async function HomeMatchCenter() {
   return (
     <section aria-labelledby="match-center-title">
       <h2 id="match-center-title" className="mb-4 border-b border-gray-200 pb-3 text-3xl">Match Center</h2>
-      <div className="grid items-stretch gap-4 md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,2.2fr)]">
-      <div className="grid min-w-0 content-start gap-4 xl:row-span-2 xl:grid-rows-subgrid">
+      <div className="grid items-stretch gap-3 md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,2.2fr)]">
+      <div className="grid min-w-0 content-start gap-3 xl:row-span-2 xl:grid-rows-subgrid">
       <div className={panel}>
         <h3 className="mb-2 text-xl">Risultati</h3>
         <p className="text-sm text-gray-400">Serie A {season ? season + "/" + String(season + 1).slice(-2) : ""}</p>
@@ -80,7 +80,7 @@ export default async function HomeMatchCenter() {
             venue={last.fixture.venue?.name} competition="Serie A" league={135}
             value={last.goals.home + "–" + last.goals.away} status="FINITA" note={fixtureDate(last.fixture.date)} />
         </div>
-        <a className="mt-3 inline-block" href={calendar}>Calendario ufficiale →</a>
+        <a className="mt-2 inline-block text-xs" href={calendar}>Calendario ufficiale →</a>
       </div>
 
       {last.fixture.date.slice(0, 10) === "2026-11-08" &&
@@ -88,18 +88,18 @@ export default async function HomeMatchCenter() {
         last.goals.home === 1 && last.goals.away === 2 && <GenoaMilanReport />}
       </div>
 
-      <div className="grid min-w-0 content-start gap-4 xl:row-span-2 xl:grid-rows-subgrid">
+      <div className="grid min-w-0 content-start gap-3 xl:row-span-2 xl:grid-rows-subgrid">
       <div className={panel}>
         <h3 className="mb-1 text-xl font-bold">Classifica marcatori</h3>
         <p className="mb-3 text-sm text-gray-600">AC Milan · Serie A 2026/27</p>
-        <table className="w-full text-left text-sm">
+        <table className="w-full text-left text-xs">
           <thead>
             <tr><th scope="col">Pos.</th><th scope="col">Giocatore</th><th scope="col" className="text-right">Gol</th></tr>
           </thead>
           <tbody>
             {scorers.map(player => (
               <tr key={player.name} className={player.rank === 1 ? "border-t border-gray-200 bg-red-50 font-semibold" : "border-t border-gray-200"}>
-                <td className="py-2">{player.rank}</td>
+                <td className="py-1">{player.rank}</td>
                 <td>{player.name}</td>
                 <td className="text-right font-bold tabular-nums">{player.goals}</td>
               </tr>
@@ -112,14 +112,14 @@ export default async function HomeMatchCenter() {
       <div className={panel}>
         <h3 className="mb-1 text-xl font-bold">Classifica assist</h3>
         <p className="mb-3 text-sm text-gray-600">AC Milan · Serie A 2026/27</p>
-        <table className="w-full text-left text-sm">
+        <table className="w-full text-left text-xs">
           <thead>
             <tr><th scope="col">Pos.</th><th scope="col">Giocatore</th><th scope="col" className="text-right">Assist</th></tr>
           </thead>
           <tbody>
             {assists.map(player => (
               <tr key={player.name} className={player.rank === 1 ? "border-t border-gray-200 bg-red-50 font-semibold" : "border-t border-gray-200"}>
-                <td className="py-2">{player.rank}</td>
+                <td className="py-1">{player.rank}</td>
                 <td>{player.name}</td>
                 <td className="text-right font-bold tabular-nums">{player.total}</td>
               </tr>
@@ -131,7 +131,7 @@ export default async function HomeMatchCenter() {
       </div>
       <div className={panel + " md:col-span-2 xl:col-span-1 xl:row-span-2"}>
         <h3 className="mb-3 text-xl font-bold">Classifica Serie A · 20 squadre</h3>
-        <StandingsTable rows={rows} title="Classifica completa Serie A" expanded />
+        <StandingsTable rows={rows} title="Classifica completa Serie A" expanded compact />
         <p className={caption}>{rows !== serieA ? "Dati di campionato da API-Football" : "Dati verificati al 15 novembre 2026"}</p>
         <a className="mt-2 inline-block" href={officialTable}>Fonte ufficiale →</a>
       </div>
