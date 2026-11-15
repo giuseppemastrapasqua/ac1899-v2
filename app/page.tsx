@@ -84,12 +84,12 @@ export default async function Home() {
     <main style={page}>
       <HomeFeaturedNews />
       
-      <section style={featuredLayout}>
+      <section className="homepage-layout" style={featuredLayout}>
         <div style={mainColumn}>
           
           <NewsList />
 
-          <div style={premiumCard}>
+          <section id="ai-room" aria-labelledby="ai-room-title" style={premiumCard}>
   <div>
    <span
   style={{
@@ -97,16 +97,17 @@ export default async function Home() {
     color: "#e30613",
   }}
 >
-  🤖 AI ROOM
+  Approfondimenti
 </span>
     <h2
+  id="ai-room-title"
   style={{
     marginTop: 10,
     fontSize: 32,
     marginBottom: 10,
   }}
 >
-
+  AI Room
 </h2>
 
   <p
@@ -117,11 +118,12 @@ export default async function Home() {
     maxWidth: 700,
   }}
 >
+  Analisi, confronti e approfondimenti sul Milan.
     </p>
   </div>
 
   <MilanHubAI />
-  </div>
+  </section>
   
           <div style={premiumCard}>
   <span
@@ -186,7 +188,7 @@ export default async function Home() {
           style={{
             marginTop: 18,
             display: "grid",
-            gridTemplateColumns: "110px auto 110px",
+            gridTemplateColumns: "minmax(0, 1fr) auto minmax(0, 1fr)",
             alignItems: "center",
             gap: 10,
             textAlign: "center",

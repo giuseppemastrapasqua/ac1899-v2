@@ -62,3 +62,14 @@ table {
   --milan-red: #e30613;
   --milan-red-dark: #9b0008;
 }
+#ai-room,
+#europa,
+#newsletter {
+  scroll-margin-top: 9rem;
+}
+
+@media (max-width: 960px) {
+  .homepage-layout {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}

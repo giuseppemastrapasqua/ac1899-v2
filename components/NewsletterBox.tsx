@@ -37,6 +37,8 @@ export default function NewsletterBox() {
 
   return (
     <section
+      id="newsletter"
+      aria-labelledby="newsletter-title"
       style={{
         background: "#111827",
         border: "1px solid rgba(255,255,255,.08)",
@@ -58,6 +60,7 @@ export default function NewsletterBox() {
       </span>
 
       <h3
+        id="newsletter-title"
         style={{
           margin: "10px 0 8px",
           color: "#ffffff",
@@ -88,6 +91,7 @@ export default function NewsletterBox() {
       >
         <input
           type="email"
+          aria-label="Indirizzo email"
           placeholder="La tua email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}

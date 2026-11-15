@@ -6,11 +6,11 @@ export default function Navbar() {
   const links = [
     { label: "Home", href: "/" },
     { label: "Milan", href: "/news" },
-    { label: "AI Room", href: "/ai" },
+    { label: "AI Room", href: "/#ai-room" },
     { label: "Creator", href: "/creator-video" },
     { label: "Wonderkids", href: "/wonderkids" },
-    { label: "Europa", href: "/europa-league" },
-    { label: "Community", href: "/newsletter" },
+    { label: "Europa", href: "/#europa" },
+    { label: "Community", href: "/#newsletter" },
   ];
 
   return (
@@ -24,13 +24,15 @@ export default function Navbar() {
       }}
     >
       <nav
+        aria-label="Navigazione principale"
         style={{
           maxWidth: 1400,
           margin: "0 auto",
           padding: "12px 24px",
           display: "flex",
           alignItems: "center",
-          gap: 24,
+          gap: "12px 24px",
+          flexWrap: "wrap",
         }}
       >
         <Link
@@ -42,7 +44,7 @@ export default function Navbar() {
             fontSize: 26,
             letterSpacing: "-1px",
             fontFamily: "Arial Black, sans-serif",
-            marginRight: 40,
+            marginRight: 12,
           }}
         >
           AC1899

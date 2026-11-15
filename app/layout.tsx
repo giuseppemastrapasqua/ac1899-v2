@@ -91,8 +91,8 @@ export default function RootLayout({
       <a href="/news" style={footerLink}>News</a>
       <a href="/creator-video" style={footerLink}>Creator</a>
       <a href="/wonderkids" style={footerLink}>Wonderkids</a>
-      <a href="/avversario" style={footerLink}>AI Room</a>
-      <a href="/europa-league" style={footerLink}>Europa</a>
+      <a href="/#ai-room" style={footerLink}>AI Room</a>
+      <a href="/#europa" style={footerLink}>Europa</a>
     </nav>
 
     <p
