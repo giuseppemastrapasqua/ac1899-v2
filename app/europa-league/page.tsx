@@ -1,3 +1,4 @@
+import EuropaOpponent from "../../components/EuropaOpponent";
 import Link from "next/link";
 import EuropaLeagueBox from "../../components/EuropaLeagueBox";
 
@@ -12,6 +13,7 @@ export default function EuropaLeaguePage() {
         </div>
         <p className="text-xs text-gray-600">Dati UEFA dopo quattro giornate.</p>
         <EuropaLeagueBox />
+        <EuropaOpponent />
         <Link href="/europa-league/analisi" className="font-semibold">Analisi ultima gara e prossimo avversario →</Link>
       </div>
     </main>

@@ -36,7 +36,7 @@ export default async function CreatorVideoPage() {
   );
 
   return (
-    <main style={page}>
+    <main className="ac1899-home min-h-screen"><div className="home-section-inner">
       <section style={hero}>
         <span style={badge}>🎥 CREATOR VIDEO</span>
         <h1 style={title}>AC1899 Creator Room</h1>
@@ -124,7 +124,7 @@ export default async function CreatorVideoPage() {
       <Link href="/" style={backLink}>
         ← Torna alla Home
       </Link>
-    </main>
+    </div></main>
   );
 }
 

@@ -1,3 +1,4 @@
+import LeagueCharts from "../../components/LeagueCharts";
 import Link from "next/link";
 import HomeMatchCenter from "../../components/HomeMatchCenter";
 import UpcomingMatchCards from "../../components/UpcomingMatchCards";
@@ -16,14 +17,18 @@ export default function CampionatoPage() {
         </div>
         <UpcomingMatchCards league={135} today={new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Rome" }).format(new Date())} />
         <HomeMatchCenter />
+        <LeagueCharts />
         <section className="ac1899-box p-4" aria-labelledby="league-metrics">
           <h2 id="league-metrics" className="mb-3 text-2xl">Statistiche delle 20 squadre</h2>
           <div className="overflow-x-auto" tabIndex={0} role="region" aria-label="Possesso, passaggi e duelli di Serie A">
             <table className="w-full min-w-max text-left text-sm tabular-nums">
-              <thead className="bg-gray-100"><tr>{["Squadra", "Possesso %", "Passaggi", "Prec. passaggi %", "Duelli a terra vinti %", "Duelli aerei vinti %", "Angoli"].map(label => <th scope="col" key={label} className="p-2">{label}</th>)}</tr></thead>
-              <tbody>{serieATeamStats.map(([team, ...values]) => <tr key={team} className={team === "Milan" ? "bg-red-50 font-bold" : "border-b border-gray-100"}>
-                <th scope="row" className="p-2">{team}</th>{values.map((value, index) => <td key={index} className="p-2">{value.toLocaleString("it-IT")}</td>)}
-              </tr>)}</tbody>
+              <thead className="bg-gray-100"><tr>{["Squadra", "Possesso %", "Passaggi", "Prec. passaggi %", "Duelli a terra vinti %", "Duelli aerei vinti %", "Angoli", "Punti/gara", "Gol/gara", "Subiti/gara", "Vittorie %"].map(label => <th scope="col" key={label} className="p-2">{label}</th>)}</tr></thead>
+              <tbody>{serieATeamStats.map(([team, ...values]) => {
+                const row = serieA.find(entry => entry[1] === (team === "Milan" ? "AC Milan" : team));
+                const rates = row ? [row[2] / row[3], row[7] / row[3], row[8] / row[3], row[4] / row[3] * 100] : [];
+                return <tr key={team} className={team === "Milan" ? "bg-red-50 font-bold" : "border-b border-gray-100"}>
+                <th scope="row" className="p-2">{team}</th>{[...values, ...Array.from({ length: 4 }, (_, i) => rates[i])].map((value, index) => <td key={index} className="p-2">{value?.toLocaleString("it-IT", { maximumFractionDigits: 2 }) ?? "—"}</td>)}
+              </tr>; })}</tbody>
             </table>
           </div>
           <p className="mt-2 text-xs text-gray-600">Medie per partita · Fonte: StatsNext, dopo 11 giornate.</p>

@@ -13,7 +13,7 @@ export default function Navbar() {
     { label: "Europa League", href: "/europa-league" },
     { label: "Wonderkids", href: "/wonderkids" },
     { label: "Creator", href: "/creator-video" },
-    { label: "Community", href: "/#newsletter" },
+    { label: "Community", href: "/community" },
   ];
 
   return (
