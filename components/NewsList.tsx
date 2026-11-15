@@ -1,5 +1,6 @@
 "use client";
 
+import NewsCover, { NewsCoverCredit } from "./NewsCover";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
@@ -109,13 +110,7 @@ export default function NewsList() {
               : featuredCard
           }
         >
-          {featured.image_url && (
-            <img
-              src={featured.image_url}
-              alt={featured.title}
-              style={featuredImage}
-            />
-          )}
+          <NewsCover image={featured.image_url || undefined} linkedCard />
 
           <div style={featuredContent}>
             <p
@@ -156,9 +151,7 @@ export default function NewsList() {
             }
             style={item.type === "editorial" ? editorialCard : smallCard}
           >
-            {item.image_url && (
-              <img src={item.image_url} alt={item.title} style={smallImage} />
-            )}
+            <NewsCover image={item.image_url || undefined} linkedCard />
 
             <div style={compactContent}>
               <p
@@ -192,6 +185,7 @@ export default function NewsList() {
           </Link>
         ))}
       </section>
+      <p className="text-xs text-gray-400"><NewsCoverCredit /></p>
     </>
   );
 }

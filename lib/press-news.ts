@@ -15,7 +15,7 @@ const editions = {
     hl: "en-GB", gl: "GB", ceid: "GB:en",
     domains: ["reuters.com", "ft.com", "bbc.com", "skysports.com", "theguardian.com", "espn.com", "nytimes.com", "lequipe.fr", "marca.com", "as.com", "kicker.de"],
     seed: [{
-      title: "RedBird sceglie Brett Yormark per guidare la nuova holding",
+      title: "RedBird sceglie Brett Yormark per guidare la nuova holding del Milan",
       source: "Reuters", date: "2026-11-13T14:36:05Z",
       url: "https://www.reuters.com/sports/soccer/redbird-launches-milan-sports-holding-company-names-brett-yormark-ceo-2026-11-13/",
     }, {
@@ -33,6 +33,12 @@ function field(item: string, name: string) {
     .replace(/&(?:amp|quot|apos|lt|gt|#39);/g, (entity) => ({
       "&amp;": "&", "&quot;": '"', "&apos;": "'", "&lt;": "<", "&gt;": ">", "&#39;": "'",
     })[entity] ?? entity);
+}
+
+function isAboutMilan(title: string) {
+  const club = /\b(?:a\.?\s?c\.?[ -]milan|milan ac|rossoner[ioe])\b/i;
+  const footballContext = /\b(?:club|serie a|inter|derby|san siro|calciomercato|redbird|cardinale|mercato|coach|transfer|stadio|allenatore|squadra|holding|women)\b/i;
+  return club.test(title) || (/\bMilan\b/i.test(title) && footballContext.test(title));
 }
 
 export async function getPressNews(edition: Edition): Promise<PressStory[]> {
@@ -53,7 +59,7 @@ export async function getPressNews(edition: Edition): Promise<PressStory[]> {
       const rawTitle = field(item, "title");
       const title = rawTitle.endsWith(" - " + source) ? rawTitle.slice(0, -source.length - 3) : rawTitle;
       const timestamp = Date.parse(field(item, "pubDate"));
-      if (!title || !source || !url.startsWith("https://news.google.com/") || !Number.isFinite(timestamp)) continue;
+      if (!isAboutMilan(title) || !source || !url.startsWith("https://news.google.com/") || !Number.isFinite(timestamp)) continue;
       stories.push({ title, source, url, date: new Date(timestamp).toISOString() });
     }
   } catch (error) {
