@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&display=swap");
 @import "tailwindcss";
 
 :root {
@@ -74,11 +75,73 @@ table {
   }
 }
 
-.ac1899-home {
-  --home-title: #ff4b55;
+main.ac1899-home {
+  --home-surface: #fff;
+  --home-text: #171717;
+  --home-muted: #525252;
+  --home-border: #e3e3e3;
+  --home-editorial: #fff8f8;
+  --home-title: #d60012;
+  background: var(--home-surface) !important;
+  color: var(--home-text) !important;
+  color-scheme: light;
 }
 
 .ac1899-home :is(h1, h2, h3),
 .ac1899-home :is(h1, h2, h3) a {
+  font-family: "Barlow Condensed", "Arial Narrow", sans-serif;
   color: var(--home-title) !important;
+  font-weight: 700;
+  letter-spacing: 0.015em;
+  text-transform: uppercase;
+}
+
+.ac1899-home a:not([style]) {
+  color: #b00012;
+}
+
+.ac1899-home :is(.bg-gray-950, .bg-gray-900) {
+  background-color: var(--home-surface);
+}
+
+.ac1899-home :is(.text-gray-100, .text-white, table) {
+  color: var(--home-text);
+}
+
+.ac1899-home :is(.text-gray-300, .text-gray-400) {
+  color: var(--home-muted);
+}
+
+.ac1899-home :is([class*="border-white/"], [class*="divide-white/"] > :not(:last-child)) {
+  border-color: var(--home-border);
+}
+
+.ac1899-home .bg-red-950 {
+  background-color: #fff0f1;
+}
+
+.ac1899-home figure figcaption.bg-black\/80,
+.ac1899-home figure figcaption.bg-black\/80 a {
+  color: white;
+}
+
+body:has(.ac1899-home) .site-navbar,
+body:has(.ac1899-home) .site-footer {
+  background: #fff !important;
+  color: #171717;
+}
+
+body:has(.ac1899-home) .site-navbar {
+  border-bottom: 1px solid #e3e3e3 !important;
+}
+
+body:has(.ac1899-home) .site-navbar a,
+body:has(.ac1899-home) .site-footer nav a {
+  color: #171717 !important;
+  font-family: "Barlow Condensed", "Arial Narrow", sans-serif !important;
+  text-transform: uppercase;
+}
+
+body:has(.ac1899-home) .site-navbar a:first-child {
+  color: #d60012 !important;
 }

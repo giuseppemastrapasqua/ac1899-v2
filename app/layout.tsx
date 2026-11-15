@@ -51,7 +51,7 @@ export default function RootLayout({
 
         <div style={{ flex: 1 }}>{children}</div>
 
-        <footer
+        <footer className="site-footer"
   style={{
     background: "#111827",
     borderTop: "1px solid #e30613",

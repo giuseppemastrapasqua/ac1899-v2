@@ -52,7 +52,7 @@ const page = {
   background:
     "radial-gradient(circle at top left,#7f1d1d 0,#030712 32%,#030712 100%)",
   minHeight: "100vh",
-  color: "#f9fafb",
+  color: "var(--home-text, #f9fafb)",
   fontFamily: "Arial",
 };
 
@@ -84,7 +84,7 @@ const sectionBadge = {
 };
 
 const premiumCard = {
-  background: "#111827",
+  background: "var(--home-surface, #111827)",
   padding: 28,
   borderRadius: 0,
   marginTop: 32,

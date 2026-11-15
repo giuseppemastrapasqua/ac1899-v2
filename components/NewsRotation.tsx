@@ -65,7 +65,7 @@ export default function NewsRotation({ stories }: { stories: RotationStory[] }) 
   return (
     <section
       aria-label="Notizie in evidenza"
-      className="mb-7 border-b border-white/10 bg-gray-950 px-4 py-6 text-gray-100 sm:px-6 lg:py-9"
+      className="mb-7 border-b border-white/10 bg-white px-4 py-6 text-gray-100 sm:px-6 lg:py-9"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onFocus={() => setFocused(true)}
@@ -81,7 +81,7 @@ export default function NewsRotation({ stories }: { stories: RotationStory[] }) 
               <h1 className="mb-4 text-2xl font-black uppercase sm:text-3xl">{lead.title}</h1>
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <StoryMeta story={lead} />
-                <a href={lead.url} className="border border-red-500 px-3 py-2 text-sm font-bold text-red-400 hover:bg-red-950">
+                <a href={lead.url} className="border border-red-500 px-3 py-2 text-sm font-bold text-red-400 hover:bg-red-50">
                   Leggi di più →
                 </a>
               </div>

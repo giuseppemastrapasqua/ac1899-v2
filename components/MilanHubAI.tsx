@@ -45,8 +45,8 @@ export default function MilanHubAI() {
           <article
             key={index}
             style={{
-              background: "#111827",
-              border: "1px solid rgba(255,255,255,.08)",
+              background: "var(--home-surface, #111827)",
+              border: "1px solid var(--home-border, rgba(255,255,255,.08))",
               padding: 20,
               minHeight: 270,
               display: "flex",
@@ -61,7 +61,7 @@ export default function MilanHubAI() {
 
               <h3
                 style={{
-                  color: "#f9fafb",
+                  color: "var(--home-text, #f9fafb)",
                   fontSize: 22,
                   fontWeight: 800,
                   margin: "0 0 10px",
@@ -73,7 +73,7 @@ export default function MilanHubAI() {
 
               <p
                 style={{
-                  color: "#9ca3af",
+                  color: "var(--home-muted, #9ca3af)",
                   lineHeight: 1.55,
                   fontSize: 15,
                   margin: 0,

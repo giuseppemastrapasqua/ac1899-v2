@@ -15,6 +15,7 @@ export default function Navbar() {
 
   return (
     <header
+      className="site-navbar"
       style={{
         background: "#111827",
         borderBottom: "2px solid #991b1b",
