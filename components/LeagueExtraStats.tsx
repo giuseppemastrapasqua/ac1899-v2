@@ -20,6 +20,28 @@ const rankings = [
   ] },
 ] as const;
 
+const matchDistances = [
+  {
+    title: "Milan · I cinque con più chilometri",
+    match: "Milan–Como · 18 febbraio 2026 · Serie A 2025/26",
+    rows: [
+      ["Ardon Jashari", "Milan", 11.431], ["Davide Bartesaghi", "Milan", 11.029],
+      ["Koni De Winter", "Milan", 10.329], ["Luka Modrić", "Milan", 10.222], ["Fikayo Tomori", "Milan", 9.705],
+    ],
+  },
+  {
+    title: "Serie A · Confronto tra squadre",
+    match: "Torino–Lecce · 7 novembre 2026 · 11ª giornata 2026/27 · 2 squadre su 20",
+    rows: [
+      ["Oumar Ngom", "Lecce", 12.676], ["Daniel Bragança", "Torino", 11.701],
+      ["Rafik Belghali", "Torino", 11.454], ["Amar Fatah", "Lecce", 11.276],
+      ["Pietro Comuzzo", "Torino", 11.222], ["Giovanni Simeone", "Torino", 11.151],
+      ["Danilo Veiga", "Lecce", 11.134], ["Youssef Maleh", "Lecce", 11.064],
+      ["Saúl Coco", "Torino", 10.789], ["Antonino Gallo", "Lecce", 10.703],
+    ],
+  },
+] as const;
+
 export default function LeagueExtraStats() {
   return <section className="space-y-3" aria-labelledby="league-extra-stats">
     <h2 id="league-extra-stats" className="text-3xl">Disciplina, passaggi e tiri</h2>
@@ -47,6 +69,19 @@ export default function LeagueExtraStats() {
       </dl>
       <p className="mt-2 text-xs text-gray-600">Lega Serie A · dati di squadra.</p>
       <p className="mt-2 text-sm text-gray-700">I report ufficiali della Lega Serie A pubblicano i chilometri percorsi <strong>nella singola gara</strong> per i cinque giocatori che hanno corso di più per squadra. Per calcolare la media stagionale di ogni calciatore servono anche le distanze delle partite in cui è sceso in campo fuori da quella top 5. Quei dati non risultano disponibili nelle fonti che ho trovato, né per l’intera rosa del Milan né per tutta la Serie A.</p>
+    </div>
+    <div id="km-singola-gara" className="grid gap-3 md:grid-cols-2">
+      {matchDistances.map(({ title, match, rows }) => <div key={title} className="ac1899-box p-4">
+        <table className="w-full text-left text-sm tabular-nums">
+          <caption className="mb-2 text-left"><strong className="text-xl">{title}</strong><span className="block text-xs text-gray-600">{match}</span></caption>
+          <thead className="bg-gray-100"><tr><th scope="col" className="p-2">Giocatore</th><th scope="col" className="p-2">Squadra</th><th scope="col" className="p-2 text-right">Km in gara</th></tr></thead>
+          <tbody>{rows.map(([name, team, km]) => <tr key={name} className="border-b border-gray-100">
+            <th scope="row" className="p-2 font-medium">{name}</th><td className="p-2">{team}</td>
+            <td className="p-2 text-right">{km.toLocaleString("it-IT", { minimumFractionDigits: 3 })}</td>
+          </tr>)}</tbody>
+        </table>
+        <p className="mt-2 text-xs text-gray-600">Fonte: report gara della Lega Serie A.</p>
+      </div>)}
     </div>
   </section>;
 }
