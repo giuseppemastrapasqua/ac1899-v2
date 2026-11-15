@@ -45,7 +45,8 @@ export default function LeagueExtraStats() {
         <div><dt>Media di squadra per partita</dt><dd className="text-2xl font-bold">118 km</dd></div>
         <div><dt>Totale in 11 giornate</dt><dd className="text-2xl font-bold">1.300 km</dd></div>
       </dl>
-      <p className="mt-2 text-xs text-gray-600">Lega Serie A · dati di squadra. Le distanze individuali per partita non sono disponibili nelle fonti consultate.</p>
+      <p className="mt-2 text-xs text-gray-600">Lega Serie A · dati di squadra.</p>
+      <p className="mt-2 text-sm text-gray-700">I report ufficiali della Lega Serie A pubblicano i chilometri percorsi <strong>nella singola gara</strong> per i cinque giocatori che hanno corso di più per squadra. Per calcolare la media stagionale di ogni calciatore servono anche le distanze delle partite in cui è sceso in campo fuori da quella top 5. Quei dati non risultano disponibili nelle fonti che ho trovato, né per l’intera rosa del Milan né per tutta la Serie A.</p>
     </div>
   </section>;
 }
