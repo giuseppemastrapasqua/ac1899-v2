@@ -21,10 +21,7 @@ export default function EuropaLeagueBox() {
         <h3 className="mb-2 text-xl">Classifica completa · 36 squadre</h3>
         <p className="mb-3 text-sm text-gray-600">Fase campionato · dopo 4 giornate</p>
         <StandingsTable rows={europaLeague} title="Classifica completa Europa League" expanded compact />
-        <div className="mt-4 flex flex-wrap gap-4 text-sm">
-          <a href="https://it.uefa.com/uefaeuropaleague/clubs/50058/matches/">Calendario UEFA →</a>
-          <a href="https://www.acmilan.com/it/stagione/2026/classifiche/uefa-europa-league">Classifica ufficiale →</a>
-        </div>
+        <p className="mt-3 text-xs text-gray-600">Classifica ufficiale AC Milan.</p>
       </div>
     </section>
   );

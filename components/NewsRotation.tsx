@@ -65,7 +65,7 @@ export default function NewsRotation({ stories }: { stories: RotationStory[] }) 
   return (
     <section
       aria-label="Notizie in evidenza"
-      className="bg-white px-4 pt-7 pb-5 text-gray-100 sm:px-6 lg:pt-10"
+      className="px-4 pt-7 pb-5 text-gray-100 sm:px-6 lg:pt-10"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onFocus={() => setFocused(true)}

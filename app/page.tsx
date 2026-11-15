@@ -1,4 +1,5 @@
 import Link from "next/link";
+import EuropaMatchAnalyst from "../components/EuropaMatchAnalyst";
 import EuropaLeagueBox from "../components/EuropaLeagueBox";
 import HomeFeaturedNews from "../components/HomeFeaturedNews";
 import HomeMatchCenter from "../components/HomeMatchCenter";
@@ -16,14 +17,26 @@ const sections = [
 export default function Home() {
   return (
     <main className="ac1899-home min-h-screen">
-      <HomeFeaturedNews />
+      <div className="home-section home-section-news"><HomeFeaturedNews /></div>
 
-      <div className="mx-auto max-w-[1448px] space-y-12 px-4 pb-12 sm:px-6">
+      <div className="home-section home-section-league">
+        <div className="home-section-inner">
         <UpcomingMatchCards today={new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Rome" }).format(new Date())} />
         <HomeMatchCenter />
         <MatchAnalyst />
         <MonthlyMvp />
-        <EuropaLeagueBox />
+        </div>
+      </div>
+
+      <div className="home-section home-section-europa">
+        <div className="home-section-inner">
+          <EuropaLeagueBox />
+          <EuropaMatchAnalyst />
+        </div>
+      </div>
+
+      <div className="home-section home-section-community">
+        <div className="home-section-inner">
 
         <section aria-labelledby="explore-title">
           <h2 id="explore-title" className="mb-4 border-b border-gray-200 pb-3 text-3xl">Approfondimenti</h2>
@@ -39,6 +52,7 @@ export default function Home() {
         </section>
 
         <NewsletterBox />
+        </div>
       </div>
     </main>
   );

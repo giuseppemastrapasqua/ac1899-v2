@@ -158,3 +158,20 @@ body:has(.ac1899-home) .site-navbar a:first-child {
   border-color: rgb(255 255 255 / 10%);
   background: #111827;
 }
+
+.home-section + .home-section {
+  border-top: 1px solid #e4e4e7;
+}
+
+.home-section-inner {
+  max-width: 1448px;
+  margin-inline: auto;
+  padding: clamp(1rem, 3vw, 2.5rem);
+  display: grid;
+  gap: clamp(1.25rem, 3vw, 2.5rem);
+}
+
+.home-section-news { background: #fff; }
+.home-section-league { background: #f1f5f9; }
+.home-section-europa { background: #fff5e8; }
+.home-section-community { background: #fff2f4; }
