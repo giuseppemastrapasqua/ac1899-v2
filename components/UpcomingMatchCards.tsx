@@ -4,13 +4,13 @@ import { useRef } from "react";
 
 const milan = { name: "Milan", id: 489 };
 const matches = [
-  { date: "2026-11-22", time: "18:00", venue: "Stadio San Siro", opponent: { name: "Frosinone", id: 512 }, home: true, competition: "Serie A", league: 135, tickets: "https://booking.acmilan.com/serie-a/milan-frosinone/", note: "Partita sponsorizzata da Fondazione Milan" },
-  { date: "2026-11-26", time: "18:45", venue: "Stadio Georgios Karaiskákis", opponent: { name: "Olympiacos", id: 553 }, home: false, competition: "Europa League", league: 3, tickets: "https://calcio2.vivaticket.it/it/event/europa-league-trasferta-olympiacos-fc-ac-milan/323080" },
+  { date: "2026-11-22", time: "18:00", venue: "Stadio San Siro", opponent: { name: "Frosinone", id: 512 }, home: true, competition: "Serie A", league: 135, note: "Partita sponsorizzata da Fondazione Milan" },
+  { date: "2026-11-26", time: "18:45", venue: "Stadio Georgios Karaiskákis", opponent: { name: "Olympiacos", id: 553 }, home: false, competition: "Europa League", league: 3 },
   { date: "2026-11-30", time: "20:45", venue: "Unipol Domus", opponent: { name: "Cagliari", id: 490 }, home: false, competition: "Serie A", league: 135 },
-  { date: "2026-12-06", time: "20:45", venue: "Stadio San Siro", opponent: { name: "Parma", id: 523 }, home: true, competition: "Serie A", league: 135, tickets: "https://booking.acmilan.com/serie-a/milan-parma/" },
-  { date: "2026-12-10", time: "21:00", venue: "Stadio San Siro", opponent: { name: "Sunderland", id: 746 }, home: true, competition: "Europa League", league: 3, tickets: "https://booking.acmilan.com/europa-league/milan-sunderland/" },
+  { date: "2026-12-06", time: "20:45", venue: "Stadio San Siro", opponent: { name: "Parma", id: 523 }, home: true, competition: "Serie A", league: 135 },
+  { date: "2026-12-10", time: "21:00", venue: "Stadio San Siro", opponent: { name: "Sunderland", id: 746 }, home: true, competition: "Europa League", league: 3 },
   { date: "2026-12-13", time: "20:45", venue: "Stadio Diego Armando Maradona", opponent: { name: "Napoli", id: 492 }, home: false, competition: "Serie A", league: 135 },
-  { date: "2026-12-19", time: "18:00", venue: "Stadio San Siro", opponent: { name: "Como", id: 895 }, home: true, competition: "Serie A", league: 135, tickets: "https://booking.acmilan.com/serie-a/milan-como/" },
+  { date: "2026-12-19", time: "18:00", venue: "Stadio San Siro", opponent: { name: "Como", id: 895 }, home: true, competition: "Serie A", league: 135 },
 ];
 
 export default function UpcomingMatchCards({ today }: { today: string }) {
@@ -64,7 +64,6 @@ export default function UpcomingMatchCards({ today }: { today: string }) {
                   </div>
                   <time dateTime={match.date + "T" + match.time + ":00+01:00"} className="shrink-0 border border-gray-200 bg-gray-100 px-2 py-1 text-lg font-bold tabular-nums">{match.time}</time>
                 </div>
-                {match.tickets && <a href={match.tickets} className="mt-auto self-end border border-red-700 px-3 py-2 text-sm font-bold">Acquista biglietti →</a>}
               </div>
               <div className="border-t border-gray-200 bg-gray-50 px-4 py-2 text-xs text-gray-600">
                 {match.competition}{match.note && " · " + match.note}
