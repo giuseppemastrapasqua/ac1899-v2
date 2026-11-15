@@ -1,5 +1,3 @@
-const report = "https://www.acmilan.com/it/news/articoli/serie-a/2026-11-08/reazione-milan-2-1-a-genova";
-
 export const lineups = [
   {
     team: "Genoa", formation: "3-4-2-1", coach: "Daniele De Rossi",
@@ -39,7 +37,6 @@ export default function GenoaMilanReport() {
           <p className="mt-1"><strong>Riserve non utilizzate:</strong> {bench.join(", ")}.</p>
         </details>
       ))}
-      <a href={report} className="mt-2 inline-block text-xs">Resoconto ufficiale →</a>
     </section>
   );
 }

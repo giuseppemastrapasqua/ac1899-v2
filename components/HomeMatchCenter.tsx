@@ -2,7 +2,6 @@ import GenoaMilanReport from "./GenoaMilanReport";
 import MatchCard, { type MatchTeam } from "./MatchCard";
 import StandingsTable from "./StandingsTable";
 import { serieA, type StandingRow } from "../lib/home-standings";
-import Link from "next/link";
 import { getMilanFixtures, getSerieAStandings } from "../lib/api-football";
 
 type Standing = {
@@ -19,8 +18,6 @@ type Fixture = {
   goals: { home: number | null; away: number | null };
 };
 
-const calendar = "https://www.acmilan.com/it/stagione/2026/calendario/serie-a";
-const officialTable = "https://www.acmilan.com/en/season/2026/standings/serie-a";
 const officialFixtures: Fixture[] = [
   { fixture: { date: "2026-11-08T15:00:00+01:00", venue: { name: "Stadio Luigi Ferraris" }, status: { short: "FT" } }, league: { id: 135, season: 2026 }, teams: { home: { name: "Genoa", id: 495 }, away: { name: "AC Milan", id: 489 } }, goals: { home: 1, away: 2 } },
 ];
@@ -80,7 +77,6 @@ export default async function HomeMatchCenter() {
             venue={last.fixture.venue?.name} competition="Serie A" league={135}
             value={last.goals.home + "–" + last.goals.away} status="FINITA" note={fixtureDate(last.fixture.date)} />
         </div>
-        <a className="mt-2 inline-block text-xs" href={calendar}>Calendario ufficiale →</a>
       </div>
 
       {last.fixture.date.slice(0, 10) === "2026-11-08" &&
@@ -106,8 +102,7 @@ export default async function HomeMatchCenter() {
             ))}
           </tbody>
         </table>
-        <p className={caption}>Statistiche giocatori verificate al 15 novembre 2026 · <a href="https://www.fotmob.com/it/leagues/55/stats/season/36072/players/goals/team/8564/milan">FotMob</a></p>
-        <Link className="mt-2 inline-block" href="/rosa">Scopri la rosa →</Link>
+        <p className={caption}>Statistiche giocatori verificate al 15 novembre 2026 · FotMob</p>
       </div>
       <div className={panel}>
         <h3 className="mb-1 text-xl font-bold">Classifica assist</h3>
@@ -126,14 +121,14 @@ export default async function HomeMatchCenter() {
             ))}
           </tbody>
         </table>
-        <p className={caption}>Dati verificati al 15 novembre 2026 · <a href="https://www.fotmob.com/leagues/55/stats/season/36072/players/goal_assist/team/8564/milan">FotMob</a></p>
+        <p className={caption}>Dati verificati al 15 novembre 2026 · FotMob</p>
       </div>
       </div>
-      <div className={panel + " md:col-span-2 xl:col-span-1 xl:row-span-2"}>
-        <h3 className="mb-3 text-xl font-bold">Classifica Serie A · 20 squadre</h3>
+      <div className={panel + " flex flex-col self-stretch md:col-span-2 xl:col-span-1 xl:row-span-2"}>
+        <h3 className="mb-1 text-xl font-bold">Classifica Serie A · 20 squadre</h3>
+        <p className="mb-3 text-sm text-gray-600">Serie A 2026/27</p>
         <StandingsTable rows={rows} title="Classifica completa Serie A" expanded compact />
-        <p className={caption}>{rows !== serieA ? "Dati di campionato da API-Football" : "Dati verificati al 15 novembre 2026"}</p>
-        <a className="mt-2 inline-block" href={officialTable}>Fonte ufficiale →</a>
+        <p className="mt-auto pt-3 text-xs text-gray-400">{rows !== serieA ? "Dati di campionato da API-Football" : "Dati verificati al 15 novembre 2026"}</p>
       </div>
       </div>
     </section>
