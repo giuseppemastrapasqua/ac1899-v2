@@ -47,7 +47,7 @@ export default function NewsRotation({ stories }: { stories: RotationStory[] }) 
       <div className="mx-auto max-w-[1400px]">
         <div className="grid gap-5 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
           <article className="ac1899-box">
-            <NewsCover image={lead.image} />
+            <NewsCover image={lead.image} title={lead.title} category={lead.category} />
             <div className="p-4">
               <h1 className="mb-4 text-2xl font-black uppercase sm:text-3xl">{lead.title}</h1>
               <div className="flex flex-wrap items-center justify-between gap-4">
@@ -60,8 +60,8 @@ export default function NewsRotation({ stories }: { stories: RotationStory[] }) 
           </article>
           <div className="grid gap-4 lg:auto-rows-fr">
             {side.map(story => (
-              <article key={story.url} className={story.image ? "grid grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] items-center gap-3 border-b border-gray-200 pb-3 last:border-0 last:pb-0" : "grid content-center border-b border-gray-200 py-3 last:border-0"}>
-                <NewsCover image={story.image} />
+              <article key={story.url} className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] items-center gap-3 border-b border-gray-200 pb-3 last:border-0 last:pb-0">
+                <NewsCover image={story.image} title={story.title} category={story.category} />
                 <div>
                   <h2 className="mb-2 text-sm font-black uppercase sm:text-lg">
                     <a href={story.url} className="hover:underline">{story.title}</a>

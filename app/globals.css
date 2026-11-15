@@ -258,3 +258,82 @@ main :is(h1, h2, h3, p, dd, td) {
     padding-inline: min(4vw, 1rem) !important;
   }
 }
+
+.editorial-cover {
+  --illustration-base: #16141b;
+  --illustration-accent: #ff4357;
+  position: relative;
+  display: flex;
+  align-items: center;
+  aspect-ratio: 16 / 9;
+  min-width: 0;
+  overflow: hidden;
+  isolation: isolate;
+  container-type: inline-size;
+  border-radius: .5rem;
+  color: #fff;
+  background: linear-gradient(115deg, #111016 8%, var(--illustration-base) 73%, #120d14);
+}
+
+.editorial-cover--market { --illustration-base: #7c1028; --illustration-accent: #ff7284; }
+.editorial-cover--club { --illustration-base: #36243e; --illustration-accent: #e7a9ff; }
+.editorial-cover--women { --illustration-base: #79214a; --illustration-accent: #ffadd4; }
+.editorial-cover--youth { --illustration-base: #15443b; --illustration-accent: #9de4d1; }
+.editorial-cover--match { --illustration-base: #133c48; --illustration-accent: #a6ddea; }
+.editorial-cover--training { --illustration-base: #633019; --illustration-accent: #ffd095; }
+
+.editorial-cover-art {
+  position: absolute;
+  z-index: -1;
+  inset: 10% -14% 4% 40%;
+  border: 1px solid var(--illustration-accent);
+  border-radius: 12%;
+  opacity: .48;
+  background:
+    radial-gradient(circle at center, transparent 0 17%, var(--illustration-accent) 17.5% 18%, transparent 18.5%),
+    linear-gradient(90deg, transparent 49%, var(--illustration-accent) 49.5% 50%, transparent 50.5%),
+    repeating-linear-gradient(90deg, transparent 0 12%, #fff1 12% 24%);
+  transform: skew(-13deg) rotate(-9deg);
+}
+
+.editorial-cover--club .editorial-cover-art {
+  transform: skew(-13deg) rotate(-9deg);
+  background: repeating-linear-gradient(90deg, #fff1 0 9%, transparent 9% 13%);
+}
+
+.editorial-cover--market .editorial-cover-art {
+  background: repeating-linear-gradient(-35deg, transparent 0 13%, #fff2 13% 16%);
+}
+
+.editorial-cover-copy {
+  display: grid;
+  gap: .25rem;
+  width: min(85%, 38rem);
+  padding: 0 0 5% 6%;
+}
+
+.editorial-cover-label {
+  font-size: clamp(.55rem, 3.1cqw, 1rem);
+  color: var(--illustration-accent);
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.editorial-cover-title {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  font-family: "Barlow Condensed", "Arial Narrow", sans-serif;
+  font-size: clamp(.63rem, 6cqw, 2.75rem);
+  font-weight: 700;
+  line-height: 1.04;
+}
+
+.editorial-cover-credit {
+  position: absolute;
+  right: 4%;
+  bottom: 5%;
+  color: #fff;
+  font-size: clamp(.5rem, 2.6cqw, .75rem);
+}

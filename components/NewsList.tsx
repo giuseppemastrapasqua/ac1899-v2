@@ -104,14 +104,14 @@ export default function NewsList() {
               ? `/editoriali/${featured.id}`
               : `/news/${featured.id}`
           }
-          className={featured.image_url ? "news-featured-card" : undefined}
+          className="news-featured-card"
           style={
             featured.type === "editorial"
               ? editorialFeaturedCard
-              : featured.image_url ? featuredCard : { ...featuredCard, gridTemplateColumns: "minmax(0, 1fr)" }
+              : featuredCard
           }
         >
-          <NewsCover image={featured.image_url || undefined} />
+          <NewsCover image={featured.image_url || undefined} title={featured.title} category={featured.category} />
 
           <div style={featuredContent}>
             <p
@@ -152,7 +152,7 @@ export default function NewsList() {
             }
             style={item.type === "editorial" ? editorialCard : smallCard}
           >
-            <NewsCover image={item.image_url || undefined} />
+            <NewsCover image={item.image_url || undefined} title={item.title} category={item.category} />
 
             <div style={compactContent}>
               <p
