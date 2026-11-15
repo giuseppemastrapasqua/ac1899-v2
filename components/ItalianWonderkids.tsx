@@ -2,7 +2,6 @@ import Link from "next/link";
 import { italianWonderkids } from "../lib/italian-wonderkids";
 
 export default function ItalianWonderkids({ compact = false }: { compact?: boolean }) {
-  const players = compact ? italianWonderkids.slice(0, 3) : italianWonderkids;
   return (
     <section id="wonderkids-italia" aria-labelledby="wonderkids-italia-title">
       <header className="mb-3 flex flex-wrap items-end justify-between gap-2 border-b border-gray-200 pb-3">
@@ -14,7 +13,7 @@ export default function ItalianWonderkids({ compact = false }: { compact?: boole
         {compact && <Link href="/wonderkids" className="text-sm font-semibold">Tutti i profili →</Link>}
       </header>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {players.map(player => (
+        {italianWonderkids.map(player => (
           <article key={player.name} className="ac1899-box flex h-full flex-col p-4">
             <h3 className="text-xl">{player.name}</h3>
             <p className="mb-2 text-sm font-semibold">{player.club} · {player.role} · {player.national}</p>

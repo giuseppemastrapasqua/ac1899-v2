@@ -6,6 +6,7 @@ import HomeMatchCenter from "../components/HomeMatchCenter";
 import MatchAnalyst from "../components/MatchAnalyst";
 import MonthlyMvp from "../components/MonthlyMvp";
 import UpcomingMatchCards from "../components/UpcomingMatchCards";
+import ItalianTeamOfWeek from "../components/ItalianTeamOfWeek";
 import ItalianWonderkids from "../components/ItalianWonderkids";
 import NewsletterBox from "../components/NewsletterBox";
 
@@ -38,6 +39,7 @@ export default function Home() {
       <div className="home-section home-section-community">
         <div className="home-section-inner">
 
+        <ItalianTeamOfWeek />
         <ItalianWonderkids compact />
 
         <section aria-labelledby="explore-title">
