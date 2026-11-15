@@ -133,8 +133,25 @@ function rssField(item: string, name: string) {
     .replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
 }
 
-async function generateOfficialBriefs(): Promise<LocalNews[]> {
-  const updates = (await getOfficialMilanNews())
+const freshnessWindowMs = 5 * 60 * 1000;
+
+function isFreshPublication(publishedAt: number, checkedAt: number) {
+  return Number.isFinite(publishedAt) && publishedAt <= checkedAt && publishedAt > checkedAt - freshnessWindowMs;
+}
+
+function officialPublishedAt(html: string) {
+  const timestamp = html.match(/"datePublished"\s*:\s*"([^"]+)"/i)?.[1]
+    ?? [...html.matchAll(/<meta\b[^>]*>/gi)].find(([tag]) =>
+      /\bproperty=["']article:published_time["']/i.test(tag)
+    )?.[0].match(/\bcontent=["']([^"']+)["']/i)?.[1];
+  if (!timestamp || !/T\d{2}:\d{2}.*(?:Z|[+-]\d{2}:?\d{2})$/i.test(timestamp)) return NaN;
+  return Date.parse(timestamp);
+}
+
+async function generateOfficialBriefs(checkedAt: number): Promise<LocalNews[]> {
+  const italianDate = (time: number) => new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Rome" }).format(time);
+  const candidateDates = new Set([italianDate(checkedAt), italianDate(checkedAt - freshnessWindowMs)]);
+  const updates = (await getOfficialMilanNews()).filter(story => candidateDates.has(story.date))
     .filter(story => !reviewed.some(entry => entry.coverSource === story.url))
     .slice(0, 3);
   const results = await Promise.allSettled(updates.map(async story => {
@@ -143,6 +160,8 @@ async function generateOfficialBriefs(): Promise<LocalNews[]> {
     });
     if (!response.ok) return;
     const html = await response.text();
+    const publishedAt = officialPublishedAt(html);
+    if (!isFreshPublication(publishedAt, checkedAt)) return;
     const article = html.match(/<article\b[^>]*>([\s\S]*?)<\/article>/i)?.[1];
     const description = article
       ? [...article.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/gi)].map(([, value]) => value)
@@ -152,7 +171,7 @@ async function generateOfficialBriefs(): Promise<LocalNews[]> {
     const rewrite = await generateBrief(story.title, description.slice(0, 3500));
     if (!rewrite) return;
     return { ...rewrite, id: "milan-" + createHash("sha256").update(story.url).digest("hex").slice(0, 18),
-      source: "AC Milan", date: story.date, category: story.category, coverSource: story.url };
+      source: "AC Milan", date: new Date(publishedAt).toISOString(), category: story.category, coverSource: story.url };
   }));
   return results.flatMap(result => result.status === "fulfilled" && result.value ? [result.value] : []);
 }
@@ -164,9 +183,9 @@ const feeds = [
     url: "https://www.theguardian.com/football/acmilan/rss", host: "www.theguardian.com", limit: 3 },
 ] as const;
 
-async function readPressFeed(feed: typeof feeds[number]): Promise<LocalNews[]> {
+async function readPressFeed(feed: typeof feeds[number], checkedAt: number): Promise<LocalNews[]> {
   const response = await fetch(feed.url, {
-    next: { revalidate: 300 }, signal: AbortSignal.timeout(6000),
+    next: { revalidate: 60 }, signal: AbortSignal.timeout(6000),
   });
   if (!response.ok) return [];
   const items = [...(await response.text()).matchAll(/<item>([\s\S]*?)<\/item>/gi)]
@@ -176,7 +195,7 @@ async function readPressFeed(feed: typeof feeds[number]): Promise<LocalNews[]> {
     }))
     .filter(item => /\b(?:milan|rossoner[ioe])\b/i.test(item.title)
       && !(/endrick/i.test(item.title) && /tresoldi/i.test(item.title))
-      && item.description.length >= 100 && Number.isFinite(item.date)
+      && item.description.length >= 100 && isFreshPublication(item.date, checkedAt)
       && item.url.startsWith("https://" + feed.host + "/"))
     .sort((a, b) => b.date - a.date)
     .slice(0, feed.limit);
@@ -199,15 +218,15 @@ const indexedClubSearches = [
   { query: '"AC Milan" OR "Milan Women"', locale: "en", country: "GB", edition: "Estero" },
 ] as const;
 
-async function readIndexedNews({ query, locale, country, edition, category, sourceFor, matches, limit }: {
+async function readIndexedNews({ query, locale, country, edition, category, sourceFor, matches, limit, checkedAt }: {
   query: string; locale: string; country: string; edition: NonNullable<LocalNews["edition"]>;
-  category: string; sourceFor?: (host: string) => string | undefined; matches: (title: string) => boolean; limit: number;
+  category: string; sourceFor?: (host: string) => string | undefined; matches: (title: string) => boolean; limit: number; checkedAt: number;
 }): Promise<LocalNews[]> {
   const params = new URLSearchParams({
     q: query, hl: locale, gl: country, ceid: country + ":" + locale.split("-")[0],
   });
   const response = await fetch("https://news.google.com/rss/search?" + params, {
-    next: { revalidate: 300 }, signal: AbortSignal.timeout(7500),
+    next: { revalidate: 60 }, signal: AbortSignal.timeout(7500),
   });
   if (!response.ok) throw new Error("Indexed news feed returned HTTP " + response.status);
 
@@ -223,7 +242,7 @@ async function readIndexedNews({ query, locale, country, edition, category, sour
     const title = label && fullTitle.endsWith(suffix) ? fullTitle.slice(0, -suffix.length).trim() : fullTitle;
     const date = Date.parse(rssField(item, "pubDate"));
     const url = rssField(item, "link");
-    if (!title || !Number.isFinite(date) || !url.startsWith("https://news.google.com/rss/articles/") || !matches(title)) return [];
+    if (!title || !isFreshPublication(date, checkedAt) || !url.startsWith("https://news.google.com/rss/articles/") || !matches(title)) return [];
     return [{
       id: (category === "Rassegna giocatori" ? "player-" : "web-") + createHash("sha256").update(url).digest("hex").slice(0, 18),
       title, date: new Date(date).toISOString(), source: publisher, category, edition, body: [],
@@ -231,7 +250,7 @@ async function readIndexedNews({ query, locale, country, edition, category, sour
   }).sort((a, b) => b.date.localeCompare(a.date)).slice(0, limit);
 }
 
-function readPlayerNews(group: typeof playerNewsSources[number]) {
+function readPlayerNews(group: typeof playerNewsSources[number], checkedAt: number) {
   const squad = milanSquad.flatMap(({ players }) => players.map(row => normalizeNewsText(row[1])));
   const players = group.players.filter(name => squad.some(player => (" " + player + " ").includes(" " + normalizeNewsText(name) + " ")));
   if (!players.length) return Promise.resolve([]);
@@ -241,18 +260,19 @@ function readPlayerNews(group: typeof playerNewsSources[number]) {
     locale: group.locale, country: group.country, edition: "Estero", category: "Rassegna giocatori",
     sourceFor: host => group.outlets.find(([domain]) => host === domain || host.endsWith("." + domain))?.[1],
     matches: title => players.some(player => (" " + normalizeNewsText(title) + " ").includes(" " + normalizeNewsText(player) + " ")),
-    limit: 2,
+    limit: 2, checkedAt,
   });
 }
 
 export async function getLocalNews(): Promise<LocalNews[]> {
+  const checkedAt = Date.now();
   const [sources, indexed] = process.env.OPENAI_API_KEY ? await Promise.all([
-    Promise.allSettled([generateOfficialBriefs(), ...feeds.map(readPressFeed)]),
+    Promise.allSettled([generateOfficialBriefs(checkedAt), ...feeds.map(feed => readPressFeed(feed, checkedAt))]),
     Promise.allSettled([
-      ...playerNewsSources.map(readPlayerNews),
+      ...playerNewsSources.map(group => readPlayerNews(group, checkedAt)),
       ...indexedClubSearches.map(({ query, ...search }) => readIndexedNews({
         ...search, query: "(" + query + ") when:1d", category: "Rassegna stampa",
-        matches: title => /\b(?:milan|rossoner[ieo])\b/i.test(title), limit: 5,
+        matches: title => /\b(?:milan|rossoner[ieo])\b/i.test(title), limit: 5, checkedAt,
       })),
     ]),
   ]) : [[], []];
