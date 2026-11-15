@@ -32,6 +32,14 @@ const scorers = [
   { rank: 5, name: "Gonçalo Ramos", goals: 2 },
 ];
 
+const assists = [
+  { rank: 1, name: "Adrien Rabiot", total: 4 },
+  { rank: 2, name: "Diego Moreira", total: 3 },
+  { rank: 3, name: "Samuel Chukwueze", total: 2 },
+  { rank: 3, name: "Luka Modrić", total: 2 },
+  { rank: 3, name: "Gonçalo Ramos", total: 2 },
+];
+
 const panel = "ac1899-box min-w-0 p-5";
 const caption = "mt-3 text-xs text-gray-400";
 
@@ -60,7 +68,7 @@ export default async function HomeMatchCenter() {
   return (
     <section aria-labelledby="match-center-title">
       <h2 id="match-center-title" className="mb-4 border-b border-gray-200 pb-3 text-3xl">Match Center</h2>
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid items-start gap-4 md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,2.2fr)]">
       <div className={panel}>
         <h3 className="mb-2 text-xl">Risultati</h3>
         <p className="text-sm text-gray-400">Serie A {season ? season + "/" + String(season + 1).slice(-2) : ""}</p>
@@ -73,6 +81,7 @@ export default async function HomeMatchCenter() {
         <a className="mt-3 inline-block" href={calendar}>Calendario ufficiale →</a>
       </div>
 
+      <div className="grid min-w-0 gap-4">
       <div className={panel}>
         <h3 className="mb-1 text-xl font-bold">Classifica marcatori</h3>
         <p className="mb-3 text-sm text-gray-600">AC Milan · Serie A 2026/27</p>
@@ -90,18 +99,36 @@ export default async function HomeMatchCenter() {
             ))}
           </tbody>
         </table>
-        <p className="mt-4 border-t border-gray-200 pt-3 text-sm"><strong>Più assist:</strong> Adrien Rabiot · 4</p>
         <p className={caption}>Statistiche giocatori verificate al 15 novembre 2026 · <a href="https://www.fotmob.com/it/leagues/55/stats/season/36072/players/goals/team/8564/milan">FotMob</a></p>
         <Link className="mt-2 inline-block" href="/rosa">Scopri la rosa →</Link>
       </div>
+      <div className={panel}>
+        <h3 className="mb-1 text-xl font-bold">Classifica assist</h3>
+        <p className="mb-3 text-sm text-gray-600">AC Milan · Serie A 2026/27</p>
+        <table className="w-full text-left text-sm">
+          <thead>
+            <tr><th scope="col">Pos.</th><th scope="col">Giocatore</th><th scope="col" className="text-right">Assist</th></tr>
+          </thead>
+          <tbody>
+            {assists.map(player => (
+              <tr key={player.name} className={player.rank === 1 ? "border-t border-gray-200 bg-red-50 font-semibold" : "border-t border-gray-200"}>
+                <td className="py-2">{player.rank}</td>
+                <td>{player.name}</td>
+                <td className="text-right font-bold tabular-nums">{player.total}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <p className={caption}>Dati verificati al 15 novembre 2026 · <a href="https://www.fotmob.com/leagues/55/stats/season/36072/players/goal_assist/team/8564/milan">FotMob</a></p>
       </div>
-      <div className={panel + " mt-4"}>
+      </div>
+      <div className={panel + " md:col-span-2 xl:col-span-1"}>
         <h3 className="mb-3 text-xl font-bold">Classifica Serie A · 20 squadre</h3>
         <StandingsTable rows={rows} title="Classifica completa Serie A" expanded />
         <p className={caption}>{rows !== serieA ? "Dati di campionato da API-Football" : "Dati verificati al 15 novembre 2026"}</p>
         <a className="mt-2 inline-block" href={officialTable}>Fonte ufficiale →</a>
       </div>
-
+      </div>
     </section>
   );
 }
