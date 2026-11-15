@@ -14,7 +14,7 @@ export default function ItalianWonderkids({ compact = false }: { compact?: boole
       </header>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {italianWonderkids.map(player => (
-          <article key={player.name} className="ac1899-box flex h-full flex-col p-4">
+          <article key={player.name} className="ac1899-box ac1899-signature flex h-full flex-col p-4">
             <h3 className="text-xl">{player.name}</h3>
             <p className="mb-2 text-sm font-semibold">{player.club} · {player.role} · {player.national}</p>
             <p className="mb-2 text-sm">{player.evidence}</p>

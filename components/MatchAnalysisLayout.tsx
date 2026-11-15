@@ -19,7 +19,7 @@ export default function MatchAnalysisLayout({
 }) {
   const scale = Math.max(1.5, Math.ceil(Math.max(...teams.map(team => team.xg)) * 2) / 2);
   return (
-    <section id={id} aria-labelledby={id + "-analyst-title"} className="ac1899-box p-4 sm:p-5">
+    <section id={id} aria-labelledby={id + "-analyst-title"} className="ac1899-box ac1899-signature p-4 sm:p-5">
       <div className="mb-4 border-b border-gray-200 pb-3">
         <h2 id={id + "-analyst-title"} className="text-3xl">Match Analyst AI</h2>
         <p className="mt-1 text-sm text-gray-600">{subtitle}</p>

@@ -20,7 +20,7 @@ const lines = [
 
 export default function ItalianTeamOfWeek() {
   return (
-    <section aria-labelledby="italian-weekly-title" className="ac1899-box p-4 sm:p-6">
+    <section aria-labelledby="italian-weekly-title" className="ac1899-box ac1899-signature p-4 sm:p-6">
       <header className="mb-4">
         <h2 id="italian-weekly-title" className="text-3xl">Undici italiano Under 18 della settimana</h2>
         <p className="text-sm text-gray-600">9–15 novembre 2026 · modulo 4-3-1-2</p>

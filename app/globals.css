@@ -337,3 +337,45 @@ main :is(h1, h2, h3, p, dd, td) {
   color: #fff;
   font-size: clamp(.5rem, 2.6cqw, .75rem);
 }
+
+.ac1899-brand-link {
+  display: inline-flex;
+  margin-inline-end: .5rem;
+  text-decoration: none;
+}
+
+.ac1899-mark {
+  display: inline-flex;
+  align-items: center;
+  border-radius: .35rem;
+  overflow: hidden;
+  background: #111;
+  color: #fff;
+  font: 900 1.65rem/1 "Barlow Condensed", "Arial Narrow", sans-serif;
+  letter-spacing: -.035em;
+}
+
+.ac1899-mark-prefix {
+  padding: .27em .28em;
+  background: #cb0014;
+}
+
+.ac1899-mark-number {
+  padding: .27em .31em .27em .23em;
+}
+
+.ac1899-mark-nine {
+  color: #ff5361;
+  padding-inline-end: .1em;
+  background: linear-gradient(165deg, transparent 62%, #e30613 63% 70%, transparent 71% 77%, #e30613 78% 85%, transparent 86%);
+}
+
+.ac1899-box.ac1899-signature {
+  border-inline-start: .45rem solid transparent;
+  background: linear-gradient(90deg, #d60012 0 55%, #151515 55%) border-box,
+    linear-gradient(#fff, #fff) padding-box;
+  background-origin: border-box, padding-box;
+  background-clip: border-box, padding-box;
+  background-size: .45rem 100%, 100% 100%;
+  background-repeat: no-repeat;
+}

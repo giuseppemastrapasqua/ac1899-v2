@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import BrandMark from "./BrandMark";
 
 export default function Navbar() {
   const links = [
@@ -40,19 +41,8 @@ export default function Navbar() {
           flexWrap: "wrap",
         }}
       >
-        <Link
-          href="/"
-          style={{
-            color: "#e30613",
-            textDecoration: "none",
-            fontWeight: 900,
-            fontSize: 26,
-            letterSpacing: "-1px",
-            fontFamily: "Arial Black, sans-serif",
-            marginRight: 12,
-          }}
-        >
-          AC1899
+        <Link href="/" aria-label="AC1899 · Home" className="ac1899-brand-link">
+          <BrandMark />
         </Link>
 
         <div className="site-nav-links">

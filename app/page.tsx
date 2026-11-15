@@ -1,3 +1,4 @@
+import MatchThreeNumbers from "../components/MatchThreeNumbers";
 import Link from "next/link";
 import EuropaMatchAnalyst from "../components/EuropaMatchAnalyst";
 import EuropaLeagueBox from "../components/EuropaLeagueBox";
@@ -24,6 +25,7 @@ export default function Home() {
         <div className="home-section-inner">
         <UpcomingMatchCards today={new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Rome" }).format(new Date())} />
         <HomeMatchCenter />
+        <MatchThreeNumbers />
         <MatchAnalyst />
         <MonthlyMvp />
         </div>
