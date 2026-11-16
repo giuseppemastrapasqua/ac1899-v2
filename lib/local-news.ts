@@ -139,7 +139,7 @@ function rssField(item: string, name: string) {
     .replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
 }
 
-const acquisitionWindowMs = 60 * 60 * 1000;
+const acquisitionWindowMs = 10 * 60 * 1000;
 
 function isFreshPublication(publishedAt: number, checkedAt: number) {
   return Number.isFinite(publishedAt) && publishedAt <= checkedAt && publishedAt > checkedAt - acquisitionWindowMs;
