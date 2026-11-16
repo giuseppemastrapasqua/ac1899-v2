@@ -226,7 +226,7 @@ const indexedClubSearches = [
 async function readIndexedNews({ query, locale, country, edition, category, sourceFor, matches, limit, checkedAt }: {
   query: string; locale: string; country: string; edition: NonNullable<LocalNews["edition"]>;
   category: string; sourceFor?: (host: string) => string | undefined; matches: (title: string) => boolean; limit: number; checkedAt: number;
-}): Promise<LocalNews[]> {
+}): Promise<(LocalNews & { summary: string })[]> {
   const params = new URLSearchParams({
     q: query, hl: locale, gl: country, ceid: country + ":" + locale.split("-")[0],
   });
@@ -250,7 +250,7 @@ async function readIndexedNews({ query, locale, country, edition, category, sour
     if (!title || !isFreshPublication(date, checkedAt) || !url.startsWith("https://news.google.com/rss/articles/") || !matches(title)) return [];
     return [{
       id: (category === "Rassegna giocatori" ? "player-" : "web-") + createHash("sha256").update(url).digest("hex").slice(0, 18),
-      title, date: new Date(date).toISOString(), source: publisher, category, edition, body: [],
+      title, date: new Date(date).toISOString(), source: publisher, category, edition, body: [], summary: rssField(item, "description"),
     }];
   }).sort((a, b) => b.date.localeCompare(a.date)).slice(0, limit);
 }
@@ -302,10 +302,17 @@ export async function getLocalNews(): Promise<LocalNews[]> {
       seenHeadlines.add(key);
       return true;
     });
-  const results = await Promise.allSettled(headlines.map(async story => {
-    const rewrite = await generateBrief(story.title, "Unico elemento disponibile: il titolo. Riportalo in italiano in forma di breve attribuita soltanto se contiene un fatto concreto. Non dedurre dettagli.");
+  const results = await Promise.allSettled(headlines.map(async ({ summary, ...story }) => {
+    const context = summary && normalizeNewsText(summary).length > normalizeNewsText(story.title).length + 40
+      ? summary.slice(0, 3500)
+      : "Unico elemento disponibile: il titolo. Riportalo in italiano soltanto se contiene un fatto concreto. Non dedurre dettagli.";
+    const rewrite = await generateBrief(story.title, context);
+    if (!rewrite) console.info("[ac1899-news] Nessun articolo generato", { id: story.id, title: story.title, source: story.source, hasSummary: context !== "" && !context.startsWith("Unico elemento") });
     return rewrite ? { ...story, ...rewrite } : null;
   }));
+  results.forEach((result, index) => {
+    if (result.status === "rejected") console.warn("[ac1899-news] Errore elaborazione", { id: headlines[index].id, type: result.reason instanceof Error ? result.reason.name : "unknown" });
+  });
   const playerBriefs = results.flatMap(result => result.status === "fulfilled" && result.value ? [result.value] : []);
   const live = sources.flatMap(result => result.status === "fulfilled" ? result.value : []);
   if (live.length === 0 && playerBriefs.length === 0) {
