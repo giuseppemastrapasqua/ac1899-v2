@@ -153,7 +153,9 @@ function officialPublishedAt(html: string) {
   return Date.parse(timestamp);
 }
 
-async function generateOfficialBriefs(checkedAt: number): Promise<LocalNews[]> {
+type NewsCandidate = { story: LocalNews; context: string };
+
+async function generateOfficialBriefs(checkedAt: number): Promise<NewsCandidate[]> {
   const italianDate = (time: number) => new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Rome" }).format(time);
   const candidateDates = new Set([italianDate(checkedAt), italianDate(checkedAt - acquisitionWindowMs)]);
   const updates = (await getOfficialMilanNews()).filter(story => candidateDates.has(story.date))
@@ -172,10 +174,8 @@ async function generateOfficialBriefs(checkedAt: number): Promise<LocalNews[]> {
           .join(" ").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim()
       : "";
     if (description.length < 120) return;
-    const rewrite = await generateBrief(story.title, description.slice(0, 3500));
-    if (!rewrite) return;
-    return { ...rewrite, id: "milan-" + createHash("sha256").update(story.url).digest("hex").slice(0, 18),
-      source: "AC Milan", date: new Date(publishedAt).toISOString(), category: story.category, coverSource: story.url };
+    return { context: description.slice(0, 3500), story: { body: [], title: story.title, id: "milan-" + createHash("sha256").update(story.url).digest("hex").slice(0, 18),
+      source: "AC Milan", date: new Date(publishedAt).toISOString(), category: story.category, coverSource: story.url } };
   }));
   return results.flatMap(result => result.status === "fulfilled" && result.value ? [result.value] : []);
 }
@@ -204,11 +204,9 @@ async function readPressFeed(feed: typeof feeds[number], checkedAt: number): Pro
     .sort((a, b) => b.date - a.date)
     .slice(0, feed.limit);
   const briefs = await Promise.allSettled(items.map(async item => {
-    const rewrite = await generateBrief(item.title, item.description.slice(0, 3500));
-    if (!rewrite) return;
-    return { ...rewrite, id: feed.id + "-" + createHash("sha256").update(item.url).digest("hex").slice(0, 18),
+    return { context: item.description.slice(0, 3500), story: { body: [], title: item.title, id: feed.id + "-" + createHash("sha256").update(item.url).digest("hex").slice(0, 18),
       source: feed.source, date: new Date(item.date).toISOString(), category: "Rassegna stampa",
-      edition: feed.edition, coverSource: item.url };
+      edition: feed.edition, coverSource: item.url } };
   }));
   return briefs.flatMap(result => result.status === "fulfilled" && result.value ? [result.value] : []);
 }
@@ -319,31 +317,56 @@ export async function getLocalNews(): Promise<LocalNews[]> {
       seenHeadlines.add(key);
       return true;
     });
-  const results = await Promise.allSettled(headlines.map(async ({ summary, ...story }) => {
-    const context = summary && normalizeNewsText(summary).length > normalizeNewsText(story.title).length + 40
-      ? summary.slice(0, 3500)
-      : "Unico elemento disponibile: il titolo. Riportalo in italiano soltanto se contiene un fatto concreto. Non dedurre dettagli.";
-    const rewrite = await generateBrief(story.title, context);
-    if (!rewrite) console.info("[ac1899-news] Nessun articolo generato", { id: story.id, title: story.title, source: story.source, hasSummary: context !== "" && !context.startsWith("Unico elemento") });
-    return rewrite ? { ...story, ...rewrite } : null;
-  }));
-  results.forEach((result, index) => {
-    if (result.status === "rejected") console.warn("[ac1899-news] Errore elaborazione", { id: headlines[index].id, type: result.reason instanceof Error ? result.reason.name : "unknown" });
-  });
-  const playerBriefs = results.flatMap(result => result.status === "fulfilled" && result.value ? [result.value] : []);
-  const live = sources.flatMap(result => result.status === "fulfilled" ? result.value : []);
-  if (live.length === 0 && playerBriefs.length === 0) {
-    console.info("[ac1899-news] Nessuna notizia automatica", {
-      rewritingConfigured: Boolean(process.env.OPENAI_API_KEY),
-      failedFeeds: [...sources, ...indexed].filter(result => result.status === "rejected").length,
-      playerHeadlines: headlines.length,
-    });
+  const candidates: NewsCandidate[] = [
+    ...sources.flatMap(result => result.status === "fulfilled" ? result.value : []),
+    ...headlines.map(({ summary, ...story }) => ({
+      story,
+      context: summary && normalizeNewsText(summary).length > normalizeNewsText(story.title).length + 40
+        ? summary.slice(0, 3500)
+        : "Unico elemento disponibile: il titolo. Riportalo in italiano soltanto se contiene un fatto concreto. Non dedurre dettagli.",
+    })),
+  ];
+  const pending = new Map(candidates.map(candidate => [candidate.story.id, candidate]));
+  const queue = url && key ? createClient(url, key, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  }).from("ac1899_news_queue") : undefined;
+  if (queue && pending.size) {
+    const { error } = await queue.upsert([...pending.values()].map(candidate => ({
+      id: candidate.story.id, candidate,
+    })), { onConflict: "id", ignoreDuplicates: true });
+    if (error) console.error("[ac1899-news] Scrittura coda fallita", error.code);
   }
+  if (queue) {
+    const { data, error } = await queue.select("candidate").order("attempted_at", {
+      ascending: true, nullsFirst: true,
+    }).limit(20);
+    if (error) console.error("[ac1899-news] Lettura coda fallita", error.code);
+    for (const row of data ?? []) {
+      const candidate = row.candidate as NewsCandidate;
+      pending.set(candidate.story.id, candidate);
+    }
+  }
+  const work = [...pending.values()].slice(0, 20);
+  const results = await Promise.allSettled(work.map(async ({ story, context }) => {
+    if (stored.some(entry => entry.id === story.id)) return story.id;
+    if (queue) await queue.update({ attempted_at: new Date().toISOString() }).eq("id", story.id);
+    const rewrite = await generateBrief(story.title, context);
+    return rewrite ? { ...story, ...rewrite } : story.id;
+  }));
+  const completed = results.flatMap(result =>
+    result.status === "fulfilled" && typeof result.value === "string" ? [result.value] : []);
+  const live = results.flatMap(result =>
+    result.status === "fulfilled" && typeof result.value !== "string" ? [result.value] : []);
+  console.info("[ac1899-news] Acquisizione", {
+    candidates: candidates.length, attempted: work.length, rewritten: live.length,
+    failed: results.filter(result => result.status === "rejected").length,
+    failedFeeds: [...sources, ...indexed].filter(result => result.status === "rejected").length,
+  });
   const urls = new Set<string>();
   const ids = new Set<string>();
   const titles = new Set<string>();
   const liveEvents: LocalNews[] = await liveEventsPromise;
-  const stories = [...reviewed, ...stored, ...liveEvents, ...live, ...playerBriefs].filter(story => {
+  const stories = [...reviewed, ...stored, ...liveEvents, ...live].filter(story => {
     const title = normalizeNewsText(story.title);
     if (ids.has(story.id) || titles.has(title) || (story.coverSource && urls.has(story.coverSource))) return false;
     ids.add(story.id);
@@ -358,7 +381,14 @@ export async function getLocalNews(): Promise<LocalNews[]> {
       id: story.id, published_at: story.date, story,
     })), { onConflict: "id", ignoreDuplicates: true }).select("id");
     if (error) console.error("[ac1899-news] Salvataggio archivio fallito", error.code);
-    else if (data.length) console.info("[ac1899-news] Articoli acquisiti", data.map(row => row.id));
+    else {
+      completed.push(...live.map(story => story.id));
+      if (data.length) console.info("[ac1899-news] Articoli acquisiti", data.map(row => row.id));
+    }
+  }
+  if (queue && completed.length) {
+    const { error } = await queue.delete().in("id", completed);
+    if (error) console.error("[ac1899-news] Chiusura coda fallita", error.code);
   }
   return stories;
 }
