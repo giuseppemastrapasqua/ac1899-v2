@@ -176,11 +176,11 @@ type LiveFixture = {
   }[];
 };
 
-async function getLiveFixtures() {
+async function getLiveFixtures(query = "live=all", revalidate = 300) {
   if (!process.env.API_FOOTBALL_KEY) return null;
   try {
-    const response = await fetch(`${BASE_URL}/fixtures?live=all`, {
-      headers, next: { revalidate: 300 }, signal: AbortSignal.timeout(6000),
+    const response = await fetch(`${BASE_URL}/fixtures?${query}`, {
+      headers, next: { revalidate }, signal: AbortSignal.timeout(6000),
     });
     if (!response.ok) return null;
     const data = await response.json() as { errors: object; response: LiveFixture[] };
@@ -216,21 +216,11 @@ export async function getCommunityScoreboard() {
     }).sort((a, b) => Number(b.milan) - Number(a.milan));
 }
 
-// Confirmed fixtures only. One shared query per five-minute cache window.
-const liveNewsKickoffs = [
-  "2026-11-16T20:45:00+01:00", // Switzerland–Scotland
-  "2026-11-17T20:45:00+01:00", // Wales–Portugal
-  "2026-11-17T23:00:00+01:00", // United States–Haiti
-  "2026-11-22T18:00:00+01:00", // Milan–Frosinone
-];
-
 const normalizeName = (name: string) =>
   name.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase().replace(/[^a-z]+/g, " ").trim();
 
 export async function getMilanLiveNews(now = Date.now()) {
-  if (!liveNewsKickoffs.some(date => now >= Date.parse(date) && now < Date.parse(date) + 135 * 60_000)) return [];
-
-  const fixtures = await getLiveFixtures() ?? [];
+  if (!process.env.API_FOOTBALL_KEY) return [];
   const players = milanSquad.flatMap(group => group.players.map(row => ({
     name: row[1], nation: row[2], keeper: group.role === "Portieri",
   })));
@@ -238,6 +228,31 @@ export async function getMilanLiveNews(now = Date.now()) {
     italia: "italy", francia: "france", stati: "usa", belgio: "belgium", croazia: "croatia",
     svizzera: "switzerland", portogallo: "portugal", ecuador: "ecuador", serbia: "serbia", inghilterra: "england",
   };
+
+  const calendarDate = new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Rome" });
+  const currentDay = calendarDate.format(now);
+  const recentDay = calendarDate.format(now - 150 * 60_000);
+  const dates = [...new Set([currentDay, recentDay])];
+  const calendars = await Promise.all(dates.map(date =>
+    getLiveFixtures("date=" + date + "&timezone=Europe%2FRome", 3600)
+  ));
+  const coveredTeams = new Set(players.map(player => nationalTeams[normalizeName(player.nation).split(" ")[0]]));
+  const relevant = (match: LiveFixture) => [match.teams.home, match.teams.away].some(team =>
+    team.id === 489 || coveredTeams.has(normalizeName(team.name))
+  );
+  const inWindow = (match: LiveFixture) => {
+    const kickoff = Date.parse(match.fixture.date);
+    return relevant(match) && now >= kickoff && now < kickoff + 150 * 60_000;
+  };
+  if (calendars.some(calendar => calendar === null)) {
+    console.warn("[ac1899-live] Calendario indisponibile");
+  }
+  if (!calendars.some(calendar => calendar?.some(inWindow))) return [];
+  const fixtures = await getLiveFixtures();
+  if (!fixtures) {
+    console.warn("[ac1899-live] Diretta indisponibile");
+    return [];
+  }
 
   return fixtures.flatMap(match => (match.events ?? []).flatMap(event => {
     if (!event.player.name) return [];

@@ -4,11 +4,11 @@ import { siteUrl } from "../../../../lib/site-seo";
 import { notFound } from "next/navigation";
 import NewsCover from "../../../../components/NewsCover";
 import { getOfficialMilanCover } from "../../../../lib/acmilan-news";
-import { getLocalNews } from "../../../../lib/local-news";
+import { findLocalNews } from "../../../../lib/local-news";
 
 const findStory = cache(async (slug: string) => {
   if (!/^[a-z0-9-]{1,80}$/.test(slug)) return undefined;
-  return (await getLocalNews()).find(item => item.id === slug);
+  return findLocalNews(slug);
 });
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {

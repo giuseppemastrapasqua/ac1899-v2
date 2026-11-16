@@ -1,3 +1,4 @@
+import { createClient } from "@supabase/supabase-js";
 import { getMilanLiveNews } from "./api-football";
 import OpenAI from "openai";
 import { unstable_cache } from "next/cache";
@@ -138,10 +139,10 @@ function rssField(item: string, name: string) {
     .replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
 }
 
-const freshnessWindowMs = 5 * 60 * 1000;
+const acquisitionWindowMs = 60 * 60 * 1000;
 
 function isFreshPublication(publishedAt: number, checkedAt: number) {
-  return Number.isFinite(publishedAt) && publishedAt <= checkedAt && publishedAt > checkedAt - freshnessWindowMs;
+  return Number.isFinite(publishedAt) && publishedAt <= checkedAt && publishedAt > checkedAt - acquisitionWindowMs;
 }
 
 function officialPublishedAt(html: string) {
@@ -155,10 +156,9 @@ function officialPublishedAt(html: string) {
 
 async function generateOfficialBriefs(checkedAt: number): Promise<LocalNews[]> {
   const italianDate = (time: number) => new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Rome" }).format(time);
-  const candidateDates = new Set([italianDate(checkedAt), italianDate(checkedAt - freshnessWindowMs)]);
+  const candidateDates = new Set([italianDate(checkedAt), italianDate(checkedAt - acquisitionWindowMs)]);
   const updates = (await getOfficialMilanNews()).filter(story => candidateDates.has(story.date))
-    .filter(story => !reviewed.some(entry => entry.coverSource === story.url))
-    .slice(0, 3);
+    .filter(story => !reviewed.some(entry => entry.coverSource === story.url));
   const results = await Promise.allSettled(updates.map(async story => {
     const response = await fetch(story.url, {
       next: { revalidate: 3600 }, signal: AbortSignal.timeout(5000), redirect: "error",
@@ -271,7 +271,13 @@ function readPlayerNews(group: typeof playerNewsSources[number], checkedAt: numb
 
 export async function getLocalNews(): Promise<LocalNews[]> {
   const checkedAt = Date.now();
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const archive = url && key ? createClient(url, key, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  }).from("ac1899_news_archive") : undefined;
   const liveEventsPromise = getMilanLiveNews(checkedAt);
+  const savedPromise = archive?.select("story").order("published_at", { ascending: false }).limit(300);
   const [sources, indexed] = process.env.OPENAI_API_KEY ? await Promise.all([
     Promise.allSettled([generateOfficialBriefs(checkedAt), ...feeds.map(feed => readPressFeed(feed, checkedAt))]),
     Promise.allSettled([
@@ -282,8 +288,11 @@ export async function getLocalNews(): Promise<LocalNews[]> {
       })),
     ]),
   ]) : [[], []];
+  const saved = await savedPromise;
+  if (saved?.error) console.error("[ac1899-news] Lettura archivio fallita", saved.error.code);
+  const stored = (saved?.data ?? []).map(row => row.story as LocalNews);
   const seenHeadlines = new Set(reviewed.map(story => normalizeNewsText(story.title)));
-  const seenIds = new Set<string>();
+  const seenIds = new Set(stored.map(story => story.id));
   const headlines = indexed.flatMap(result => result.status === "fulfilled" ? result.value : [])
     .sort((a, b) => b.date.localeCompare(a.date))
     .filter(story => {
@@ -307,15 +316,41 @@ export async function getLocalNews(): Promise<LocalNews[]> {
     });
   }
   const urls = new Set<string>();
+  const ids = new Set<string>();
   const titles = new Set<string>();
   const liveEvents: LocalNews[] = await liveEventsPromise;
-  return [...reviewed, ...liveEvents, ...live, ...playerBriefs].filter(story => {
+  const stories = [...reviewed, ...stored, ...liveEvents, ...live, ...playerBriefs].filter(story => {
     const title = normalizeNewsText(story.title);
-    if (titles.has(title) || (story.coverSource && urls.has(story.coverSource))) return false;
+    if (ids.has(story.id) || titles.has(title) || (story.coverSource && urls.has(story.coverSource))) return false;
+    ids.add(story.id);
     titles.add(title);
     if (story.coverSource) urls.add(story.coverSource);
     return true;
   }).sort((a, b) => Date.parse(b.date) - Date.parse(a.date) || a.id.localeCompare(b.id));
+  const existing = new Set([...reviewed, ...stored].map(story => story.id));
+  const additions = stories.filter(story => !existing.has(story.id));
+  if (archive && additions.length) {
+    const { data, error } = await archive.upsert(additions.map(story => ({
+      id: story.id, published_at: story.date, story,
+    })), { onConflict: "id", ignoreDuplicates: true }).select("id");
+    if (error) console.error("[ac1899-news] Salvataggio archivio fallito", error.code);
+    else if (data.length) console.info("[ac1899-news] Articoli acquisiti", data.map(row => row.id));
+  }
+  return stories;
+}
+
+export async function findLocalNews(id: string) {
+  const reviewedStory = reviewed.find(story => story.id === id);
+  if (reviewedStory) return reviewedStory;
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (url && key) {
+    const { data } = await createClient(url, key, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    }).from("ac1899_news_archive").select("story").eq("id", id).maybeSingle();
+    if (data) return data.story as LocalNews;
+  }
+  return (await getLocalNews()).find(story => story.id === id);
 }
 
 export const localNewsHref = (id: string) => "/news/lettura/" + id;
