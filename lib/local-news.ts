@@ -19,10 +19,14 @@ const reviewed: LocalNews[] = [
     body: ["In vista di Belgio–Italia, in programma alle 20:45 a Bruxelles, Fantacalcio indica Diego Moreira nel tridente belga con De Ketelaere e Doku. Alphadjo Cissè è tra i convocati azzurri e, secondo le indicazioni prepartita pubblicate da Sky Sport, non figura nell’undici provato da Mancini.", "Sono indicazioni della vigilia. La presenza dei due rossoneri va verificata con le distinte ufficiali."],
   },
   {
-    id: "francia-turchia-formazioni-novembre-2026", title: "Maignan sostituito all’intervallo di Francia–Turchia: problema alla coscia",
-    source: "Radio Rossonera e SportMediaset", date: "2026-11-15T22:05:00+01:00", category: "Nazionali", edition: "Estero",
+    id: "francia-turchia-formazioni-novembre-2026", title: "Maignan, esami oggi con il Milan: cosa si sa dopo il cambio con la Francia",
+    source: "Federcalcio francese, via Foot Mercato ed Eurosport", date: "2026-11-16T08:06:00+01:00", category: "Nazionali", edition: "Estero",
     coverSource: "https://www.radiorossonera.it/news/52210077190/francia-turchia-maignan-infortunio",
-    body: ["Mike Maignan è uscito al 45′ di Francia–Turchia, a Bordeaux, ed è stato sostituito da Guillaume Restes. Secondo Radio Rossonera e SportMediaset, il portiere rossonero ha accusato un problema alla coscia destra.", "L’entità del problema e i tempi di recupero restano da chiarire. Adrien Rabiot, l’altro rossonero convocato dalla Francia, era partito titolare."],
+    body: [
+      "Mike Maignan è rimasto negli spogliatoi all’intervallo di Francia–Turchia, finita 2–1. Al suo posto è entrato Guillaume Restes per tutta la ripresa.",
+      "Secondo la Federcalcio francese, citata da Foot Mercato ed Eurosport, Maignan ha accusato dolore all’anca. Lo staff medico della nazionale ha informato il Milan, che valuterà il portiere lunedì 16 novembre.",
+      "L’esito degli accertamenti e i tempi di recupero restano da confermare.",
+    ],
   },
   {
     id: "milan-frosinone-recuperi-15-novembre", title: "Verso il Frosinone, il Milan valuta i rientri di Pavlović e Tomori",
