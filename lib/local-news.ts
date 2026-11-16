@@ -122,15 +122,14 @@ const generateBrief = unstable_cache(async (title: string, description: string) 
   }).catch((error: unknown) => {
     console.warn("[ac1899-news] Riscrittura non riuscita", error instanceof OpenAI.APIError
       ? { status: error.status, code: error.code } : { type: error instanceof Error ? error.name : "unknown" });
-    return null;
+    throw error;
   });
-  if (!completion) return null;
   const result = JSON.parse(completion.choices[0]?.message.content ?? "{}");
   if (typeof result.title !== "string" || !result.title.trim() || !Array.isArray(result.body)) return null;
   const body = result.body.filter((text: unknown): text is string =>
     typeof text === "string" && text.trim().length > 25 && !/https?:\/\//i.test(text)).slice(0, 3);
   return body.length ? { title: result.title.trim(), body } : null;
-}, ["ac1899-editorial-brief-v1"], { revalidate: 86400 });
+}, ["ac1899-editorial-brief-v2"], { revalidate: 86400 });
 
 function rssField(item: string, name: string) {
   const raw = item.match(new RegExp("<" + name + ">([\\s\\S]*?)</" + name + ">", "i"))?.[1]?.trim() ?? "";
