@@ -187,7 +187,7 @@ const feeds = [
     url: "https://www.theguardian.com/football/acmilan/rss", host: "www.theguardian.com", limit: 3 },
 ] as const;
 
-async function readPressFeed(feed: typeof feeds[number], checkedAt: number): Promise<LocalNews[]> {
+async function readPressFeed(feed: typeof feeds[number], checkedAt: number): Promise<NewsCandidate[]> {
   const response = await fetch(feed.url, {
     next: { revalidate: 60 }, signal: AbortSignal.timeout(6000),
   });
