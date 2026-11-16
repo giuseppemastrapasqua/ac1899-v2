@@ -218,6 +218,22 @@ function normalizeNewsText(text: string) {
   return text.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
 }
 
+const clubOutlets = [
+  ["gazzetta.it", "La Gazzetta dello Sport"], ["corrieredellosport.it", "Corriere dello Sport"],
+  ["sport.sky.it", "Sky Sport"], ["sportmediaset.mediaset.it", "SportMediaset"],
+  ["milannews.it", "MilanNews"], ["tuttomercatoweb.com", "TuttoMercatoWeb"],
+  ["ansa.it", "ANSA"], ["reuters.com", "Reuters"], ["bbc.co.uk", "BBC Sport"],
+  ["theguardian.com", "The Guardian"], ["lequipe.fr", "L’Équipe"],
+  ["rmcsport.bfmtv.com", "RMC Sport"], ["marca.com", "Marca"],
+  ["acmilan.com", "AC Milan"], ["figc.it", "FIGC"], ["uefa.com", "UEFA"],
+] as const;
+
+const allowedArchiveSources = new Set<string>([
+  ...clubOutlets.map(([, name]) => name),
+  ...playerNewsSources.flatMap(group => group.outlets.map(([, name]) => name)),
+  "API-Football · tabellino live",
+]);
+
 const indexedClubSearches = [
   { query: '"AC Milan" OR rossoneri', locale: "it", country: "IT", edition: "Italia" },
   { query: '"AC Milan" OR "Milan Women"', locale: "en", country: "GB", edition: "Estero" },
@@ -225,7 +241,7 @@ const indexedClubSearches = [
 
 async function readIndexedNews({ query, locale, country, edition, category, sourceFor, matches, limit, checkedAt }: {
   query: string; locale: string; country: string; edition: NonNullable<LocalNews["edition"]>;
-  category: string; sourceFor?: (host: string) => string | undefined; matches: (title: string) => boolean; limit: number; checkedAt: number;
+  category: string; sourceFor: (host: string) => string | undefined; matches: (title: string) => boolean; limit: number; checkedAt: number;
 }): Promise<(LocalNews & { summary: string })[]> {
   const params = new URLSearchParams({
     q: query, hl: locale, gl: country, ceid: country + ":" + locale.split("-")[0],
@@ -240,7 +256,7 @@ async function readIndexedNews({ query, locale, country, edition, category, sour
     const host = source && URL.parse(source[1])?.hostname;
     if (!source || !host) return [];
     const label = rssField("<publisher>" + source[2] + "</publisher>", "publisher");
-    const publisher = sourceFor ? sourceFor(host) : label;
+    const publisher = sourceFor(host);
     if (!publisher || publisher.length > 100) return [];
     const fullTitle = rssField(item, "title");
     const suffix = " - " + label;
@@ -283,14 +299,16 @@ export async function getLocalNews(): Promise<LocalNews[]> {
     Promise.allSettled([
       ...playerNewsSources.map(group => readPlayerNews(group, checkedAt)),
       ...indexedClubSearches.map(({ query, ...search }) => readIndexedNews({
-        ...search, query: "(" + query + ") when:1d", category: "Rassegna stampa",
+        ...search, query: "(" + query + ") when:1d",
+        sourceFor: host => clubOutlets.find(([domain]) => host === domain || host.endsWith("." + domain))?.[1],
+        category: "Rassegna stampa",
         matches: title => /\b(?:milan|rossoner[ieo])\b/i.test(title), limit: 5, checkedAt,
       })),
     ]),
   ]) : [[], []];
   const saved = await savedPromise;
   if (saved?.error) console.error("[ac1899-news] Lettura archivio fallita", saved.error.code);
-  const stored = (saved?.data ?? []).map(row => row.story as LocalNews);
+  const stored = (saved?.data ?? []).map(row => row.story as LocalNews).filter(story => allowedArchiveSources.has(story.source));
   const seenHeadlines = new Set(reviewed.map(story => normalizeNewsText(story.title)));
   const seenIds = new Set(stored.map(story => story.id));
   const headlines = indexed.flatMap(result => result.status === "fulfilled" ? result.value : [])
@@ -355,7 +373,7 @@ export async function findLocalNews(id: string) {
     const { data } = await createClient(url, key, {
       auth: { persistSession: false, autoRefreshToken: false },
     }).from("ac1899_news_archive").select("story").eq("id", id).maybeSingle();
-    if (data) return data.story as LocalNews;
+    if (data && allowedArchiveSources.has((data.story as LocalNews).source)) return data.story as LocalNews;
   }
   return (await getLocalNews()).find(story => story.id === id);
 }
