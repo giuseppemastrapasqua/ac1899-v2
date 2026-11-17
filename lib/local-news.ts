@@ -223,6 +223,36 @@ const clubOutlets = [
   ["theguardian.com", "The Guardian"], ["lequipe.fr", "L’Équipe"],
   ["rmcsport.bfmtv.com", "RMC Sport"], ["marca.com", "Marca"],
   ["acmilan.com", "AC Milan"], ["figc.it", "FIGC"], ["uefa.com", "UEFA"],
+  ["tuttosport.com", "Tuttosport"],
+  ["repubblica.it", "la Repubblica"],
+  ["corriere.it", "Corriere della Sera"],
+  ["skysports.com", "Sky Sports UK"],
+  ["ft.com", "Financial Times"],
+  ["nytimes.com", "The New York Times"],
+  ["as.com", "Diario AS"],
+  ["kicker.de", "kicker"],
+  ["pianetamilan.it", "Pianeta Milan"],
+  ["radiorossonera.it", "Radio Rossonera"],
+  ["ouest-france.fr", "Ouest-France"],
+  ["leparisien.fr", "Le Parisien"],
+  ["lesoir.be", "Le Soir"],
+  ["rtp.pt", "RTP Desporto"],
+  ["sport.hrt.hr", "HRT Sport"],
+  ["punchng.com", "Punch Sports"],
+  ["completesports.com", "Complete Sports"],
+  ["efe.com", "EFE Deportes"],
+  ["ge.globo.com", "ge – Globo Esporte"],
+  ["uol.com.br", "UOL Esporte"],
+  ["sunderlandecho.com", "Sunderland Echo"],
+  ["thenorthernecho.co.uk", "The Northern Echo"],
+  ["lfootball.it", "L Football"],
+  ["sprintesport.it", "Sprint e Sport"],
+  ["fff.fr", "FFF"],
+  ["rbfa.be", "RBFA"],
+  ["fpf.pt", "FPF"],
+  ["ussoccer.com", "U.S. Soccer"],
+  ["hns.family", "HNS"],
+  ["bbc.com", "BBC Sport"],
 ] as const;
 
 const allowedArchiveSources = new Set<string>([
@@ -234,6 +264,11 @@ const allowedArchiveSources = new Set<string>([
 const indexedClubSearches = [
   { query: '"AC Milan" OR rossoneri', locale: "it", country: "IT", edition: "Italia" },
   { query: '"AC Milan" OR "Milan Women"', locale: "en", country: "GB", edition: "Estero" },
+  { query: '"Milan Femminile" OR "Milan Women" OR "Milan Primavera" OR "Milan Futuro"', locale: "it", country: "IT", edition: "Italia" },
+  { query: '"AC Milan" OR "Milan AC"', locale: "fr", country: "FR", edition: "Estero" },
+  { query: '"AC Milan" OR "Milan"', locale: "es", country: "ES", edition: "Estero" },
+  { query: '"AC Milan" OR "Milan"', locale: "pt", country: "BR", edition: "Estero" },
+  { query: '"AC Milan" OR "AC Mailand"', locale: "de", country: "DE", edition: "Estero" },
 ] as const;
 
 async function readIndexedNews({ query, locale, country, edition, category, sourceFor, matches, limit, checkedAt }: {
@@ -299,7 +334,7 @@ export async function getLocalNews(): Promise<LocalNews[]> {
         ...search, query: "(" + query + ") when:1d",
         sourceFor: host => clubOutlets.find(([domain]) => host === domain || host.endsWith("." + domain))?.[1],
         category: "Rassegna stampa",
-        matches: title => /\b(?:milan|rossoner[ieo])\b/i.test(title), limit: 5, checkedAt,
+        matches: title => /\b(?:milan|mailand|rossoner[ieo])\b/i.test(title), limit: 5, checkedAt,
       })),
     ]),
   ]) : [[], []];
