@@ -46,8 +46,8 @@ export default async function Home() {
     image: story.image || (story.coverSource ? await getOfficialMilanCover(story.coverSource) : undefined),
   })));
   const [lead, ...others] = featured;
-  const side = others.slice(0, 3);
-  const more = others.slice(3);
+  const side = others.slice(0, 2);
+  const more = others.slice(2);
   const normalize = (value: string) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("it").replace(/[^\p{L}\p{N}]+/gu, " ").trim();
   const squadNames = milanSquad.flatMap(group => group.players.map(player => normalize(player[1].split(" ").slice(1).join(" ")))).filter(name => name.length > 3);
   const medicalPlayers = new Set<string>();
