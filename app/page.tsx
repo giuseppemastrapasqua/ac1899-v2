@@ -104,12 +104,12 @@ export default async function Home() {
         </aside>
       </div>
     </div>
-    <section className={styles.videoBand} id="ai-room"><div className={styles.wrap}>
+    <section className={styles.videoBand}><div className={styles.wrap}>
       <div className={styles.videoIntro}><span className={styles.eyebrow}>LA VOCE DI AC1899</span><h2>Rabdo, a tutto Milan.</h2><p>Il programma da lunedì: un video al giorno durante la settimana, il prepartita e il commento dopo il fischio finale.</p><Link href="/creator-video">Entra nella Creator Room</Link></div>
       <div className={styles.videoSchedule}>{[["OGNI MATTINA", "L’editoriale", "Il tema del giorno, la mia opinione."], ["PRIMA E DOPO LA GARA", "Dentro la partita", "Attese, scelte e commento a caldo."], ["DURANTE LA SETTIMANA", "Un video al giorno", "I temi li scegliamo insieme."]].map(([label, title, text]) => <div key={title}><span>{label}</span><h3>{title}</h3><p>{text}</p></div>)}</div>
       {!!videoResult.data?.length && <div className={styles.publishedVideos}><h3>Già nella Creator Room</h3>{videoResult.data.filter(video => /^https:\/\/(www\.)?(youtube\.com|youtu\.be)\//.test(video.youtube_url || "")).map(video => <a key={video.id} href={video.youtube_url} target="_blank" rel="noopener noreferrer"><span>VIDEO · {video.creator}</span><strong>{video.title}</strong></a>)}</div>}
     </div></section>
-    <div className={styles.sportBand}><div className={styles.wrap}>
+    <div className={styles.sportBand} id="ai-room"><div className={styles.wrap}>
       <UpcomingMatchCards today={today} />
       <SectionHeading title="Il campo, in breve" href="/campionato/analisi" label="Analisi e grafici completi" />
       <div className={styles.matchLayout}><MatchThreeNumbers /><div className={styles.competitions}>
