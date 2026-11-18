@@ -1,38 +1,42 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { supabase } from "../lib/supabase";
 
 export default function NewsletterBox() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
 
-  async function subscribe() {
-    if (!email.includes("@")) {
-      alert("Inserisci un indirizzo email valido");
+  const [feedback, setFeedback] = useState<{ kind: "success" | "error"; message: string }>();
+
+  async function subscribe(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (loading) return;
+    const address = email.trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(address) || address.length > 254) {
+      setFeedback({ kind: "error", message: "Inserisci un indirizzo email valido." });
       return;
     }
-
     setLoading(true);
-
-    const { error } = await supabase
-      .from("newsletter_subscribers")
-      .insert([{ email }]);
-
-    setLoading(false);
-
-    if (error) {
-      if (error.message.includes("duplicate")) {
-        alert("Email già registrata");
-      } else {
-        alert("Errore durante l'iscrizione");
-        console.error(error);
+    setFeedback(undefined);
+    try {
+      const { error } = await supabase.from("newsletter_subscribers").insert([{ email: address }]).abortSignal(AbortSignal.timeout(12000));
+      if (error) {
+        if (error.code === "23505") {
+          setFeedback({ kind: "success", message: "Questo indirizzo è già iscritto alla newsletter." });
+        } else {
+          setFeedback({ kind: "error", message: "Non siamo riusciti a completare l’iscrizione. Riprova tra poco." });
+          console.error("[newsletter] Iscrizione fallita", { code: error.code });
+        }
+        return;
       }
-      return;
+      setEmail("");
+      setFeedback({ kind: "success", message: "Iscrizione completata! Sei nella newsletter di AC1899." });
+    } catch {
+      setFeedback({ kind: "error", message: "Connessione non disponibile. Controlla la rete e riprova." });
+    } finally {
+      setLoading(false);
     }
-
-    setEmail("");
-    alert("Iscrizione completata! 🔴⚫");
   }
 
   return (
@@ -82,7 +86,7 @@ export default function NewsletterBox() {
         Ricevi news, mercato, pagelle e analisi esclusive del mondo rossonero.
       </p>
 
-      <div
+      <form onSubmit={subscribe} aria-busy={loading}
         style={{
           display: "grid",
           gap: 10,
@@ -91,6 +95,11 @@ export default function NewsletterBox() {
       >
         <input
           type="email"
+          required
+          maxLength={254}
+          autoComplete="email"
+          name="email"
+          aria-describedby={feedback ? "newsletter-feedback" : undefined}
           aria-label="Indirizzo email"
           placeholder="La tua email"
           value={email}
@@ -107,7 +116,7 @@ export default function NewsletterBox() {
         />
 
         <button
-          onClick={subscribe}
+          type="submit"
           disabled={loading}
           style={{
             width: "100%",
@@ -122,9 +131,10 @@ export default function NewsletterBox() {
             letterSpacing: 1,
           }}
         >
-          {loading ? "Iscrizione..." : "Iscriviti →"}
+          {loading ? "Iscrizione..." : "Iscriviti"}
         </button>
-      </div>
+        {feedback && <p id="newsletter-feedback" role={feedback.kind === "error" ? "alert" : "status"} style={{ margin: 0, padding: "12px 14px", borderRadius: 6, fontSize: 15, background: feedback.kind === "error" ? "#fff1f2" : "#ecfdf5", color: feedback.kind === "error" ? "#9f1239" : "#166534" }}>{feedback.message}</p>}
+      </form>
     </section>
   );
 }
