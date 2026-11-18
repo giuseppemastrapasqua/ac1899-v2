@@ -13,6 +13,22 @@ export type LocalNews = {
 };
 
 const reviewed: LocalNews[] = [
+{
+  "id": "andrea-conti-intervista-18-novembre-2026",
+  "title": "CONTI SI RACCONTA: IL SOGNO MILAN, GLI INFORTUNI E LA RIPARTENZA DA ALLENATORE",
+  "source": "Fanpage, intervista ripresa da MilanNews",
+  "date": "2026-11-18T14:30:00+01:00",
+  "category": "Interviste",
+  "edition": "Italia",
+  "coverSource": "https://www.milannews.it/primo-piano/conti-al-milan-coronato-sogno-invisibile-potessi-cancellare-carriera-cancellerei-quell-allenamento-636583",
+  "body": [
+    "Andrea Conti ripercorre la sua esperienza rossonera nell’intervista a Fanpage ripresa da MilanNews. L’ex terzino conserva gratitudine per l’opportunità ricevuta dal Milan, che considera la realizzazione di un desiderio d’infanzia. La possibilità di trasferirsi al Chelsea nel 2017 non rappresenta un rimpianto.",
+    "Il ricordo più doloroso resta il primo grave infortunio. Conti racconta che quel giorno si allenò senza sentirsi nelle condizioni migliori e individua in quell’episodio l’inizio delle difficoltà della sua carriera.",
+    "Dopo aver ritrovato continuità nel 2020, un nuovo intervento lo fermò. Al rientro finì ai margini, senza comprendere pienamente le ragioni delle scelte. Una situazione che descrive come difficile anche sul piano personale.",
+    "Conti riconosce a Ibrahimović un contributo importante alla crescita del Milan, ricordandone l’esigenza in campo e il carattere più disteso fuori.",
+    "Ora lavora nel settore giovanile dello Scanzorosciate. Ai ragazzi consiglia di cercare continuità e affrontare gradualmente le tappe della propria crescita, anche nelle categorie inferiori."
+  ]
+},
   {
     id: "belgio-italia-formazioni-novembre-2026", title: "Belgio–Italia, le probabili formazioni: Moreira verso una maglia da titolare",
     source: "Fantacalcio e Sky Sport", date: "2026-11-15T19:55:00+01:00", category: "Nazionali", edition: "Italia",
