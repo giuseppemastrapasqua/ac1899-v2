@@ -34,7 +34,8 @@ async function getEditorialArchive() {
   return entries;
 }
 
-export default async function NewsPage() {
+export default async function NewsPage({ searchParams }: { searchParams: Promise<{ q?: string; categoria?: string }> }) {
+  const filters = await searchParams;
   const [local, editorial] = await Promise.all([getLocalNews(), getEditorialArchive()]);
   const translated = await Promise.all(local.map(async ({ id, title, date, source, category, coverSource }) => ({
     title, date, source, category, href: localNewsHref(id),
@@ -49,7 +50,7 @@ export default async function NewsPage() {
           <h1 className="text-4xl">Archivio notizie</h1>
           <p className="mt-2 text-sm text-gray-600">Notizie ufficiali, rassegna stampa e articoli AC1899. I contributi in inglese sono rielaborati in italiano.</p>
         </header>
-        <NewsArchive entries={entries} />
+        <NewsArchive key={`${filters.q ?? ""}:${filters.categoria ?? ""}`} entries={entries} initialQuery={filters.q} initialCategory={filters.categoria} />
       </div>
     </main>
   );
