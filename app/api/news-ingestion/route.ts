@@ -1,5 +1,5 @@
 import { timingSafeEqual } from "node:crypto";
-import { getLocalNews } from "../../../lib/local-news";
+import { getLocalNews, type IngestionReport } from "../../../lib/local-news";
 
 export const maxDuration = 60;
 
@@ -10,6 +10,12 @@ export async function POST(request: Request) {
   if (!secret || supplied.length !== expected.length || !timingSafeEqual(supplied, expected)) {
     return Response.json({ ok: false }, { status: 401 });
   }
-  const stories = await getLocalNews();
-  return Response.json({ ok: true, archiveEntries: stories.length });
+  try {
+    let report: IngestionReport | undefined;
+    const stories = await getLocalNews({ ingest: true, onReport: value => { report = value; } });
+    return Response.json({ ok: !!report?.rewriteConfigured && report.failed === 0, archiveEntries: stories.length, report });
+  } catch (error) {
+    console.error("[ac1899-news] Controllo fallito", error instanceof Error ? error.message : "unknown");
+    return Response.json({ ok: false, error: "Controllo non completato. Consultare i log di acquisizione." }, { status: 503 });
+  }
 }
