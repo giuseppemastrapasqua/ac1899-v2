@@ -197,8 +197,7 @@ async function readPressFeed(feed: typeof feeds[number], checkedAt: number): Pro
       title: rssField(item, "title"), description: rssField(item, "description"),
       url: rssField(item, "link"), date: Date.parse(rssField(item, "pubDate")),
     }))
-    .filter(item => /\b(?:milan|rossoner[ioe])\b/i.test(item.title)
-      && !(/endrick/i.test(item.title) && /tresoldi/i.test(item.title))
+    .filter(item => matchesMilanNews(item.title)
       && item.description.length >= 100 && isFreshPublication(item.date, checkedAt)
       && item.url.startsWith("https://" + feed.host + "/"))
     .sort((a, b) => b.date - a.date)
@@ -213,6 +212,15 @@ async function readPressFeed(feed: typeof feeds[number], checkedAt: number): Pro
 
 function normalizeNewsText(text: string) {
   return text.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+}
+
+function matchesMilanNews(title: string) {
+  if (/\b(?:milan|mailand|rossoner[ioe])\b/i.test(title)) return true;
+  const normalized = " " + normalizeNewsText(title) + " ";
+  return milanSquad.some(group => group.players.some(([, name]) => {
+    const surname = normalizeNewsText(name).split(" ").slice(1).join(" ");
+    return surname.length > 3 && normalized.includes(" " + surname + " ");
+  }));
 }
 
 const clubOutlets = [
@@ -334,7 +342,7 @@ export async function getLocalNews(): Promise<LocalNews[]> {
         ...search, query: "(" + query + ") when:1d",
         sourceFor: host => clubOutlets.find(([domain]) => host === domain || host.endsWith("." + domain))?.[1],
         category: "Rassegna stampa",
-        matches: title => /\b(?:milan|mailand|rossoner[ieo])\b/i.test(title), limit: 5, checkedAt,
+        matches: matchesMilanNews, limit: 5, checkedAt,
       })),
     ]),
   ]) : [[], []];
