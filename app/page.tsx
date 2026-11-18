@@ -9,6 +9,7 @@ import { getOfficialMilanCover } from "../lib/acmilan-news";
 import { getLocalNews, localNewsHref } from "../lib/local-news";
 import { serieA, europaLeague } from "../lib/home-standings";
 import { italianWonderkids } from "../lib/italian-wonderkids";
+import { milanSquad } from "../lib/milan-squad";
 import { sectionMetadata } from "../lib/site-seo";
 import { supabase } from "../lib/supabase";
 import styles from "./home.module.css";
@@ -47,7 +48,17 @@ export default async function Home() {
   const [lead, ...others] = featured;
   const side = others.slice(0, 3);
   const more = others.slice(3);
-  const medical = sorted.filter(story => /infortun|rientr|recuper|esami|precauz|maignan/i.test(story.title)).slice(0, 2);
+  const normalize = (value: string) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("it").replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+  const squadNames = milanSquad.flatMap(group => group.players.map(player => normalize(player[1].split(" ").slice(1).join(" ")))).filter(name => name.length > 3);
+  const medicalPlayers = new Set<string>();
+  const medical = sorted.filter(story => {
+    if (!/infortun|rientr|recuper|esami|precauz|risonanza|maignan/i.test(story.title) || story.category === "Interviste") return false;
+    const title = ` ${normalize(story.title)} `;
+    const players = squadNames.filter(name => title.includes(` ${name} `));
+    if (!players.some(name => !medicalPlayers.has(name))) return false;
+    players.forEach(name => medicalPlayers.add(name));
+    return true;
+  }).slice(0, 2);
   const topics = [
     { title: "Mercato", query: "", category: "Mercato", pattern: /mercato|endrick|tresoldi|prestito|rinnovo/i },
     { title: "Nazionali", query: "", category: "Nazionali", pattern: /nazional|francia|portogallo|pulisic|belgio|azzurr/i },
