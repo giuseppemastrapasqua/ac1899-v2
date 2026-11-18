@@ -110,7 +110,7 @@ export default async function Home() {
           </section>
           <section className={styles.panel}><span className={styles.eyebrow}>CERCA IL TUO ARGOMENTO</span><h2>Dentro la notizia</h2>
             <form action="/news" className={styles.search}><label htmlFor="home-search">Giocatore o argomento</label><div><input id="home-search" name="q" placeholder="Maignan, mercato…" /><button type="submit">Cerca</button></div></form>
-            <div className={styles.chips}>{["Maignan", "Pulisic", "Ramos", "Rinnovo"].map(name => <Link key={name} href={`/news?q=${encodeURIComponent(name)}`}>{name}</Link>)}</div>
+            <div className={styles.chips}>{["Maignan", "Pulisic", "Ramos", "Rinnovo"].map(name => <Link key={name} href={name === "Rinnovo" ? "/news?q=Rinnovo" : `/dossier/${name.toLowerCase()}`}>{name}</Link>)}</div>
           </section>
         </aside>
       </div>

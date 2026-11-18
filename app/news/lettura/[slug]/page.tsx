@@ -1,14 +1,17 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { cache } from "react";
 import { siteUrl } from "../../../../lib/site-seo";
 import { notFound } from "next/navigation";
 import NewsCover from "../../../../components/NewsCover";
 import { getOfficialMilanCover } from "../../../../lib/acmilan-news";
-import { findLocalNews } from "../../../../lib/local-news";
+import { getLocalNews, localNewsHref } from "../../../../lib/local-news";
+
+const readNews = cache(getLocalNews);
 
 const findStory = cache(async (slug: string) => {
   if (!/^[a-z0-9-]{1,80}$/.test(slug)) return undefined;
-  return findLocalNews(slug);
+  return (await readNews()).find(story => story.id === slug);
 });
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -29,6 +32,9 @@ export default async function LocalNewsPage({ params }: { params: Promise<{ slug
   const story = await findStory(slug);
   if (!story) notFound();
   const image = story.coverSource ? await getOfficialMilanCover(story.coverSource) : undefined;
+
+  const terms = story.title.toLocaleLowerCase("it").match(/[\p{L}]{5,}/gu) ?? [];
+  const related = (await readNews()).filter(item => item.id !== story.id).map(item => ({ item, score: terms.filter(term => item.title.toLocaleLowerCase("it").includes(term)).length * 2 + (item.category === story.category ? 1 : 0) })).filter(entry => entry.score > 0).sort((a, b) => b.score - a.score || Date.parse(b.item.date) - Date.parse(a.item.date)).slice(0, 3);
 
   const structuredData = {
     "@context": "https://schema.org", "@type": "NewsArticle",
@@ -55,6 +61,7 @@ export default async function LocalNewsPage({ params }: { params: Promise<{ slug
         </div>
         <footer className="border-t border-gray-200 pt-3 text-sm text-gray-600">Fonte: {story.source}</footer>
       </article>
+      {!!related.length && <section aria-labelledby="related-title" className="mx-auto mt-6 max-w-3xl"><h2 id="related-title" className="mb-4 text-3xl">Continua a leggere</h2><div className="grid gap-3 sm:grid-cols-3">{related.map(({ item }) => <Link key={item.id} href={localNewsHref(item.id)} className="ac1899-box p-4"><p className="mb-2 text-sm text-gray-600">{item.category}</p><h3 className="text-xl">{item.title}</h3><time dateTime={item.date} className="mt-2 block text-sm text-gray-600">{new Date(item.date).toLocaleDateString("it-IT", { timeZone: "Europe/Rome" })}</time></Link>)}</div></section>}
     </main>
   );
 }
