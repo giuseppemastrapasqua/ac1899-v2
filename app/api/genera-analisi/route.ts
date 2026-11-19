@@ -1,3 +1,4 @@
+import { requireAdmin } from "../../../lib/require-admin";
 import OpenAI from "openai";
 
 const openai = new OpenAI({
@@ -5,6 +6,8 @@ const openai = new OpenAI({
 });
 
 export async function POST(request: Request) {
+  const denied = await requireAdmin(request);
+  if (denied) return denied;
   try {
     const body = await request.json();
     const type = body.type || "match";

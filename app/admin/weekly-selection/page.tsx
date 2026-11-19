@@ -1,4 +1,5 @@
 "use client";
+import { adminFetch } from "../../../lib/admin-fetch";
 
 import { useState } from "react";
 import AdminGuard from "../../../components/AdminGuard";
@@ -12,7 +13,7 @@ export default function WeeklySelectionPage() {
     setLoading(true);
     setResult(null);
 
-    const res = await fetch("/api/wonderkids/weekly-selection", {
+    const res = await adminFetch("/api/wonderkids/weekly-selection", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -40,7 +41,7 @@ export default function WeeklySelectionPage() {
     setImageLoading(true);
     setResult(null);
 
-    const res = await fetch("/api/wonderkids/generate-images", {
+    const res = await adminFetch("/api/wonderkids/generate-images", {
       method: "POST",
     });
 

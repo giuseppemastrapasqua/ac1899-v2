@@ -23,6 +23,8 @@ export default function AdminGuard({
         return;
       }
 
+      const { data: admin, error } = await supabase.rpc("ac1899_is_admin");
+      if (error || admin !== true) { router.replace("/iscriviti"); return; }
       setAllowed(true);
     }
 

@@ -2,8 +2,16 @@
 
 import Link from "next/link";
 import BrandMark from "./BrandMark";
+import { useEffect, useState } from "react";
+import { supabase } from "../lib/supabase";
 
 export default function Navbar() {
+  const [signedIn, setSignedIn] = useState(false);
+  useEffect(() => {
+    void supabase.auth.getSession().then(({ data }) => setSignedIn(!!data.session));
+    const { data } = supabase.auth.onAuthStateChange((_event, session) => setSignedIn(!!session));
+    return () => data.subscription.unsubscribe();
+  }, []);
   const links = [
     { label: "Home", href: "/" },
     { label: "Milan", href: "/milan" },
@@ -64,19 +72,11 @@ export default function Navbar() {
         ))}
         </div>
 
-        <Link
-          href="/admin"
-          className="site-nav-admin"
-          style={{
-            marginLeft: "auto",
-            color: "#fca5a5",
-            textDecoration: "none",
-            fontWeight: 700,
-            fontSize: 14,
-          }}
-        >
-          Admin
-        </Link>
+        <div className="site-nav-account">
+        <Link href="/admin" className="site-nav-admin">Admin</Link>
+        <Link href="/iscriviti" className="site-nav-signup">{signedIn ? "Il mio account" : "Iscriviti"}</Link>
+        </div>
+
       </nav>
     </header>
   );

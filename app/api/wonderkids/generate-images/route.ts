@@ -1,3 +1,4 @@
+import { requireAdmin } from "../../../../lib/require-admin";
 import { createClient } from "@supabase/supabase-js";
 
 const supabaseAdmin = createClient(
@@ -5,7 +6,9 @@ const supabaseAdmin = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-export async function POST() {
+export async function POST(request: Request) {
+  const denied = await requireAdmin(request);
+  if (denied) return denied;
   try {
     const { data: players, error } = await supabaseAdmin
       .from("wonderkids_weekly_awards")

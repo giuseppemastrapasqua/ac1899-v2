@@ -1,4 +1,5 @@
 "use client";
+import { adminFetch } from "../../../lib/admin-fetch";
 
 import { useState } from "react";
 import AdminGuard from "../../../components/AdminGuard";
@@ -11,7 +12,7 @@ export default function DailyEditorialAdminPage() {
     setLoading(true);
     setResult(null);
 
-    const res = await fetch("/api/daily-editorial/generate", {
+    const res = await adminFetch("/api/daily-editorial/generate", {
       method: "POST",
     });
 
