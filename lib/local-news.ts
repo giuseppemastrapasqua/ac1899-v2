@@ -126,7 +126,7 @@ const reviewed: LocalNews[] = [
 export const generateBrief = unstable_cache(async (title: string, description: string, related: { id: string; title: string; date: string; summary: string }[] = []) => {
   if (!process.env.OPENAI_API_KEY) return null;
   const detailed = /cardinale|redbird|analisi|approfondimento/i.test(title);
-  const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY, timeout: detailed ? 15000 : 6500, maxRetries: 0 });
+  const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY, timeout: detailed ? 25000 : 20000, maxRetries: 0 });
   const completion = await client.chat.completions.create({
     model: "gpt-4o-mini",
     temperature: 0.2,
