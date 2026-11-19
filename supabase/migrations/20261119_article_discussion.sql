@@ -1,0 +1,15 @@
+create or replace function public.ac1899_is_admin() returns boolean language sql stable security definer set search_path=public as $$ select exists(select 1 from public.admins where lower(email)=lower(auth.jwt()->>'email')) $$;
+revoke all on function public.ac1899_is_admin() from public; grant execute on function public.ac1899_is_admin() to authenticated;
+drop policy if exists "Allow read newsletter subscribers" on public.newsletter_subscribers;
+create policy "Admin reads newsletter" on public.newsletter_subscribers for select to authenticated using(public.ac1899_is_admin());
+create table public.article_comments(id uuid primary key default gen_random_uuid(),article_id text not null check(article_id ~ '^[a-z0-9-]{1,80}$'),user_id uuid not null references auth.users(id) on delete cascade,author text not null check(length(author) between 3 and 100),body text not null check(length(trim(body)) between 3 and 2000),created_at timestamptz not null default now());
+create index on public.article_comments(article_id,created_at desc);
+alter table public.article_comments enable row level security;
+create policy "Read comments" on public.article_comments for select using(true);
+create policy "Own comment" on public.article_comments for insert to authenticated with check(auth.uid()=user_id and author=trim(coalesce(auth.jwt()->'user_metadata'->>'full_name','')) and length(author)>=3);
+create policy "Delete own comment" on public.article_comments for delete to authenticated using(auth.uid()=user_id or public.ac1899_is_admin());
+create table public.article_reactions(article_id text not null check(article_id ~ '^[a-z0-9-]{1,80}$'),user_id uuid not null references auth.users(id) on delete cascade,value smallint not null check(value in (-1,1)),primary key(article_id,user_id));
+alter table public.article_reactions enable row level security;
+create policy "Own reactions" on public.article_reactions for all to authenticated using(user_id=auth.uid()) with check(user_id=auth.uid());
+create function public.article_reaction_counts(story text) returns table(likes bigint,dislikes bigint) language sql stable security definer set search_path=public as $$select count(*) filter(where value=1),count(*) filter(where value=-1) from public.article_reactions where article_id=story$$;
+grant execute on function public.article_reaction_counts(text) to anon,authenticated;
