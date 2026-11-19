@@ -17,7 +17,7 @@ export default function NewsCover({ image, title, category }: { image?: string; 
     return (
       <img
         src={image}
-        alt=""
+        alt={title}
         loading="lazy"
         className="aspect-video w-full rounded-lg object-cover"
         onError={() => setFailedImage(image)}

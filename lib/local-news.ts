@@ -415,45 +415,10 @@ export async function getLocalNews(options: { ingest?: boolean; onReport?: (repo
   }
   const { data: queued, error: queueError } = await queue.select("candidate").order("attempted_at", { ascending: true, nullsFirst: true }).limit(60);
   if (queueError) throw new Error(`Lettura coda fallita: ${queueError.code}`);
-  const work = (queued ?? []).map(row => row.candidate as NewsCandidate).filter(candidate => (candidate.attempts ?? 0) < 3).slice(0, 16);
-  if (!report.rewriteConfigured) console.error("[ac1899-news] Configurazione riscrittura assente: fonti controllate, notizie conservate in coda");
-  if (report.rewriteConfigured) await Promise.allSettled(work.map(async candidate => {
-    const { story } = candidate;
-    if (existingIds.has(story.id)) { await queue.delete().eq("id", story.id); return; }
-    report.attempted++;
-    try {
-      const context = candidate.context.length >= 180 ? candidate.context : story.coverSource ? await articleContext(story.coverSource, candidate.context) : candidate.context;
-      const terms = normalizeNewsText(story.title).split(" ").filter(term => term.length > 4);
-      const related = existing.filter(item => terms.some(term => normalizeNewsText(item.title).includes(term))).slice(0, 8).map(item => ({ id: item.id, title: item.title, date: item.date, summary: item.body[0]?.slice(0, 350) ?? "" }));
-      const rewrite = await generateBrief(story.title, context, related);
-      if (rewrite && "duplicateOf" in rewrite) { report.duplicates++; await queue.delete().eq("id", story.id); return; }
-      if (!rewrite) {
-        report.held++;
-        await queue.update({ attempted_at: new Date().toISOString(), candidate: { ...candidate, attempts: (candidate.attempts ?? 0) + 1, lastError: "Materiale insufficiente per una riscrittura verificabile" } }).eq("id", story.id);
-        return;
-      }
-      report.rewritten++;
-      const article = { ...story, ...rewrite };
-      const title = normalizeNewsText(article.title);
-      if (existingTitles.has(title) || (article.coverSource && existingUrls.has(article.coverSource))) { report.duplicates++; await queue.delete().eq("id", story.id); return; }
-      existingTitles.add(title); if (article.coverSource) existingUrls.add(article.coverSource);
-      const { data, error } = await archive!.upsert({ id: article.id, published_at: article.date, story: article }, { onConflict: "id", ignoreDuplicates: true }).select("id");
-      if (error) throw new Error(`Salvataggio archivio: ${error.code}`);
-      if (data?.length) { report.persisted += data.length; report.publishedIds.push(article.id); stored.push(article); existing.push(article); }
-      await queue.delete().eq("id", story.id);
-    } catch (error) {
-      report.failed++;
-      await queue.update({ attempted_at: new Date().toISOString(), candidate: { ...candidate, lastError: error instanceof Error ? error.message.slice(0, 200) : "Errore temporaneo" } }).eq("id", story.id);
-    }
-  }));
-  const liveEvents = await getMilanLiveNews(checkedAt);
-  for (const story of liveEvents) {
-    if (existingIds.has(story.id)) continue;
-    const { data, error } = await archive!.upsert({ id: story.id, published_at: story.date, story }, { onConflict: "id", ignoreDuplicates: true }).select("id");
-    if (error) report.failed++;
-    else if (data?.length) { report.persisted += data.length; report.publishedIds.push(story.id); stored.push(story); }
-  }
-  console.info("[ac1899-news] Acquisizione", report);
+  // Editorial policy: candidates remain in the private queue until the user approves a full article.
+  // This endpoint never publishes automatically. Approval is performed by the editor on the reviewed text.
+  report.held = (queued ?? []).length;
+  console.info("[ac1899-news] In attesa di approvazione", report);
   options.onReport?.(report);
   return merge([...reviewed, ...stored]);
 }

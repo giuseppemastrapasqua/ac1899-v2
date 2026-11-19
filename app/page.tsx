@@ -1,3 +1,4 @@
+import { isTestArticle } from "../lib/article-seo";
 import Link from "next/link";
 import NewsAutoRefresh from "../components/NewsAutoRefresh";
 import NewsCover from "../components/NewsCover";
@@ -13,6 +14,8 @@ import { milanSquad } from "../lib/milan-squad";
 import { sectionMetadata } from "../lib/site-seo";
 import { supabase } from "../lib/supabase";
 import styles from "./home.module.css";
+
+export const dynamic = "force-dynamic";
 
 export const metadata = sectionMetadata("/");
 
@@ -39,7 +42,7 @@ export default async function Home() {
     ...(editorialResult.data ?? []).map(story => ({ title: story.title, source: "Redazione AC1899", date: story.created_at, category: story.category, image: story.image_url, href: `/news/${story.id}` })),
   ];
   const seen = new Set<string>();
-  const sorted = all.filter(story => Number.isFinite(Date.parse(story.date)) && Date.parse(story.date) <= Date.now())
+  const sorted = all.filter(story => !isTestArticle(story.title) && Number.isFinite(Date.parse(story.date)) && Date.parse(story.date) <= Date.now())
     .sort((a, b) => Date.parse(b.date) - Date.parse(a.date) || a.href.localeCompare(b.href))
     .filter(story => { const key = story.title.toLocaleLowerCase("it").replace(/[^\p{L}\p{N}]/gu, ""); if (seen.has(key)) return false; seen.add(key); return true; });
   const featured = await Promise.all(sorted.slice(0, 12).map(async story => ({ ...story,

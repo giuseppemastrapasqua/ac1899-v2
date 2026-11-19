@@ -1,3 +1,4 @@
+import { isTestArticle } from "../../lib/article-seo";
 import NewsAutoRefresh from "../../components/NewsAutoRefresh";
 import { sectionMetadata } from "../../lib/site-seo";
 
@@ -15,14 +16,15 @@ async function getEditorialArchive() {
   for (const table of ["news", "daily_editorials"] as const) {
     const isNews = table === "news";
     for (let offset = 0; ; offset += size) {
-      const result = await supabase.from(table)
+      let query = supabase.from(table)
         .select(isNews ? "id,title,created_at,category,image_url" : "id,title,created_at")
         .order("created_at", { ascending: false }).order("id")
-        .range(offset, offset + size - 1).abortSignal(AbortSignal.timeout(5000))
-        .overrideTypes<EditorialRow[], { merge: false }>();
+        .range(offset, offset + size - 1).abortSignal(AbortSignal.timeout(5000));
+      if (!isNews) query = query.eq("status", "published");
+      const result = await query.overrideTypes<EditorialRow[], { merge: false }>();
       if (result.error || !result.data) break;
       for (const entry of result.data) {
-        if (!entry.created_at) continue;
+        if (!entry.created_at || isTestArticle(entry.title)) continue;
         entries.push({ title: entry.title, date: entry.created_at, source: "Redazione AC1899",
           href: (isNews ? "/news/" : "/editoriali/") + entry.id,
           category: "category" in entry && typeof entry.category === "string" ? entry.category : "Editoriale",

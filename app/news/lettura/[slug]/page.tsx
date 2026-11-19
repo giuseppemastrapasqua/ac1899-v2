@@ -1,3 +1,5 @@
+import { articleMetadata } from "../../../../lib/article-seo";
+import ArticleShare from "../../../../components/ArticleShare";
 import ArticleDiscussion from "../../../../components/ArticleDiscussion";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -21,11 +23,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!story) return { robots: { index: false } };
   const path = "/news/lettura/" + slug;
   const description = story.body[0]?.slice(0, 160);
-  return {
-    title: story.title, description,
-    alternates: { canonical: path },
-    openGraph: { type: "article", title: story.title, description, url: path, publishedTime: story.date, siteName: "AC1899", locale: "it_IT" },
-  };
+  const image = story.coverSource ? await getOfficialMilanCover(story.coverSource) : undefined;
+  return articleMetadata({ title: story.title, description: description || story.title, path, date: story.date, image });
 }
 
 export default async function LocalNewsPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -57,6 +56,7 @@ export default async function LocalNewsPage({ params }: { params: Promise<{ slug
           </time>
         </header>
         <NewsCover image={image} title={story.title} category={story.category} />
+        <ArticleShare title={story.title} url={siteUrl + localNewsHref(story.id)} />
         <div className="space-y-3 text-base leading-relaxed">
           {story.body.map((paragraph, index) => <p key={index}>{paragraph}</p>)}
         </div>

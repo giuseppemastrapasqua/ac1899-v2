@@ -5,6 +5,7 @@ export default async function EditorialiPage() {
   const { data } = await supabase
     .from("daily_editorials")
     .select("*")
+    .eq("status", "published")
     .order("created_at", { ascending: false });
 
   const editorials = data || [];
