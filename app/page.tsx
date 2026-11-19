@@ -85,6 +85,7 @@ export default async function Home() {
           <div><span className={styles.eyebrow}>{story.category || "Notizie"}</span><h2><Link href={story.href}>{story.title}</Link></h2><StoryMeta story={story} /></div>
         </article>)}</div>
       </section>
+      <section className={styles.panel} style={{marginBottom:28,borderTop:"4px solid #c40020"}} aria-labelledby="cardinale-focus"><span className={styles.eyebrow}>IL FOCUS · PROPRIETÀ E FUTURO DEL MILAN</span><h2 id="cardinale-focus">Gerry Cardinale, tutte le notizie</h2><p>RedBird, investimenti, stadio e strategie: notizie, dichiarazioni e indiscrezioni attribuite alle fonti.</p><div className={styles.newsGrid}>{sorted.filter(story => /cardinale|redbird|red bird/i.test(story.title)).slice(0,3).map(story => <Link className={styles.topicStory} href={story.href} key={story.href}><time dateTime={story.date}>{dateLabel(story.date)}</time><strong>{story.title}</strong></Link>)}</div><Link href="/news?q=Cardinale">Tutto il focus Cardinale</Link></section>
       <div className={styles.newsLayout}>
         <section id="ultime-notizie" className={styles.newsSection}>
           <SectionHeading title="Il filo rossonero" href="/news" label="Tutte le notizie" />
