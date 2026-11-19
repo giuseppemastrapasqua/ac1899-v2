@@ -52,16 +52,16 @@ export default function AccountForm() {
     finally { setBusy(false); }
   }
   const field = "block w-full rounded-lg border border-gray-300 bg-white p-3 text-base text-gray-900";
-  return <section className="ac1899-box mx-auto max-w-lg space-y-5 p-6 sm:p-8">
+  return <section className="account-form ac1899-box mx-auto max-w-lg space-y-5 p-6 sm:p-8">
     <span className="text-sm font-bold text-red-700">COMMUNITY AC1899</span>
     <h1 className="text-3xl">{userName ? "Il tuo account" : mode === "signup" ? "Iscriviti" : "Accedi"}</h1>
     <p>{userName ? "Benvenuto, " + userName + "." : "Unisciti alla community per commentare gli articoli e votare. Nei commenti sarà visibile il tuo nickname, non la tua email."}</p>
-    {userName ? <div className="grid gap-3"><Link className="rounded-lg bg-red-700 px-4 py-3 text-center font-bold text-white" href="/news">Leggi, commenta e vota</Link><button type="button" disabled={busy} onClick={async () => { setBusy(true); const { error } = await supabase.auth.signOut(); setFeedback(error ? { error: true, text: "Uscita non riuscita. Riprova." } : undefined); setBusy(false); }} className="rounded-lg border p-3">Esci</button></div> : <>
+    {userName ? <div className="grid gap-3"><Link className="account-primary rounded-lg bg-red-700 px-4 py-3 text-center font-bold text-white" href="/news">Leggi, commenta e vota</Link><button type="button" disabled={busy} onClick={async () => { setBusy(true); const { error } = await supabase.auth.signOut(); setFeedback(error ? { error: true, text: "Uscita non riuscita. Riprova." } : undefined); setBusy(false); }} className="rounded-lg border p-3">Esci</button></div> : <>
       <form onSubmit={submit} className="grid gap-4" aria-busy={busy}>
         {mode === "signup" && <label className="grid gap-1">Nickname<input className={field} name="nickname" autoComplete="nickname" required minLength={3} maxLength={30} pattern="[A-Za-z0-9_.\-]{3,30}" value={nickname} onChange={e => setNickname(e.target.value)} aria-describedby="nickname-help" /><span id="nickname-help" className="text-sm text-gray-600">3–30 caratteri: lettere, numeri, punto, trattino o underscore.</span></label>}
         <label className="grid gap-1">Email<input className={field} name="email" type="email" autoComplete="email" maxLength={254} required value={email} onChange={e => setEmail(e.target.value)} /></label>
         <label className="grid gap-1">Password<input className={field} name="password" type="password" autoComplete={mode === "signup" ? "new-password" : "current-password"} required minLength={mode === "signup" ? 8 : undefined} maxLength={128} value={password} onChange={e => setPassword(e.target.value)} aria-describedby={mode === "signup" ? "password-help" : undefined} />{mode === "signup" && <span id="password-help" className="text-sm text-gray-600">Almeno 8 caratteri.</span>}</label>
-        <button disabled={busy} className="rounded-lg bg-red-700 p-3 text-base font-bold text-white disabled:opacity-60">{busy ? "Attendi…" : mode === "signup" ? "Crea account" : "Accedi"}</button>
+        <button disabled={busy} className="account-primary rounded-lg bg-red-700 p-3 text-base font-bold text-white disabled:opacity-60">{busy ? "Attendi…" : mode === "signup" ? "Crea account" : "Accedi"}</button>
       </form>
       <p>{mode === "signup" ? "Hai già un account? " : "Non hai un account? "}<button type="button" className="font-bold text-red-700 underline" disabled={busy} onClick={() => { setMode(mode === "signup" ? "login" : "signup"); setPassword(""); setFeedback(undefined); }}>{mode === "signup" ? "Accedi" : "Iscriviti"}</button></p>
     </>}

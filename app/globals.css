@@ -395,3 +395,8 @@ h1, h2, h3, h4, h5, h6 { font-family: "Outfit", Arial, sans-serif !important; fo
 .site-navbar .site-nav-signup:focus-visible { outline: 3px solid #111827; outline-offset: 3px; }
 .site-nav-account .site-nav-admin { font-size: 14px; }
 @media (max-width: 1200px) { .site-nav-links { order: 3; flex: 0 0 100%; overflow-x: auto; padding-block: .375rem; } .site-nav-account { order: 2; } }
+
+.ac1899-home .account-form input { background: #fff; color: #171717; border: 1px solid #a1a1aa; }
+.ac1899-home .account-form input:focus-visible { outline: 2px solid #c40020; outline-offset: 2px; }
+.ac1899-home .account-form .account-primary { background: #b00012; color: #fff !important; }
+body:has(.ac1899-home) .site-navbar .site-nav-signup { color: #fff !important; }
