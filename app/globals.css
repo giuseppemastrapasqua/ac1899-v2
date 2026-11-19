@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Lato:wght@400;700;900&family=Outfit:wght@400;500;600;700;800&display=swap");
 @import "tailwindcss";
 
 :root {
@@ -379,3 +379,12 @@ main :is(h1, h2, h3, p, dd, td) {
   background-size: .45rem 100%, 100% 100%;
   background-repeat: no-repeat;
 }
+
+/* Editorial typography: Outfit headlines and Lato reading text. */
+body { font-family: "Lato", Arial, sans-serif !important; }
+h1, h2, h3, h4, h5, h6 { font-family: "Outfit", Arial, sans-serif !important; font-weight: 700; }
+.ac1899-box { border-radius: 12px; box-shadow: none; }
+#rassegna-stampa article { padding: 0; border: 1px solid #e5e5e5; }
+#rassegna-stampa article > h2 { padding: 4px 16px; line-height: 1.15; font-size: 1.5rem; text-transform: none; }
+#rassegna-stampa article > p { padding: 0 16px 16px; }
+#rassegna-stampa article img, #rassegna-stampa article figure { border-radius: 12px !important; aspect-ratio: 16 / 9; object-fit: cover; }
