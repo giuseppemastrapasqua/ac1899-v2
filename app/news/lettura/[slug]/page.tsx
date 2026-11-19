@@ -1,3 +1,4 @@
+import ArticleDiscussion from "../../../../components/ArticleDiscussion";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { cache } from "react";
@@ -61,6 +62,7 @@ export default async function LocalNewsPage({ params }: { params: Promise<{ slug
         </div>
         <footer className="border-t border-gray-200 pt-3 text-sm text-gray-600">Fonte: {story.source}</footer>
       </article>
+      <ArticleDiscussion articleId={story.id} />
       {!!related.length && <section aria-labelledby="related-title" className="mx-auto mt-6 max-w-3xl"><h2 id="related-title" className="mb-4 text-3xl">Continua a leggere</h2><div className="grid gap-3 sm:grid-cols-3">{related.map(({ item }) => <Link key={item.id} href={localNewsHref(item.id)} className="ac1899-box p-4"><p className="mb-2 text-sm text-gray-600">{item.category}</p><h3 className="text-xl">{item.title}</h3><time dateTime={item.date} className="mt-2 block text-sm text-gray-600">{new Date(item.date).toLocaleDateString("it-IT", { timeZone: "Europe/Rome" })}</time></Link>)}</div></section>}
     </main>
   );
