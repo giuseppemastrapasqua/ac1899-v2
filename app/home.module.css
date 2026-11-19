@@ -52,3 +52,7 @@
 .sideNews h2 { line-height:1.15; }
 .eyebrow { font-family:"Lato",Arial,sans-serif; font-size:14px; color:#c40020; }
 .meta { font-size:14px; }
+
+@media (max-width: 767px) {
+  .newsGrid > .newsCard:nth-child(n + 9) { display: none; }
+}
