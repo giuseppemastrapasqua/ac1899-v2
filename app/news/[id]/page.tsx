@@ -1,5 +1,6 @@
 "use client";
 
+import ArticleDiscussion from "../../../components/ArticleDiscussion";
 import Link from "next/link";
 import NewsCover from "../../../components/NewsCover";
 import { useEffect, useState } from "react";
@@ -112,6 +113,7 @@ export default function NewsDetailPage() {
           ← Torna alle news
         </Link>
       </article>
+      <ArticleDiscussion articleId={"news-" + article.id} />
 
       {related.length > 0 && (
         <section style={relatedSection}>
