@@ -123,7 +123,7 @@ const reviewed: LocalNews[] = [
   },
 ];
 
-const generateBrief = unstable_cache(async (title: string, description: string, related: { id: string; title: string; date: string; summary: string }[] = []) => {
+export const generateBrief = unstable_cache(async (title: string, description: string, related: { id: string; title: string; date: string; summary: string }[] = []) => {
   if (!process.env.OPENAI_API_KEY) return null;
   const detailed = /cardinale|redbird|analisi|approfondimento/i.test(title);
   const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY, timeout: detailed ? 15000 : 6500, maxRetries: 0 });
@@ -174,7 +174,7 @@ function officialPublishedAt(html: string) {
 type NewsCandidate = { story: LocalNews; context: string; attempts?: number; lastError?: string };
 export type IngestionReport = { checkedAt: string; feedsRead: number; failedFeeds: number; candidates: number; attempted: number; rewritten: number; persisted: number; duplicates: number; held: number; failed: number; rewriteConfigured: boolean; publishedIds: string[] };
 
-async function articleContext(url: string, fallback: string): Promise<string> {
+export async function articleContext(url: string, fallback: string): Promise<string> {
   const parsed = URL.parse(url);
   const matchesHost = (host: string) => parsed?.hostname === host || !!parsed?.hostname.endsWith("." + host);
   const allowed = clubOutlets.some(([host]) => matchesHost(host)) || playerNewsSources.some(group => group.outlets.some(([host]) => matchesHost(host)));
