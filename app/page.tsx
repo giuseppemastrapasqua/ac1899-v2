@@ -42,12 +42,12 @@ export default async function Home() {
   const sorted = all.filter(story => Number.isFinite(Date.parse(story.date)) && Date.parse(story.date) <= Date.now())
     .sort((a, b) => Date.parse(b.date) - Date.parse(a.date) || a.href.localeCompare(b.href))
     .filter(story => { const key = story.title.toLocaleLowerCase("it").replace(/[^\p{L}\p{N}]/gu, ""); if (seen.has(key)) return false; seen.add(key); return true; });
-  const featured = await Promise.all(sorted.slice(0, 13).map(async story => ({ ...story,
+  const featured = await Promise.all(sorted.slice(0, 12).map(async story => ({ ...story,
     image: story.image || (story.coverSource ? await getOfficialMilanCover(story.coverSource) : undefined),
   })));
   const [lead, ...others] = featured;
   const side = others.slice(0, 2);
-  const more = others.slice(2);
+  const more = others.slice(2, 11);
   const normalize = (value: string) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("it").replace(/[^\p{L}\p{N}]+/gu, " ").trim();
   const squadNames = milanSquad.flatMap(group => group.players.map(player => normalize(player[1].split(" ").slice(1).join(" ")))).filter(name => name.length > 3);
   const medicalPlayers = new Set<string>();
