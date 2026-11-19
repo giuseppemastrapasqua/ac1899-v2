@@ -22,7 +22,7 @@ export default function RootLayout({
       <body
         style={{
           margin: 0,
-          fontFamily: "Arial, sans-serif",
+          fontFamily: '"Lato", Arial, sans-serif',
           background: "#030712",
           color: "#f9fafb",
           minHeight: "100vh",
