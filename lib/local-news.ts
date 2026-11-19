@@ -253,7 +253,7 @@ function normalizeNewsText(text: string) {
 }
 
 function matchesMilanNews(title: string) {
-  if (/\b(?:milan|mailand|rossoner[ioe]|endrick|tresoldi|amorim)\b/i.test(title)) return true;
+  if (/\b(?:milan|mailand|rossoner[ioe]|cardinale|redbird|endrick|tresoldi|amorim)\b/i.test(title)) return true;
   const normalized = " " + normalizeNewsText(title) + " ";
   return milanSquad.some(group => group.players.some(([, name]) => {
     const surname = normalizeNewsText(name).split(" ").slice(1).join(" ");
@@ -308,8 +308,8 @@ const allowedArchiveSources = new Set<string>([
 ]);
 
 const indexedClubSearches = [
-  { query: '"AC Milan" OR rossoneri', locale: "it", country: "IT", edition: "Italia" },
-  { query: '"AC Milan" OR "Milan Women"', locale: "en", country: "GB", edition: "Estero" },
+  { query: '"AC Milan" OR rossoneri OR "Gerry Cardinale" OR RedBird', locale: "it", country: "IT", edition: "Italia" },
+  { query: '"AC Milan" OR "Milan Women" OR "Gerry Cardinale" OR RedBird', locale: "en", country: "GB", edition: "Estero" },
   { query: '"Milan Femminile" OR "Milan Women" OR "Milan Primavera" OR "Milan Futuro"', locale: "it", country: "IT", edition: "Italia" },
   { query: '"AC Milan" OR "Milan AC"', locale: "fr", country: "FR", edition: "Estero" },
   { query: '"AC Milan" OR "Milan"', locale: "es", country: "ES", edition: "Estero" },
