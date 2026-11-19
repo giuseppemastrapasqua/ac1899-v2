@@ -1,4 +1,5 @@
 "use client";
+import { adminFetch } from "../../../lib/admin-fetch";
 
 import { useState } from "react";
 import { supabase } from "../../../lib/supabase";
@@ -28,7 +29,7 @@ export default function AdminAnalisiPage() {
     setAnalysis("");
 
     try {
-      const res = await fetch("/api/genera-analisi", {
+      const res = await adminFetch("/api/genera-analisi", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

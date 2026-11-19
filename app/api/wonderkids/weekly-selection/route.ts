@@ -1,3 +1,4 @@
+import { requireAdmin } from "../../../../lib/require-admin";
 import { createClient } from "@supabase/supabase-js";
 
 const supabaseAdmin = createClient(
@@ -86,7 +87,9 @@ function note(slot: string, player: Candidate) {
   return `${fullName} scelto nel tridente offensivo per pericolosità, creatività e rendimento.`;
 }
 
-export async function POST() {
+export async function POST(request: Request) {
+  const denied = await requireAdmin(request);
+  if (denied) return denied;
   try {
     const { data: candidates, error: loadError } = await supabaseAdmin
       .from("wonderkid_candidates")

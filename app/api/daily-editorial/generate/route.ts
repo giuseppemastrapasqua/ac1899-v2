@@ -1,3 +1,4 @@
+import { requireAdmin } from "../../../../lib/require-admin";
 import { createClient } from "@supabase/supabase-js";
 import OpenAI from "openai";
 
@@ -10,7 +11,9 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
 });
 
-export async function POST() {
+export async function POST(request: Request) {
+  const denied = await requireAdmin(request);
+  if (denied) return denied;
   try {
     const prompt = `
 Genera un editoriale AC1899 sulla giornata di Serie A.

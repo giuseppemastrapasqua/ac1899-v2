@@ -1,4 +1,5 @@
 "use client";
+import { adminFetch } from "../../../lib/admin-fetch";
 
 import { useEffect, useState, ChangeEvent } from "react";
 import { supabase } from "../../../lib/supabase";
@@ -152,7 +153,7 @@ export default function AdminWonderkidsPage() {
   async function generateAI(id: number) {
     setAiLoadingId(id);
 
-    const res = await fetch("/api/wonderkids/generate-ai", {
+    const res = await adminFetch("/api/wonderkids/generate-ai", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
