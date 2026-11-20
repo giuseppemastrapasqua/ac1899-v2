@@ -1,167 +1,56 @@
-import NewsList from "../../components/NewsList";
-import OfficialMilanNews from "../../components/OfficialMilanNews";
+import NewsAutoRefresh from "../../components/NewsAutoRefresh";
+import { sectionMetadata } from "../../lib/site-seo";
 
-export default function NewsPage() {
-  const pressNews = [
-    {
-      source: "Gazzetta dello Sport",
-      title: "Le ultime notizie sul Milan dalla Gazzetta",
-      url: "https://www.gazzetta.it/Calcio/Serie-A/Milan/",
-    },
-    {
-      source: "Sky Sport",
-      title: "News, video e aggiornamenti sul Milan",
-      url: "https://sport.sky.it/calcio/serie-a/squadre/milan",
-    },
-    {
-      source: "MilanNews",
-      title: "Tutte le notizie rossonere in tempo reale",
-      url: "https://www.milannews.it/",
-    },
-    {
-      source: "SportMediaset",
-      title: "Aggiornamenti Milan da SportMediaset",
-      url: "https://www.sportmediaset.mediaset.it/calcio/milan/",
-    },
-  ];
+export const metadata = sectionMetadata("/news");
 
-  const analysisArticles = [
-    {
-      title: "Analisi Milan Hub",
-      text: "Analisi su partite, prestazioni dei giocatori e dati statistici, senza trattare notizie di mercato.",
-    },
-    {
-      title: "Focus giocatore",
-      text: "Approfondimenti sui protagonisti rossoneri basati su gol, assist, minuti giocati, rendimento e impatto sulla squadra.",
-    },
-  ];
+import NewsArchive, { type ArchiveEntry } from "../../components/NewsArchive";
+import { getOfficialMilanCover } from "../../lib/acmilan-news";
+import { getLocalNews, localNewsHref } from "../../lib/local-news";
+import { supabase } from "../../lib/supabase";
 
-  const card = {
-    background: "white",
-    color: "#111827",
-    padding: 24,
-    borderRadius: 18,
-    boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
-    marginBottom: 20,
-  };
+async function getEditorialArchive() {
+  type EditorialRow = { id: number; title: string; created_at: string | null; category?: string; image_url?: string };
+  const entries: ArchiveEntry[] = [];
+  const size = 200;
+  for (const table of ["news", "daily_editorials"] as const) {
+    const isNews = table === "news";
+    for (let offset = 0; ; offset += size) {
+      const result = await supabase.from(table)
+        .select(isNews ? "id,title,created_at,category,image_url" : "id,title,created_at")
+        .order("created_at", { ascending: false }).order("id")
+        .range(offset, offset + size - 1).abortSignal(AbortSignal.timeout(5000))
+        .overrideTypes<EditorialRow[], { merge: false }>();
+      if (result.error || !result.data) break;
+      for (const entry of result.data) {
+        if (!entry.created_at) continue;
+        entries.push({ title: entry.title, date: entry.created_at, source: "Redazione AC1899",
+          href: (isNews ? "/news/" : "/editoriali/") + entry.id,
+          category: "category" in entry && typeof entry.category === "string" ? entry.category : "Editoriale",
+          image: "image_url" in entry && typeof entry.image_url === "string" ? entry.image_url : undefined });
+      }
+      if (result.data.length < size) break;
+    }
+  }
+  return entries;
+}
 
+export default async function NewsPage() {
+  const [local, editorial] = await Promise.all([getLocalNews(), getEditorialArchive()]);
+  const translated = await Promise.all(local.map(async ({ id, title, date, source, category, coverSource }) => ({
+    title, date, source, category, href: localNewsHref(id),
+    image: coverSource ? await getOfficialMilanCover(coverSource) : undefined,
+  })));
+  const entries = [...translated, ...editorial].sort((a, b) => Date.parse(b.date) - Date.parse(a.date));
   return (
-    <main
-      style={{
-        background: "#f3f4f6",
-        minHeight: "100vh",
-        padding: 24,
-        fontFamily: "Arial",
-        color: "#111827",
-      }}
-    >
-      <section
-        style={{
-          background: "linear-gradient(135deg,#111827,#7f1d1d)",
-          color: "white",
-          padding: 32,
-          borderRadius: 20,
-          marginBottom: 24,
-        }}
-      >
-        <h1 style={{ margin: 0, fontSize: 42 }}>📰 News Milan Hub</h1>
-        <p>
-          Notizie ufficiali, articoli della redazione, rassegna stampa e analisi
-          rossonere.
-        </p>
-      </section>
-
-      <section
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1.3fr 1fr",
-          gap: 24,
-          marginBottom: 24,
-        }}
-      >
-        <div>
-          <OfficialMilanNews />
-        </div>
-
-        <div>
-          <h2>📝 Milan Hub Articles</h2>
-          <NewsList />
-        </div>
-      </section>
-
-      <section style={card}>
-        <h2>🗞️ Rassegna Stampa</h2>
-
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))",
-            gap: 16,
-          }}
-        >
-          {pressNews.map((item, index) => (
-            <article
-              key={index}
-              style={{
-                border: "1px solid #e5e7eb",
-                borderRadius: 14,
-                padding: 16,
-              }}
-            >
-              <p
-                style={{
-                  color: "#991b1b",
-                  fontWeight: "bold",
-                  marginTop: 0,
-                }}
-              >
-                {item.source}
-              </p>
-
-              <h3>{item.title}</h3>
-
-              <a
-                href={item.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  color: "#991b1b",
-                  fontWeight: "bold",
-                }}
-              >
-                Vai alla fonte →
-              </a>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section style={card}>
-        <h2>📈 Analisi Milan Hub</h2>
-
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))",
-            gap: 16,
-          }}
-        >
-          {analysisArticles.map((item, index) => (
-            <article
-              key={index}
-              style={{
-                border: "1px solid #e5e7eb",
-                borderRadius: 14,
-                padding: 16,
-                background: "#fafafa",
-              }}
-            >
-              <h3>{item.title}</h3>
-              <p>{item.text}</p>
-            </article>
-          ))}
-        </div>
-      </section>
+    <main className="ac1899-home min-h-screen">
+      <NewsAutoRefresh />
+      <div className="home-section-inner">
+        <header>
+          <h1 className="text-4xl">Archivio notizie</h1>
+          <p className="mt-2 text-sm text-gray-600">Notizie ufficiali, rassegna stampa e articoli AC1899. I contributi in inglese sono rielaborati in italiano.</p>
+        </header>
+        <NewsArchive entries={entries} />
+      </div>
     </main>
   );
 }

@@ -77,8 +77,8 @@ export default async function WonderkidKingBox() {
 }
 
 const box = {
-  background: "#111827",
-  border: "1px solid rgba(255,255,255,.08)",
+  background: "var(--home-surface, #111827)",
+  border: "1px solid var(--home-border, rgba(255,255,255,.08))",
   borderTop: "2px solid #e30613",
   padding: 22,
   marginTop: 18,
@@ -100,7 +100,7 @@ const name = {
 };
 
 const muted = {
-  color: "#9ca3af",
+  color: "var(--home-muted, #9ca3af)",
   lineHeight: 1.5,
 };
 
@@ -113,7 +113,7 @@ const stats = {
 
 const label = {
   display: "block",
-  color: "#9ca3af",
+  color: "var(--home-muted, #9ca3af)",
   fontSize: 11,
   fontWeight: 900,
   textTransform: "uppercase" as const,

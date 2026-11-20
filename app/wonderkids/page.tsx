@@ -1,166 +1,43 @@
+import { sectionMetadata } from "../../lib/site-seo";
+
+export const metadata = sectionMetadata("/wonderkids");
+
 import Link from "next/link";
-import { supabase } from "../../lib/supabase";
+import { scoutingGroups } from "../../lib/italian-scouting";
+import ItalianWonderkids from "../../components/ItalianWonderkids";
+import ItalianTeamOfWeek from "../../components/ItalianTeamOfWeek";
 
-export default async function WonderkidsPage() {
-  const { data: players } = await supabase
-    .from("wonderkids")
-    .select("id, name, surname, age, club, position, nationality, market_value, scout_rating, potential_rating, slug, photo");
-
-  // console.log("FIXTURES", fixtures);
+export default function WonderkidsPage() {
   return (
-    <main style={page}>
-      <section style={hero}>
-        <span style={badge}>⭐ WONDERKIDS U20</span>
-
-        <h1 style={title}>Database Scouting AC1899</h1>
-
-        <p style={subtitle}>
-          I migliori talenti Under 20 monitorati dalla redazione AC1899.
-        </p>
-      </section>
-
-      <section style={grid}>
-        {players?.map((player: any) => (
-          <article key={player.id} style={card}>
-           <div style={photoBox}>
-  {player.photo ? (
-    <img
-      src={player.photo}
-      alt={`${player.name} ${player.surname}`}
-      style={photoImg}
-    />
-  ) : (
-    <span style={initials}>
-      {player.name?.[0]}
-      {player.surname?.[0]}
-    </span>
-  )}
-</div>
-
-            <div style={{ padding: 18 }}>
-              <h2>
-                {player.name} {player.surname}
-              </h2>
-
-              <p style={muted}>
-                {player.age} anni • {player.club}
-              </p>
-
-              <p style={muted}>
-                {player.position} • {player.nationality}
-              </p>
-
-              <p>
-                <strong>Valore:</strong> {player.market_value}
-              </p>
-
-              <p>
-                <strong>Scout Rating:</strong> {player.scout_rating}/100
-              </p>
-
-              <p>
-                <strong>Potenziale:</strong> {player.potential_rating}/100
-              </p>
-
-              <Link
-  href={`/wonderkids/${player.slug || "franco-mastantuono"}`}
-  style={button}
->
-  Scheda completa →
-</Link>
+    <main className="ac1899-home min-h-screen">
+      <div className="home-section home-section-community">
+        <div className="home-section-inner">
+          <ItalianTeamOfWeek />
+          <ItalianWonderkids />
+          <section aria-labelledby="scouting-by-role">
+            <h2 id="scouting-by-role" className="mb-2 text-3xl">Cinque talenti per ruolo</h2>
+            <p className="mb-4 text-sm text-gray-600">Selezione editoriale Under 18. Il club identifica la società di appartenenza anche per chi gioca nel vivaio.</p>
+            <div className="grid gap-4 md:grid-cols-2">
+              {scoutingGroups.map(({ role, players }) => (
+                <article key={role} className="ac1899-box p-4">
+                  <h3 className="mb-2 text-xl">{role}</h3>
+                  <ol className="divide-y divide-gray-100">
+                    {players.map(([name, club, evidence, watch, source]) => (
+                      <li key={name} className="space-y-1 py-3 text-sm">
+                        <p><strong>{name}</strong> · {club}</p>
+                        <p>{evidence}</p>
+                        <p><strong>Da osservare:</strong> {watch}</p>
+                        <p className="text-xs text-gray-600">Fonte: {source}</p>
+                      </li>
+                    ))}
+                  </ol>
+                </article>
+              ))}
             </div>
-          </article>
-        ))}
-      </section>
-
-      <Link href="/" style={backLink}>
-        ← Torna alla Home
-      </Link>
+          </section>
+          <Link href="/" className="text-sm font-semibold">← Torna alla home</Link>
+        </div>
+      </div>
     </main>
   );
 }
-
-const page = {
-  background: "#020617",
-  color: "#f9fafb",
-  minHeight: "100vh",
-  padding: "48px 24px",
-};
-
-const hero = {
-  maxWidth: 1200,
-  margin: "0 auto 30px",
-  background: "#111827",
-  border: "1px solid rgba(255,255,255,.08)",
-  padding: 32,
-};
-
-const badge = {
-  color: "#e30613",
-  fontWeight: 800,
-  fontSize: 13,
-};
-
-const title = {
-  fontSize: 48,
-  margin: "16px 0",
-};
-
-const subtitle = {
-  color: "#9ca3af",
-};
-
-const grid = {
-  maxWidth: 1200,
-  margin: "0 auto",
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))",
-  gap: 20,
-};
-
-const card = {
-  background: "#111827",
-  border: "1px solid rgba(255,255,255,.08)",
-};
-
-const photoBox = {
-  height: 220,
-  display: "grid",
-  placeItems: "center",
-  fontSize: 50,
-  background: "rgba(255,255,255,.06)",
-  overflow: "hidden",
-};
-
-const photoImg = {
-  width: "100%",
-  height: "100%",
-  objectFit: "cover" as const,
-};
-
-const initials = {
-  color: "#e30613",
-  fontWeight: 900,
-};
-const muted = {
-  color: "#9ca3af",
-};
-
-const button = {
-  display: "inline-block",
-  marginTop: 12,
-  background: "#e30613",
-  color: "white",
-  padding: "10px 14px",
-  textDecoration: "none",
-  fontWeight: "bold",
-};
-
-const backLink = {
-  display: "block",
-  maxWidth: 1200,
-  margin: "32px auto 0",
-  color: "#e30613",
-  fontWeight: 800,
-  textDecoration: "none",
-};

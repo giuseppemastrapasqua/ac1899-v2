@@ -76,7 +76,7 @@ export default async function GiocatorePage({
       <section
         style={{
           display: "grid",
-          gridTemplateColumns: "minmax(0,1.2fr) minmax(300px,0.8fr)",
+          gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 300px), 1fr))",
           gap: 24,
           alignItems: "start",
         }}
@@ -269,7 +269,7 @@ const card = {
 
 const statsGrid = {
   display: "grid",
-  gridTemplateColumns: "repeat(auto-fit,minmax(160px,1fr))",
+  gridTemplateColumns: "repeat(auto-fit,minmax(min(100%, 160px), 1fr))",
   gap: 16,
 };
 

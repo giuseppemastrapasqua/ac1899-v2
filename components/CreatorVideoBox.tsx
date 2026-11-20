@@ -43,10 +43,10 @@ export default function CreatorVideoBox() {
 }
 
 const box = {
-  background: "#111827",
-  color: "#f9fafb",
+  background: "var(--home-surface, #111827)",
+  color: "var(--home-text, #f9fafb)",
   padding: 28,
-  border: "1px solid rgba(255,255,255,.08)",
+  border: "1px solid var(--home-border, rgba(255,255,255,.08))",
   marginTop: 24,
   borderRadius: 0,
 };
@@ -66,8 +66,8 @@ const grid = {
 };
 
 const card = {
-  background: "#111827",
-  border: "1px solid rgba(255,255,255,.08)",
+  background: "var(--home-surface, #111827)",
+  border: "1px solid var(--home-border, rgba(255,255,255,.08))",
   padding: 20,
   minHeight: 220,
 };
@@ -78,7 +78,7 @@ const icon = {
 };
 
 const cardTitle = {
-  color: "#f9fafb",
+  color: "var(--home-text, #f9fafb)",
   fontSize: 20,
   fontWeight: 800,
   margin: "0 0 10px",
@@ -86,7 +86,7 @@ const cardTitle = {
 };
 
 const text = {
-  color: "#9ca3af",
+  color: "var(--home-muted, #9ca3af)",
   lineHeight: 1.55,
   fontSize: 15,
   margin: 0,

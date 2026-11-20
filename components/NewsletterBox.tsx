@@ -36,10 +36,12 @@ export default function NewsletterBox() {
   }
 
   return (
-    <section
+    <section className="ac1899-box"
+      id="newsletter"
+      aria-labelledby="newsletter-title"
       style={{
-        background: "#111827",
-        border: "1px solid rgba(255,255,255,.08)",
+        background: "var(--home-surface, #111827)",
+        border: "1px solid var(--home-border, rgba(255,255,255,.08))",
         borderTop: "2px solid #e30613",
         padding: 20,
         marginTop: 24,
@@ -58,6 +60,7 @@ export default function NewsletterBox() {
       </span>
 
       <h3
+        id="newsletter-title"
         style={{
           margin: "10px 0 8px",
           color: "#ffffff",
@@ -71,7 +74,7 @@ export default function NewsletterBox() {
       <p
         style={{
           margin: 0,
-          color: "#9ca3af",
+          color: "var(--home-muted, #9ca3af)",
           fontSize: 14,
           lineHeight: 1.6,
         }}
@@ -88,15 +91,16 @@ export default function NewsletterBox() {
       >
         <input
           type="email"
+          aria-label="Indirizzo email"
           placeholder="La tua email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           style={{
             width: "100%",
             padding: "12px 14px",
-            background: "#020617",
-            color: "white",
-            border: "1px solid rgba(255,255,255,.08)",
+            background: "var(--home-surface, #020617)",
+            color: "var(--home-text, white)",
+            border: "1px solid var(--home-border, rgba(255,255,255,.08))",
             outline: "none",
             boxSizing: "border-box",
           }}

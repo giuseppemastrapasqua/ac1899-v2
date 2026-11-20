@@ -1,20 +1,26 @@
 "use client";
 
 import Link from "next/link";
+import BrandMark from "./BrandMark";
 
 export default function Navbar() {
   const links = [
     { label: "Home", href: "/" },
-    { label: "Milan", href: "/news" },
-    { label: "AI Room", href: "/ai" },
-    { label: "Creator", href: "/creator-video" },
+    { label: "Milan", href: "/milan" },
+    { label: "Femminile", href: "/milan-femminile" },
+    { label: "News", href: "/news" },
+    { label: "Campionato", href: "/campionato" },
+    { label: "Match Analyst AI", href: "/campionato/analisi" },
+    { label: "MVP", href: "/mvp-del-mese" },
+    { label: "Europa League", href: "/europa-league" },
     { label: "Wonderkids", href: "/wonderkids" },
-    { label: "Europa", href: "/europa-league" },
-    { label: "Community", href: "/newsletter" },
+    { label: "Creator", href: "/creator-video" },
+    { label: "Community", href: "/community" },
   ];
 
   return (
     <header
+      className="site-navbar"
       style={{
         background: "#111827",
         borderBottom: "2px solid #991b1b",
@@ -24,30 +30,23 @@ export default function Navbar() {
       }}
     >
       <nav
+        aria-label="Navigazione principale"
+        className="site-nav-inner"
         style={{
           maxWidth: 1400,
           margin: "0 auto",
           padding: "12px 24px",
           display: "flex",
           alignItems: "center",
-          gap: 24,
+          gap: "12px 24px",
+          flexWrap: "wrap",
         }}
       >
-        <Link
-          href="/"
-          style={{
-            color: "#e30613",
-            textDecoration: "none",
-            fontWeight: 900,
-            fontSize: 26,
-            letterSpacing: "-1px",
-            fontFamily: "Arial Black, sans-serif",
-            marginRight: 40,
-          }}
-        >
-          AC1899
+        <Link href="/" aria-label="AC1899 · Home" className="ac1899-brand-link">
+          <BrandMark />
         </Link>
 
+        <div className="site-nav-links">
         {links.map((link) => (
           <Link
             key={link.href}
@@ -63,9 +62,11 @@ export default function Navbar() {
             {link.label}
           </Link>
         ))}
+        </div>
 
         <Link
           href="/admin"
+          className="site-nav-admin"
           style={{
             marginLeft: "auto",
             color: "#fca5a5",

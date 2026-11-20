@@ -1,3 +1,7 @@
+import { sectionMetadata } from "../../lib/site-seo";
+
+export const metadata = sectionMetadata("/creator-video");
+
 import Link from "next/link";
 import { supabase } from "../../lib/supabase";
 import type { CSSProperties } from "react";
@@ -36,7 +40,7 @@ export default async function CreatorVideoPage() {
   );
 
   return (
-    <main style={page}>
+    <main className="ac1899-home min-h-screen"><div className="home-section-inner">
       <section style={hero}>
         <span style={badge}>🎥 CREATOR VIDEO</span>
         <h1 style={title}>AC1899 Creator Room</h1>
@@ -124,7 +128,7 @@ export default async function CreatorVideoPage() {
       <Link href="/" style={backLink}>
         ← Torna alla Home
       </Link>
-    </main>
+    </div></main>
   );
 }
 
@@ -201,7 +205,7 @@ const socialLink = {
 
 const grid: CSSProperties = {
   display: "grid",
-  gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))",
+  gridTemplateColumns: "repeat(auto-fit,minmax(min(100%, 260px), 1fr))",
   gap: 18,
 };
 

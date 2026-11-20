@@ -232,6 +232,7 @@ export default function AdminNewsPage() {
           </label>
 
           <label>Carica immagine news dal PC</label>
+          <p>Per una copertina illustrata con un giocatore, verifica nome, club attuale e numero di maglia.</p>
           <input
             type="file"
             accept="image/*"

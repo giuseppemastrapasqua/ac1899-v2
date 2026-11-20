@@ -133,7 +133,7 @@ const hero = {
   borderTop: "2px solid #e30613",
   padding: 32,
   display: "grid",
-  gridTemplateColumns: "180px 1fr",
+  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 180px), 1fr))",
   gap: 28,
   alignItems: "center",
 };
@@ -195,7 +195,7 @@ const grid = {
   maxWidth: 1200,
   margin: "0 auto 28px",
   display: "grid",
-  gridTemplateColumns: "repeat(auto-fit,minmax(160px,1fr))",
+  gridTemplateColumns: "repeat(auto-fit,minmax(min(100%, 160px), 1fr))",
   gap: 14,
 };
 

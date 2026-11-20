@@ -1,104 +1,30 @@
-import { getOfficialMilanNews } from "../lib/acmilan-news";
+import NewsCover from "./NewsCover";
+import { getOfficialMilanCover } from "../lib/acmilan-news";
+import { getLocalNews, localNewsHref } from "../lib/local-news";
 
-export default async function OfficialMilanNews() {
-  const news = await getOfficialMilanNews();
-  const homeNews = news.slice(0, 3);
+export default async function OfficialMilanNews({ limit = 4 }: { limit?: number }) {
+  const stories = (await getLocalNews()).filter(story => story.source === "AC Milan").slice(0, limit);
 
-  const card = {
-    background: "#111827",
-    color: "#f9fafb",
-    padding: 0,
-    borderRadius: 0,
-    boxShadow: "0 10px 28px rgba(0,0,0,0.25)",
-    overflow: "hidden",
-    border: "1px solid rgba(255,255,255,0.08)",
-  };
+  const covers = await Promise.all(stories.map(story => story.coverSource ? getOfficialMilanCover(story.coverSource) : undefined));
 
   return (
-    <section>
-      {homeNews.length === 0 ? (
-        <article
-          style={{
-            background: "#111827",
-            color: "#f9fafb",
-            padding: 18,
-            border: "1px solid rgba(255,255,255,0.08)",
-          }}
-        >
-          <p>Notizie ufficiali momentaneamente non disponibili.</p>
-        </article>
-      ) : (
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))",
-            gap: 14,
-          }}
-        >
-          {homeNews.map((item, index) => (
-            <article key={index} style={card}>
-              {item.image && (
-                <img
-                  src={item.image}
-                  alt={item.title}
-                  style={{
-                    width: "100%",
-                    height: 120,
-                    objectFit: "cover",
-                  }}
-                />
-              )}
-
-              <div style={{ padding: 14 }}>
-                <p
-                  style={{
-                    color: "#e30613",
-                    fontWeight: "bold",
-                    margin: 0,
-                    fontSize: 12,
-                    textTransform: "uppercase",
-                  }}
-                >
-                  {item.source}
-                </p>
-
-                <h3
-                  style={{
-                    marginTop: 8,
-                    marginBottom: 8,
-                    fontSize: 16,
-                    lineHeight: 1.25,
-                  }}
-                >
-                  {item.title}
-                </h3>
-
-                {item.date && (
-                  <small style={{ color: "#9ca3af" }}>{item.date}</small>
-                )}
-
-                <br />
-
-                <a
-                  href={item.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    display: "inline-block",
-                    marginTop: 10,
-                    color: "#e30613",
-                    fontWeight: "bold",
-                    fontSize: 13,
-                    textDecoration: "none",
-                  }}
-                >
-                  Leggi →
-                </a>
-              </div>
-            </article>
-          ))}
-        </div>
-      )}
+    <section aria-label="Ultime notizie ufficiali">
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,220px),1fr))] gap-3.5">
+        {stories.map((story, index) => (
+          <article key={story.id} className="ac1899-box ac1899-box-dark p-4">
+            <NewsCover image={covers[index]} title={story.title} category={story.category} />
+            <p className="m-0 text-xs font-bold uppercase text-red-400">
+              AC Milan · {story.category}
+            </p>
+            <h3 className="my-2 text-base font-bold">
+              <a href={localNewsHref(story.id)} className="text-white hover:underline">{story.title}</a>
+            </h3>
+            <time dateTime={story.date} className="text-sm text-gray-400">
+              {new Date(story.date).toLocaleDateString("it-IT", { timeZone: "Europe/Rome" })}
+            </time>
+          </article>
+        ))}
+      </div>
     </section>
   );
 }

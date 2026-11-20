@@ -287,21 +287,21 @@ const hero = {
 
 const statsGrid = {
   display: "grid",
-  gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))",
+  gridTemplateColumns: "repeat(auto-fit,minmax(min(100%, 180px), 1fr))",
   gap: 16,
   marginBottom: 24,
 };
 
 const insightGrid = {
   display: "grid",
-  gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))",
+  gridTemplateColumns: "repeat(auto-fit,minmax(min(100%, 240px), 1fr))",
   gap: 16,
   marginBottom: 24,
 };
 
 const cardsGrid = {
   display: "grid",
-  gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))",
+  gridTemplateColumns: "repeat(auto-fit,minmax(min(100%, 260px), 1fr))",
   gap: 20,
 };
 

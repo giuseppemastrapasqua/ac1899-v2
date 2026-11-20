@@ -1,32 +1,15 @@
+import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import Navbar from "../components/Navbar";
 import "./globals.css";
 
+import { siteUrl } from "../lib/site-seo";
+
 export const metadata: Metadata = {
-  title: {
-    default: "AC1899",
-template: "%s | AC1899",
-  },
-  description:
-    "Milan Hub: news, mercato, rosa, statistiche, pagelle e approfondimenti sul mondo rossonero.",
-  keywords: [
-    "Milan",
-    "AC Milan",
-    "Milan Hub",
-    "news Milan",
-    "mercato Milan",
-    "pagelle Milan",
-    "statistiche Milan",
-    "rosa Milan",
-  ],
-  openGraph: {
-    title: "Milan Hub",
-    description:
-      "News, mercato, rosa, statistiche, pagelle e approfondimenti sul mondo rossonero.",
-    type: "website",
-    locale: "it_IT",
-    siteName: "AC1899",
-  },
+  metadataBase: new URL(siteUrl),
+  title: { default: "AC1899", template: "%s | AC1899" },
+  description: "Notizie, mercato, risultati e analisi sul Milan.",
+  openGraph: { type: "website", locale: "it_IT", siteName: "AC1899" },
 };
 
 export default function RootLayout({
@@ -51,7 +34,7 @@ export default function RootLayout({
 
         <div style={{ flex: 1 }}>{children}</div>
 
-        <footer
+        <footer className="site-footer"
   style={{
     background: "#111827",
     borderTop: "1px solid #e30613",
@@ -91,8 +74,8 @@ export default function RootLayout({
       <a href="/news" style={footerLink}>News</a>
       <a href="/creator-video" style={footerLink}>Creator</a>
       <a href="/wonderkids" style={footerLink}>Wonderkids</a>
-      <a href="/avversario" style={footerLink}>AI Room</a>
-      <a href="/europa-league" style={footerLink}>Europa</a>
+      <a href="/#ai-room" style={footerLink}>AI Room</a>
+      <a href="/#europa" style={footerLink}>Europa</a>
     </nav>
 
     <p
@@ -107,6 +90,7 @@ export default function RootLayout({
     </p>
   </div>
 </footer>
+        <Analytics />
       </body>
     </html>
   );

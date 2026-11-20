@@ -1,110 +1,28 @@
-import Link from "next/link";
+import MatchCard from "./MatchCard";
+import StandingsTable from "./StandingsTable";
+import { europaLeague } from "../lib/home-standings";
+
+const milan = { name: "Milan", id: 489 };
 
 export default function EuropaLeagueBox() {
-  const cards = [
-    {
-      icon: "🏟️",
-      title: "Ultima partita",
-      text: "Risultato, marcatori e momenti chiave dell’ultima gara europea.",
-    },
-    {
-      icon: "⌛",
-      title: "Prossima partita",
-      text: "Data, avversario e preview della prossima sfida europea.",
-    },
-    {
-      icon: "🏆",
-      title: "Classifica",
-      text: "Posizione, punti e percorso del Milan nella competizione.",
-    },
-  ];
-
   return (
-    <section style={box}>
-      <span style={badge}>🏆 EUROPA LEAGUE</span>
-
-      <div style={grid}>
-        {cards.map((item) => (
-          <article key={item.title} style={card}>
-            <div>
-              <div style={icon}>{item.icon}</div>
-              <h3 style={cardTitle}>{item.title}</h3>
-              <p style={text}>{item.text}</p>
-            </div>
-          </article>
-        ))}
+    <section id="europa" aria-labelledby="europa-title">
+      <h2 id="europa-title" className="mb-4 border-b border-gray-200 pb-3 text-3xl">Europa League</h2>
+      <div className="grid gap-4 lg:grid-cols-3">
+        <MatchCard home={milan} away={{ name: "Ferencváros", id: 651 }} date="2026-11-05"
+          venue="Stadio San Siro" competition="Europa League" league={3} value="0–2" status="FINITA"
+          note="Giornata 4 · Joseph 52′, 66′" />
+        <MatchCard home={{ name: "Olympiacos", id: 553 }} away={milan} date="2026-11-26"
+          venue="Stadio Georgios Karaiskákis" competition="Europa League" league={3} value="18:45" status="TRASFERTA" note="Giornata 5 · Orario italiano" />
+        <MatchCard home={milan} away={{ name: "Sunderland", id: 746 }} date="2026-12-10"
+          venue="Stadio San Siro" competition="Europa League" league={3} value="21:00" status="CASA" note="Giornata 6 · Orario italiano" />
       </div>
-
-      <Link href="/europa-league" style={button}>
-        Europa →
-      </Link>
+      <div className="ac1899-box mt-4 p-5">
+        <h3 className="mb-2 text-xl">Classifica completa · 36 squadre</h3>
+        <p className="mb-3 text-sm text-gray-600">Fase campionato · dopo 4 giornate</p>
+        <StandingsTable rows={europaLeague} title="Classifica completa Europa League" expanded compact />
+        <p className="mt-3 text-xs text-gray-600">Classifica ufficiale AC Milan.</p>
+      </div>
     </section>
   );
 }
-
-const box = {
-  background: "#111827",
-  color: "#f9fafb",
-  padding: 28,
-  border: "1px solid rgba(255,255,255,.08)",
-  marginTop: 24,
-  borderRadius: 0,
-};
-
-const badge = {
-  color: "#e30613",
-  fontWeight: 800,
-  fontSize: 13,
-  letterSpacing: 1,
-};
-
-const grid = {
-  display: "grid",
-  gridTemplateColumns: "repeat(3,1fr)",
-  gap: 16,
-  marginTop: 28,
-};
-
-const card = {
-  background: "#111827",
-  border: "1px solid rgba(255,255,255,.08)",
-  padding: 20,
-  minHeight: 220,
-  display: "flex",
-  flexDirection: "column" as const,
-  justifyContent: "space-between",
-};
-
-const icon = {
-  fontSize: 28,
-  marginBottom: 10,
-};
-
-const cardTitle = {
-  color: "#f9fafb",
-  fontSize: 20,
-  fontWeight: 800,
-  margin: "0 0 10px",
-  lineHeight: 1.2,
-};
-
-const text = {
-  color: "#9ca3af",
-  lineHeight: 1.55,
-  fontSize: 15,
-  margin: 0,
-};
-
-const button = {
-  display: "inline-block",
-  marginTop: 22,
-  background: "#e30613",
-  color: "white",
-  padding: "8px 12px",
-  textDecoration: "none",
-  fontWeight: "bold",
-  fontSize: 13,
-  textTransform: "uppercase" as const,
-  letterSpacing: 1,
-  borderRadius: 0,
-};

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import NewsCover from "../../../components/NewsCover";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { supabase } from "../../../lib/supabase";
@@ -96,21 +97,7 @@ export default function NewsDetailPage() {
           {article.featured && <span>🔥 In evidenza</span>}
         </div>
 
-        {article.image_url && (
-          <img
-            src={article.image_url}
-            alt={article.title}
-            style={{
-              width: "100%",
-              maxHeight: 560,
-              objectFit: "cover",
-              borderRadius: 18,
-              marginTop: 24,
-              marginBottom: 30,
-              background: "#f3f4f6",
-            }}
-          />
-        )}
+        <NewsCover image={article.image_url || undefined} title={article.title} category={article.category} />
 
         <div style={contentBox}>
           {article.content.split("\n").map((paragraph, index) => (
@@ -120,6 +107,7 @@ export default function NewsDetailPage() {
           ))}
         </div>
 
+        <p>Fonte: Redazione AC1899</p>
         <Link href="/news" style={linkStyle}>
           ← Torna alle news
         </Link>
@@ -132,7 +120,7 @@ export default function NewsDetailPage() {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))",
+              gridTemplateColumns: "repeat(auto-fit,minmax(min(100%, 240px), 1fr))",
               gap: 18,
             }}
           >

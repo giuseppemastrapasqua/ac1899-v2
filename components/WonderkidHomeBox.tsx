@@ -70,8 +70,8 @@ export default async function WonderkidHomeBox() {
 }
 
 const box = {
-  background: "#111827",
-  border: "1px solid rgba(255,255,255,.08)",
+  background: "var(--home-surface, #111827)",
+  border: "1px solid var(--home-border, rgba(255,255,255,.08))",
   borderTop: "2px solid #e30613",
   padding: 28,
   marginTop: 28,
@@ -92,8 +92,8 @@ const grid = {
 };
 
 const card = {
-  background: "#111827",
-  border: "1px solid rgba(255,255,255,.08)",
+  background: "var(--home-surface, #111827)",
+  border: "1px solid var(--home-border, rgba(255,255,255,.08))",
   padding: 16,
   color: "white",
   textDecoration: "none",
@@ -129,7 +129,7 @@ const name = {
 };
 
 const muted = {
-  color: "#9ca3af",
+  color: "var(--home-muted, #9ca3af)",
   fontSize: 15,
   lineHeight: 1.4,
 };

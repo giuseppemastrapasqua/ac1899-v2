@@ -1,5 +1,6 @@
 "use client";
 
+import NewsCover from "./NewsCover";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
@@ -103,19 +104,14 @@ export default function NewsList() {
               ? `/editoriali/${featured.id}`
               : `/news/${featured.id}`
           }
+          className="news-featured-card"
           style={
             featured.type === "editorial"
               ? editorialFeaturedCard
               : featuredCard
           }
         >
-          {featured.image_url && (
-            <img
-              src={featured.image_url}
-              alt={featured.title}
-              style={featuredImage}
-            />
-          )}
+          <NewsCover image={featured.image_url || undefined} title={featured.title} category={featured.category} />
 
           <div style={featuredContent}>
             <p
@@ -145,7 +141,7 @@ export default function NewsList() {
         </Link>
       )}
 
-      <section style={secondaryGrid}>
+      <section className="news-secondary-grid" style={secondaryGrid}>
         {otherItems.map((item) => (
           <Link
             key={`${item.type}-${item.id}`}
@@ -156,9 +152,7 @@ export default function NewsList() {
             }
             style={item.type === "editorial" ? editorialCard : smallCard}
           >
-            {item.image_url && (
-              <img src={item.image_url} alt={item.title} style={smallImage} />
-            )}
+            <NewsCover image={item.image_url || undefined} title={item.title} category={item.category} />
 
             <div style={compactContent}>
               <p
@@ -197,19 +191,19 @@ export default function NewsList() {
 }
 
 const emptyCard = {
-  background: "rgba(17,24,39,.94)",
-  color: "#f9fafb",
+  background: "var(--home-surface, rgba(17,24,39,.94))",
+  color: "var(--home-text, #f9fafb)",
   padding: 24,
-  border: "1px solid rgba(255,255,255,.08)",
+  border: "1px solid var(--home-border, rgba(255,255,255,.08))",
   marginBottom: 14,
 };
 
 const featuredCard: CSSProperties = {
-  background: "#111827",
-  color: "#f9fafb",
+  background: "var(--home-surface, #111827)",
+  color: "var(--home-text, #f9fafb)",
   overflow: "hidden",
   textDecoration: "none",
-  border: "1px solid rgba(255,255,255,.10)",
+  border: "1px solid var(--home-border, rgba(255,255,255,.10))",
   borderTop: "3px solid #e30613",
   minHeight: 210,
   display: "grid",
@@ -222,7 +216,7 @@ const editorialFeaturedCard: CSSProperties = {
   border: "1px solid rgba(227,6,19,.65)",
   borderTop: "3px solid #e30613",
   background:
-    "linear-gradient(180deg, rgba(127,29,29,.24), rgba(17,24,39,.96))",
+    "var(--home-editorial, linear-gradient(180deg, rgba(127,29,29,.24), rgba(17,24,39,.96)))",
   display: "flex",
   flexDirection: "column",
 };
@@ -250,7 +244,7 @@ const featuredTitle = {
 };
 
 const featuredSubtitle = {
-  color: "#9ca3af",
+  color: "var(--home-muted, #9ca3af)",
   fontSize: 15,
   lineHeight: 1.45,
   marginBottom: 12,
@@ -263,11 +257,11 @@ const secondaryGrid = {
 };
 
 const smallCard: CSSProperties = {
-  background: "#111827",
-  color: "#f9fafb",
+  background: "var(--home-surface, #111827)",
+  color: "var(--home-text, #f9fafb)",
   overflow: "hidden",
   textDecoration: "none",
-  border: "1px solid rgba(255,255,255,.10)",
+  border: "1px solid var(--home-border, rgba(255,255,255,.10))",
   minHeight: 150,
   display: "flex",
   flexDirection: "column",
@@ -278,7 +272,7 @@ const editorialCard: CSSProperties = {
   border: "1px solid rgba(227,6,19,.65)",
   borderTop: "3px solid #e30613",
   background:
-    "linear-gradient(180deg, rgba(127,29,29,.24), rgba(17,24,39,.96))",
+    "var(--home-editorial, linear-gradient(180deg, rgba(127,29,29,.24), rgba(17,24,39,.96)))",
 };
 
 const smallImage = {
@@ -318,7 +312,7 @@ const smallTitle = {
 };
 
 const smallSubtitle = {
-  color: "#9ca3af",
+  color: "var(--home-muted, #9ca3af)",
   fontSize: 13,
   lineHeight: 1.35,
   marginBottom: 10,
@@ -334,7 +328,7 @@ const compactReadMore = {
 };
 
 const dateText = {
-  color: "#9ca3af",
+  color: "var(--home-muted, #9ca3af)",
   marginTop: 8,
   fontSize: 12,
 };
